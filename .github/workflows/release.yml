@@ -10,4 +10,4 @@ jobs:
       - name: Set up Python
         run: uv python install
       - name: Publish
-        run: uv run publish
+        run: uv publish
