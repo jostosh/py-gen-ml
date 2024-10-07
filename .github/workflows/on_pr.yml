@@ -1,0 +1,7 @@
+on:
+  pull_request:
+jobs:
+  pre-commit:
+    uses: ./.github/workflows/pre-commit-and-test.yml
+  release:
+    uses: ./.github/workflows/release-dev.yml
