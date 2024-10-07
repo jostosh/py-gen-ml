@@ -5,4 +5,4 @@ jobs:
     uses: ./.github/workflows/pre-commit-and-test.yml
   release:
     needs: pre-commit
-    uses: ./.github/workflows/release-dev.yml
+    uses: ./.github/workflows/release.yml
