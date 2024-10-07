@@ -9,5 +9,7 @@ jobs:
       uses: astral-sh/setup-uv@v3
     - name: Set up Python
       run: uv python install
+    - name: Build
+      run: uv run build
     - name: Publish
       run: uv publish
