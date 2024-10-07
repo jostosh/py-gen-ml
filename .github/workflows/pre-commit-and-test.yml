@@ -1,0 +1,21 @@
+on:
+  workflow_call:
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+    - name: Set up Python
+      run: uv python install
+    - name: Run pre-commit
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          uv run pre-commit run --from-ref ${{ github.event.pull_request.base.sha }} \
+            --to-ref ${{ github.event.pull_request.head.sha }}
+        else
+          uv run pre-commit run --from-ref ${{ github.event.before }} --to-ref ${{ github.event.after }}
+        fi

@@ -1,0 +1,16 @@
+on:
+  push:
+    branches:
+    - main
+jobs:
+  main:
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ./.github/workflows/pre-commit-and-test.yml
+    - uses: anothrNick/github-tag-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: false
+    - uses: ./.github/workflows/release.yml

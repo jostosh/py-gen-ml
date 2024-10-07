@@ -1,5 +1,8 @@
 site_name: py-gen-ml
 site_url: https://jostosh.github.io/py-gen-ml/
+site_author: Jos van de Wolfshaar
+site_description: A library for generating machine learning tooling
+
 theme:
   name: material
   palette:
