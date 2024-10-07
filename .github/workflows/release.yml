@@ -2,6 +2,8 @@ on:
   workflow_call:
 jobs:
   release:
+    permissions:
+      id-token: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -11,5 +13,5 @@ jobs:
       run: uv python install
     - name: Build
       run: uv build
-    - name: Publish
-      run: uv publish
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
