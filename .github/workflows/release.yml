@@ -9,6 +9,10 @@ jobs:
       uses: astral-sh/setup-uv@v3
     - name: Set up Python
       run: uv python install
+    - uses: anothrNick/github-tag-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: false
     - name: Build
       run: uv build
     - name: Publish package distributions to PyPI
