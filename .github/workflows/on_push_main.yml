@@ -1,14 +1,14 @@
 on:
   push:
     branches:
-      - main
+    - main
 jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/pre-commit-and-test.yml
-      - uses: anothrNick/github-tag-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: false
-      - uses: ./.github/workflows/release.yml
+    - uses: ./.github/workflows/pre-commit-and-test.yml
+    - uses: anothrNick/github-tag-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: false
+    - uses: ./.github/workflows/release.yml
