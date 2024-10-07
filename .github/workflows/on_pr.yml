@@ -3,8 +3,3 @@ on:
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit-and-test.yml
-  release:
-    permissions:
-      id-token: write
-    needs: pre-commit
-    uses: ./.github/workflows/release.yml
