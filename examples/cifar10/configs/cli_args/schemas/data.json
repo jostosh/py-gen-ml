@@ -1,0 +1,56 @@
+{
+ "description": "Data configuration",
+ "properties": {
+  "batch_size": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Batch Size"
+  },
+  "num_epochs": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Num Epochs"
+  },
+  "_defs_": {}
+ },
+ "title": "DataArgs",
+ "type": "object"
+}

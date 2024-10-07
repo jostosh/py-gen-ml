@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=schemas/project.json
+optimizer:
+  beta1:
+    low: 0.9
+    high: 0.99
+  learning_rate:
+    log_low: 1e-5
+    log_high: 1e-3

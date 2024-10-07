@@ -1,0 +1,305 @@
+{
+ "$defs": {
+  "Activation": {
+   "description": "Activation function",
+   "enum": [
+    "gelu",
+    "relu"
+   ],
+   "title": "Activation",
+   "type": "string"
+  }
+ },
+ "description": "Global configuration",
+ "properties": {
+  "out_channels": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Out Channels"
+  },
+  "kernel_size": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Kernel Size"
+  },
+  "pool_size": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Pool Size"
+  },
+  "out_features": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Out Features"
+  },
+  "batch_size": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Batch Size"
+  },
+  "num_epochs": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Num Epochs"
+  },
+  "learning_rate": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Learning Rate"
+  },
+  "beta1": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Beta1"
+  },
+  "conv_activation": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/Activation"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null
+  },
+  "head_activation": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/Activation"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null
+  },
+  "num_conv_layers": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Num Conv Layers"
+  },
+  "num_mlp_layers": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Num Mlp Layers"
+  },
+  "_defs_": {}
+ },
+ "title": "ProjectArgs",
+ "type": "object"
+}

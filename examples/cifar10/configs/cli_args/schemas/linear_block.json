@@ -1,0 +1,66 @@
+{
+ "$defs": {
+  "Activation": {
+   "description": "Activation function",
+   "enum": [
+    "gelu",
+    "relu"
+   ],
+   "title": "Activation",
+   "type": "string"
+  }
+ },
+ "description": "Linear layer configuration",
+ "properties": {
+  "out_features": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Out Features"
+  },
+  "activation": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/Activation"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null
+  },
+  "_defs_": {}
+ },
+ "title": "LinearBlockArgs",
+ "type": "object"
+}

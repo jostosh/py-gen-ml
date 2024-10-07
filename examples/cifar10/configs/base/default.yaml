@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=schemas/project.json
+net:
+  conv_net:
+    block:
+      activation: gelu
+      kernel_size: 3
+      out_channels: 32
+      pool_size: 2
+  head:
+    block:
+      activation: gelu
+      out_features: 128
+    num_layers: 3
+optimizer:
+  beta1: 0.99
+  learning_rate: 0.0001
+data:
+  batch_size: 32
+  num_epochs: 10

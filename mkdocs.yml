@@ -1,0 +1,99 @@
+site_name: py-gen-ml
+site_url: https://jostosh.github.io/py-gen-ml/
+theme:
+  name: material
+  palette:
+  # Palette toggle for dark mode
+  - scheme: slate
+    media: "(prefers-color-scheme: dark)"
+    primary: black
+    toggle:
+      icon: material/brightness-4
+      name: Switch to light mode
+
+  # Palette toggle for light mode
+  - scheme: default
+    media: "(prefers-color-scheme: light)"
+    primary: black
+    toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+
+  features:
+  - navigation.sections
+  - navigation.indexes
+  - navigation.footer
+  - toc.follow
+  - navigation.tabs
+  - content.code.annotate
+  - content.code.copy
+  - content.footnote.tooltips
+  - content.tabs.link
+  - content.tooltips
+  - navigation.instant
+  - navigation.instant.prefetch
+  - navigation.instant.progress
+  - navigation.path
+  - navigation.tabs.sticky
+  - navigation.top
+  - navigation.tracking
+  - search.highlight
+  - search.share
+  - search.suggest
+
+watch:
+- src
+- docs
+- mkdocs.yml
+
+markdown_extensions:
+- admonition
+- pymdownx.superfences
+- pymdownx.details
+- pymdownx.tasklist
+- pymdownx.highlight:
+    anchor_linenums: true
+    line_spans: __span
+    pygments_lang_class: true
+    linenums: true
+- pymdownx.inlinehilite
+- pymdownx.snippets
+- mdx_truly_sane_lists
+
+nav:
+- Home: 
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - py-gen-ml script: py-gen-ml-command.md
+  - Protobuf Crash course: guides/protobuf.md
+- Guides:
+  - Flexible YAML configuration: guides/defining_yaml_files.md
+  - Sweeps: guides/sweep.md
+  - CLI argument parsing: guides/cli_argument_parsing.md
+  - Builders: guides/builders.md
+  - Enums: guides/enums.md
+  - Default values: guides/defaults.md
+  - Unions: guides/oneofs.md
+- Example projects:
+  - CIFAR-10: example_projects/cifar10.md
+- Reference:
+  - YamlBaseModel: reference/yaml.md
+  - pgml_cmd: reference/command_from_func.md
+  - OptunaSampler: reference/optuna_sampler.md
+
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          show_bases: true
+          parameter_headings: true
+          separate_signature: true
+          line_length: 60
+          show_signature_annotations: true
+          signature_crossrefs: true
+          members_order: source
+          docstring_section_style: list
+          show_source: false
+- section-index

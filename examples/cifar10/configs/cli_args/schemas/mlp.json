@@ -1,0 +1,90 @@
+{
+ "$defs": {
+  "Activation": {
+   "description": "Activation function",
+   "enum": [
+    "gelu",
+    "relu"
+   ],
+   "title": "Activation",
+   "type": "string"
+  }
+ },
+ "description": "Multi-layer perceptron configuration",
+ "properties": {
+  "num_layers": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Num Layers"
+  },
+  "out_features": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null,
+   "title": "Out Features"
+  },
+  "activation": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/Activation"
+    },
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an external object",
+     "minLength": 2,
+     "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+    },
+    {
+     "type": "string",
+     "description": "An object path to an internal object",
+     "minLength": 2,
+     "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+    }
+   ],
+   "default": null
+  },
+  "_defs_": {}
+ },
+ "title": "MLPArgs",
+ "type": "object"
+}

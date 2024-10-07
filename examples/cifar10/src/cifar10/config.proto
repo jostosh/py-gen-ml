@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package cifar10;
+
+import "py_gen_ml/extensions.proto";
+
+
+// Global configuration
+message Project {
+    option (pgml.arg_refs) = {
+        item: {name: "conv_activation", path: "net.conv_net.block.activation"}
+        item: {name: "head_activation", path: "net.head.block.activation"}
+        item: {name: "num_conv_layers", path: "net.conv_net.num_layers"}
+        item: {name: "num_mlp_layers", path: "net.head.num_layers"}
+    };
+    // Model configuration
+    Model net = 1;
+    // Optimizer configuration
+    Optimizer optimizer = 2;
+    // Data configuration
+    Data data = 3;
+}
+
+// Model configuration
+message Model {
+    // Conv blocks
+    ConvNet conv_net = 1;
+    // MLP head
+    MLP head = 2;
+}
+
+// Convolutional neural network configuration
+message ConvNet {
+    // Conv layer configuration
+    ConvBlock block = 1;
+    // Number of layers
+    uint32 num_layers = 2 [(pgml.default).uint32 = 2];
+}
+
+// Multi-layer perceptron configuration
+message MLP {
+    // Linear layer configuration
+    LinearBlock block = 1;
+    // Number of layers
+    uint32 num_layers = 2 [(pgml.default).uint32 = 2];
+}
+
+// Convolutional layer configuration
+message ConvBlock {
+    option (pgml.builder) = "cifar10.modules.ConvBlock";
+    // Number of output channels
+    uint32 out_channels = 1  [(pgml.default).uint32 = 128];
+    // Square kernel size
+    uint32 kernel_size = 2 [(pgml.default).uint32 = 3];
+    // Square pool size
+    uint32 pool_size = 3 [(pgml.default).uint32 = 2];
+    // Activation function
+    Activation activation = 4 [(pgml.default).enum = 0];
+}
+
+// Linear layer configuration
+message LinearBlock {
+    option (pgml.builder) = "cifar10.modules.LinearBlock";
+    // Number of output features
+    uint32 out_features = 1 [(pgml.default).uint32 = 128];
+    // Activation function
+    Activation activation = 2 [(pgml.default).enum = 0];
+}
+
+// Activation function
+enum Activation {
+    // GELU activation
+    GELU = 0;
+    // ReLU activation
+    RELU = 1;
+}
+
+// Optimizer configuration
+message Optimizer {
+    // Learning rate
+    float learning_rate = 1 [(pgml.default).float = 1e-4];
+    // Decay rate
+    float beta1 = 2 [(pgml.default).float = 0.99];
+}
+
+// Data configuration
+message Data {
+    // Batch size for a single GPU
+    uint32 batch_size = 1 [(pgml.default).uint32 = 32];
+    // Number of epochs to train
+    uint32 num_epochs = 2 [(pgml.default).uint32 = 10];
+}

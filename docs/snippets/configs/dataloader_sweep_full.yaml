@@ -1,0 +1,19 @@
+batch_size: 64
+num_workers:
+  options:
+  - 1
+  - 2
+  - 4
+persistent_workers:
+  options:
+  - true
+  - false
+pin_memory:
+  options:
+  - true
+  - false
+prefetch_factor:
+  options:
+  - 1
+  - 2
+  - 4
