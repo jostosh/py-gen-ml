@@ -1,8 +1,5 @@
-# 🚀 py-gen-ml
-
 <p align="center">
-
-  <a href="https://jostosh.github.io/py-gen-ml"><img align="center" src="docs/assets/images/logo.svg" alt="logo" width="200"></a>
+   <a href="https://jostosh.github.io/py-gen-ml"><img src="docs/assets/images/logo.svg" alt="py-gen-ml" width="200"></a>
 
 </p>
 <p align="center">
@@ -16,11 +13,11 @@
 
 ---
 
-## 🌟 Project Introduction
+# 🌟 Project Introduction
 
 `py-gen-ml` simplifies the configuration and management of machine learning projects. It leverages Protocol Buffers (protobufs) to provide a robust, strongly typed, and extensible way to define and manipulate configuration schemas for machine learning projects.
 
-### 🔑 Key Features
+## 🔑 Key Features
 
 **📌 Single Source of Truth**:
 
@@ -42,7 +39,7 @@
 - **JSON Schema Generation**: Easily validate your YAML content as you type.
 - **Strong Typing**: The generated code comes with strong typing that will help you, your IDE, the type checker and your team to better understand the codebase and to build more robust ML code.
 
-## 🚦 Getting Started
+# 🚦 Getting Started
 
 To start using py-gen-ml, you can install it via pip:
 
@@ -50,7 +47,7 @@ To start using py-gen-ml, you can install it via pip:
 pip install py-gen-ml
 ```
 
-## 💡 Motivation
+# 💡 Motivation
 
 Machine learning projects often involve complex configurations with many interdependent parameters. Changing one config (e.g., the dataset) might require adjusting several other parameters for optimal performance. Traditional approaches to organizing configs can become unwieldy and tightly coupled with code, making changes difficult.
 
@@ -69,7 +66,7 @@ Machine learning projects often involve complex configurations with many interde
 
 This approach results in more robust ML code, leveraging strong typing and IDE support while avoiding the burden of change amplification in complex configuration structures.
 
-## 🎯 When to use `py-gen-ml`
+# 🎯 When to use `py-gen-ml`
 
 Consider using `py-gen-ml` when you need to:
 
