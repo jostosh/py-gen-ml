@@ -1,0 +1,46 @@
+// cli_demo_deep.proto
+syntax = "proto3";
+
+package cli_demo_deep;
+
+import "py_gen_ml/extensions.proto";
+
+
+// Global configuration
+message CliDemoDeep {
+    option (pgml.cli).enable = true;
+    // Dataset configuration
+    Data data = 1;
+    // Model configuration
+    Model model = 2;
+    // Training configuration
+    Training training = 3;
+}
+
+// Dataset configuration
+message Dataset {
+    // Path to the dataset
+    string path = 1;
+}
+
+// Data config
+message Data {
+    // Path to the dataset
+    Dataset train_dataset = 1;
+    // Path to the dataset
+    Dataset test_dataset = 2;
+    // Number of workers for loading the dataset
+    uint32 num_workers = 3;
+}
+
+// Model configuration
+message Model {
+    // Number of layers
+    uint32 num_layers = 1;
+}
+
+// Training configuration
+message Training {
+    // Number of epochs
+    uint32 num_epochs = 1;
+}

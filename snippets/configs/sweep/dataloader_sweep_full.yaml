@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=schemas/data_loader_config.json
+batch_size: 64
+num_workers:
+  options:
+  - 1
+  - 2
+  - 4
+persistent_workers: any
+pin_memory: any
+prefetch_factor:
+  options:
+  - 1
+  - 2
+  - 4

@@ -1,0 +1,37 @@
+// advanced.proto
+syntax = "proto3";
+
+package advanced;
+
+import "py_gen_ml/extensions.proto";
+
+// Linear block configuration
+message LinearBlock {
+    // Number of units
+    int32 num_units = 1;
+    // Activation function
+    string activation = 2;
+}
+
+// Multi-layer perceptron configuration
+message MLP {
+    // List of linear blocks
+    repeated LinearBlock layers = 1;
+}
+
+// Optimizer configuration
+message Optimizer {
+    // Type of optimizer
+    string type = 1;
+    // Learning rate
+    float learning_rate = 2;
+}
+
+// Training configuration
+message Training {
+    option (pgml.cli).enable = true;
+    // Multi-layer perceptron configuration
+    MLP mlp = 1;
+    // Optimizer configuration
+    Optimizer optimizer = 2;
+}
