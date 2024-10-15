@@ -1,5 +1,21 @@
 # 🚀 py-gen-ml
 
+<p align="center">
+
+  <a href="https://jostosh.github.io/py-gen-ml"><img align="center" src="docs/assets/images/logo.svg" alt="logo" width="200"></a>
+
+</p>
+<p align="center">
+    <em>py-gen-ml, generate machine learning code from a protobuf schema.</em>
+</p>
+<p align="center">
+
+---
+
+**Documentation**: <a href="https://jostosh.github.io/py-gen-ml" target="_blank">https://jostosh.github.io/py-gen-ml</a>
+
+---
+
 ## 🌟 Project Introduction
 
 `py-gen-ml` simplifies the configuration and management of machine learning projects. It leverages Protocol Buffers (protobufs) to provide a robust, strongly typed, and extensible way to define and manipulate configuration schemas for machine learning projects.
