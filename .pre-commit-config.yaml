@@ -33,7 +33,7 @@ repos:
     types: [python]
     additional_dependencies:
     - toml
-    exclude: "examples/.*"
+    exclude: "(examples/.*|tests/.*)"
   rev: 6.1.1
 - repo: https://github.com/adrienverge/yamllint.git
   rev: v1.28.0
@@ -58,6 +58,7 @@ repos:
   - id: check-merge-conflict
   - id: check-symlinks
   - id: check-toml
+    exclude: src/py_gen_ml/plugin/yapf_style\.toml
   - id: check-vcs-permalinks
   - id: check-xml
   - id: check-yaml

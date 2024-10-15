@@ -30,7 +30,7 @@
 
 To start using py-gen-ml, you can install it via pip:
 
-```bash
+```console
 pip install py-gen-ml
 ```
 

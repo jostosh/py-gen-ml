@@ -1,0 +1,194 @@
+syntax = "proto3";
+
+package py_gen_ml.test;
+
+import "py_gen_ml/extensions.proto";
+
+message Int32Test {
+    int32 value = 1;
+}
+
+message Int64Test {
+    int64 value = 1;
+}
+
+message Uint32Test {
+    uint32 value = 1;
+}
+
+message Uint64Test {
+    uint64 value = 1;
+}
+
+message Sint32Test {
+    sint32 value = 1;
+}
+
+message Sint64Test {
+    sint64 value = 1;
+}
+
+message Fixed32Test {
+    fixed32 value = 1;
+}
+
+message Fixed64Test {
+    fixed64 value = 1;
+}
+
+message Sfixed32Test {
+    sfixed32 value = 1;
+}
+
+message Sfixed64Test {
+    sfixed64 value = 1;
+}
+
+message BoolTest {
+    bool value = 1;
+}
+
+message FloatTest {
+    float value = 1;
+}
+
+message DoubleTest {
+    double value = 1;
+}
+
+message StringTest {
+    string value = 1;
+}
+
+message BytesTest {
+    bytes value = 1;
+}
+
+enum Enum {
+    VALUE_1 = 0;
+    VALUE_2 = 1;
+    VALUE_3 = 2;
+}
+
+message EnumTest {
+    Enum value = 1;
+}
+
+message OneofTest {
+    oneof value {
+        int32 int_value = 1;
+        string string_value = 2;
+    }
+}
+
+message RepeatedTest {
+    repeated int32 values = 1;
+}
+
+message OptionalTest {
+    optional int32 value = 1;
+}
+
+message Int32DefaultTest {
+    int32 value = 1 [(pgml.default).int32 = 1];
+}
+
+message Int64DefaultTest {
+    int64 value = 1 [(pgml.default).int64 = 1];
+}
+
+message Uint32DefaultTest {
+    uint32 value = 1 [(pgml.default).uint32 = 1];
+}
+
+message Uint64DefaultTest {
+    uint64 value = 1 [(pgml.default).uint64 = 1];
+}
+
+message Sint32DefaultTest {
+    sint32 value = 1 [(pgml.default).sint32 = 1];
+}
+
+message Sint64DefaultTest {
+    sint64 value = 1 [(pgml.default).sint64 = 1];
+}
+
+message Fixed32DefaultTest {
+    fixed32 value = 1 [(pgml.default).fixed32 = 1];
+}
+
+message Fixed64DefaultTest {
+    fixed64 value = 1 [(pgml.default).fixed64 = 1];
+}
+
+message Sfixed32DefaultTest {
+    sfixed32 value = 1 [(pgml.default).sfixed32 = 1];
+}
+
+message Sfixed64DefaultTest {
+    sfixed64 value = 1 [(pgml.default).sfixed64 = 1];
+}
+
+message BoolDefaultTest {
+    bool value = 1 [(pgml.default).bool = true];
+}
+
+message FloatDefaultTest {
+    float value = 1 [(pgml.default).float = 1];
+}
+
+message DoubleDefaultTest {
+    double value = 1 [(pgml.default).double = 1];
+}
+
+message StringDefaultTest {
+    string value = 1 [(pgml.default).string = "test"];
+}
+
+message BytesDefaultTest {
+    bytes value = 1 [(pgml.default).bytes = "test"];
+}
+
+message EnumDefaultTest {
+    Enum value = 1 [(pgml.default).enum = "VALUE_1"];
+}
+
+message OneofDefaultTest {
+    oneof value {
+        int32 int_value = 1 [(pgml.default).int32 = 1];
+        string string_value = 2 [(pgml.default).string = "test"];
+    }
+}
+
+message OptionalDefaultTest {
+    optional int32 value = 1 [(pgml.default).int32 = 1];
+}
+
+message ExplicitCLIArgTest {
+    option (pgml.cli) = {
+        enable: true;
+        arg {
+            name: "foo"
+            path: "bar"
+        }
+    };
+    string bar = 1;
+}
+
+message ImplicitCLIArgTest {
+    option (pgml.cli).enable = true;
+    string bar = 1;
+}
+
+message NestedFooTest {
+    string foo = 1;
+}
+
+message NestedBarTest {
+    NestedFooTest foo_0 = 1;
+    NestedFooTest foo_1 = 2;
+}
+
+message RepeatedNestedBarTest {
+    repeated NestedBarTest bar = 1;
+}

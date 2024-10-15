@@ -28,6 +28,9 @@ dependencies = [
     "grpcio-tools>=1.46.0",
     "networkx>=3.3",
     "typer>=0.12.5",
+    "yapf>=0.40.2",
+    "mkdocs-material[docs,imaging]>=9.5.39",
+    "protobuf>=5.0.0,<5.28.0",
 ]
 
 [tool.uv-dynamic-versioning]
@@ -52,6 +55,8 @@ docs = [
     "mkdocs-material>=9.5.39",
     "mkdocs-section-index>=0.3.9",
     "mkdocstrings[python]>=0.26.1",
+    "pymdown-extensions>=10.11.2",
+    "mkdocs-video>=1.5.0",
 ]
 
 [build-system]
@@ -95,6 +100,7 @@ exclude = [
 dev-dependencies = [
     "pre-commit>=4.0.0",
     "pyright>=1.1.383",
+    "pytest>=8.3.3",
     "toml>=0.10.2",
     "yapf>=0.40.2",
 ]
@@ -102,6 +108,9 @@ dev-dependencies = [
 [tool.uv.workspace]
 members = ["examples/cifar10", "docs/snippets"]
 
+# Pytest
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 # Pyright
 
@@ -615,7 +624,7 @@ limit-inference-results=100
 
 # Minimum Python version to use for version dependent checks. Will default to
 # the version used to run pylint.
-py-version=3.9
+py-version=3.11
 
 # When enabled, pylint would attempt to guess common misconfiguration and emit
 # user-friendly hints instead of false-positive error messages.

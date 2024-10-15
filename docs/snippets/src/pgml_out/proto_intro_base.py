@@ -13,5 +13,3 @@ class MLP(pgml.YamlBaseModel):
 
     activation: str
     """Activation function"""
-
-

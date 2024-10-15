@@ -3,8 +3,11 @@ syntax = "proto3";
 
 package dataloader;
 
+import "py_gen_ml/extensions.proto";
+
 // DataLoader configuration
 message DataLoaderConfig {
+    option (pgml.cli).enable = true;
     // Batch size
     int32 batch_size = 1;
     // Number of workers

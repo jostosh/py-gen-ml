@@ -3,8 +3,8 @@
     "Activation": {
       "description": "Activation function",
       "enum": [
-        "gelu",
-        "relu"
+        "GELU",
+        "RELU"
       ],
       "title": "Activation",
       "type": "string"
@@ -202,6 +202,13 @@
           "anyOf": [
             {
               "$ref": "#/$defs/Choice_Activation_"
+            },
+            {
+              "const": "any",
+              "enum": [
+                "any"
+              ],
+              "type": "string"
             },
             {
               "$ref": "#/$defs/Activation"
@@ -595,6 +602,13 @@
           "anyOf": [
             {
               "$ref": "#/$defs/Choice_Activation_"
+            },
+            {
+              "const": "any",
+              "enum": [
+                "any"
+              ],
+              "type": "string"
             },
             {
               "$ref": "#/$defs/Activation"

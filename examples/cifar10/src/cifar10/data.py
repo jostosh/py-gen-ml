@@ -24,5 +24,6 @@ def get_data_loader(transform: transforms.Compose, batch_size: int, train: bool)
         trainset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=2,
+        num_workers=4,
+        prefetch_factor=4,
     )

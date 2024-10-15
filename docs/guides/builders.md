@@ -1,7 +1,9 @@
-## Builders
-Oftentimes, you have enough information to instantiate a class from a message. `py-gen-ml` offers an extension that lets you specify a builder for a message. The builder is a class that unpacks the message fields into keyword arguments and then instantiates the class.
+# 🏭 Factories
 
-To specify a builder for a message, you can use the `(pgml.builder)` option. For example:
+## 🪄 Generated Factory Methods
+Occasionally, you have enough information to instantiate a class from a configuration object immediately. `py-gen-ml` offers an extension that allows you to generate a factory method in such cases. The factory method unpacks the message fields into keyword arguments and then instantiates the class.
+
+To specify a factory method for a message, you can use the `(pgml.factory)` option. For example:
 
 ```proto linenums="1" hl_lines="6-7 12"
 --8<-- "docs/snippets/proto/builder_demo.proto"
@@ -9,7 +11,7 @@ To specify a builder for a message, you can use the `(pgml.builder)` option. For
 
 The generated code will look like this:
 
-```python linenums="1" hl_lines="4-7 23-30"
+```python { linenums="1" hl_lines="4-7 22-29" .generated-code }
 --8<-- "docs/snippets/src/pgml_out/builder_demo_base.py"
 ```
 
@@ -29,7 +31,7 @@ if __name__ == "__main__":
     mlp = torch.nn.Sequential(*layers)
 ```
 
-## Using custom classes
+## 🧱 Using custom classes
 
 The builder extension can be used for any class, not just PyTorch classes. You can use it to instantiate any class that you have access to.
 
@@ -59,11 +61,11 @@ And then define the following proto:
 
 The generated code will look like this:
 
-```python linenums="1" hl_lines="4-7 29-38"
+```python { linenums="1" hl_lines="4-7 28-37" .generated-code }
 --8<-- "docs/snippets/src/pgml_out/builder_custom_class_demo_base.py"
 ```
 
-## Expanding fields as varargs
+## 💥 Expanding fields as varargs
 
 You can also expand fields as varargs. This is useful if you have a list of arguments that you want to pass to the builder. For example, let's say you have a custom class that you want to instantiate. You can use the
 `(pgml.as_varargs)` option to expand the fields as varargs. For example:
@@ -74,12 +76,12 @@ You can also expand fields as varargs. This is useful if you have a list of argu
 
 The generated code will look like this:
 
-```python linenums="1" hl_lines="43-45"
+```python { linenums="1" hl_lines="41-43" .generated-code }
 --8<-- "docs/snippets/src/pgml_out/builder_varargs_demo_base.py"
 ```
 
-## Nesting builders
+## 🐣 Nesting factories
 
-As you may have noticed, builders can also be nested. In the section on varargs, we see that the build method in `MLP` takes a varargs of `Linear` objects that are also instantiated with a builder. Nesting with builders can streamline instantiation of complex objects, but it also creates a tighter coupling between your schema and the objects that are created.
+As you may have noticed, factories can also be nested. In the section on varargs, we see that the build method in `MLP` takes a varargs of `Linear` objects that are also instantiated with a factory. Nesting with factories can streamline instantiation of complex objects, but it also creates a tighter coupling between your schema and the objects that are created.
 
-Usually, it is best to use builders for objects that don't need other builders for their fields. In other words, you should nest builders sparingly.
+Usually, it is best to use factories for objects that don't need other factories for their fields. In other words, you should nest factories sparingly.

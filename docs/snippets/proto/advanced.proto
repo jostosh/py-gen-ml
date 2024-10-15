@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package advanced;
 
+import "py_gen_ml/extensions.proto";
+
 // Linear block configuration
 message LinearBlock {
     // Number of units
@@ -27,6 +29,7 @@ message Optimizer {
 
 // Training configuration
 message Training {
+    option (pgml.cli).enable = true;
     // Multi-layer perceptron configuration
     MLP mlp = 1;
     // Optimizer configuration

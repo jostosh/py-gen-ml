@@ -4,4 +4,3 @@
     options:
         inherited_members:
         - sample
-        members: [  ]

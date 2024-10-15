@@ -16,7 +16,6 @@ class LinearBlockSweep(pgml.Sweeper[patch.LinearBlockPatch]):
     """Activation function"""
 
 
-
 LinearBlockSweepField = typing.Union[
     LinearBlockSweep,
     pgml.NestedChoice[LinearBlockSweep, patch.LinearBlockPatch],  # type: ignore
@@ -33,7 +32,6 @@ class OptimizerSweep(pgml.Sweeper[patch.OptimizerPatch]):
     """Learning rate"""
 
 
-
 OptimizerSweepField = typing.Union[
     OptimizerSweep,
     pgml.NestedChoice[OptimizerSweep, patch.OptimizerPatch],  # type: ignore
@@ -45,7 +43,6 @@ class MLPSweep(pgml.Sweeper[patch.MLPPatch]):
 
     layers: LinearBlockSweepField | None = None
     """List of linear blocks"""
-
 
 
 MLPSweepField = typing.Union[

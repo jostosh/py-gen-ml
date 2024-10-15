@@ -10,5 +10,3 @@ class Optimizer(pgml.YamlBaseModel):
 
     learning_rate: float = 0.01
     """Learning rate"""
-
-

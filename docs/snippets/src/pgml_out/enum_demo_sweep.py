@@ -5,9 +5,9 @@ import py_gen_ml as pgml
 from . import enum_demo_patch as patch
 from . import enum_demo_base as base
 
-
 ActivationSweepField = typing.Union[
     pgml.Choice[base.Activation],
+    typing.Literal['any'],
     base.Activation,
 ]
 

@@ -1,7 +1,11 @@
 import pathlib
+import warnings
 from typing import Any
 
-import jsonmerge
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore', category=DeprecationWarning, module='jsonmerge')
+    import jsonmerge
+
 from pydantic import BaseModel
 from ruamel.yaml import YAML
 from typing_extensions import Self
@@ -78,7 +82,10 @@ class YamlBaseModel(BaseModel):
         data: dict[str, Any] = {}
         for path in paths:
             new_data = cls.load_data_with_references(path)
-            data = jsonmerge.merge(data, new_data)
+
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore', category=DeprecationWarning, module='jsonmerge')
+                data = jsonmerge.merge(data, new_data)
         return cls.model_validate(data)
 
     def merge(self, other: BaseModel) -> Self:
@@ -103,7 +110,9 @@ class YamlBaseModel(BaseModel):
         Returns:
             The merged model.
         """
-        data = jsonmerge.merge(self.model_dump(mode='json'), other)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', category=DeprecationWarning, module='jsonmerge')
+            data = jsonmerge.merge(self.model_dump(mode='json'), other)
         return self.model_validate(data)
 
     def apply_cli_args(self, other: BaseModel) -> Self:
@@ -180,8 +189,8 @@ def _resolve_external_ref(root_path: str, path: str) -> Any:
         raise ValueError('Expected a path that matches external reference regex')
     file_path = re_match.group(1)
 
-    if file_path.startswith('../'):
-        file_path = str(pathlib.Path(root_path).parent / file_path.removeprefix('../'))
+    if not file_path.startswith('/'):
+        file_path = str(pathlib.Path(root_path).parent / file_path)
 
     data = YamlBaseModel.load_data_with_references(file_path)
 

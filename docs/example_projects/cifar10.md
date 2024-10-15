@@ -22,7 +22,7 @@ The model definition is a simple convolutional neural network followed by a mult
 Concepts that we've used here are:
 
 - Nesting: we define a `Model` message that contains two nested messages: `ConvNet` and `MLP` which in turn contain blocks of linear and convolutional layers.
-- `pgml.builder`: This is a special attribute that tells `py-gen-ml` that with these values we can build an instance of the given class.
+- `pgml.factory`: This is a special attribute that tells `py-gen-ml` that with these values we can build an instance of the given class.
 - `pgml.default`: This is a special attribute that tells `py-gen-ml` to use a default value if the field is not set.
 - Enums: we define an enum for the activation function.
 
@@ -39,7 +39,7 @@ We define a `Data` message that contains the batch size and the number of epochs
 We define an `Optimizer` message that contains the learning rate and the decay rate. In proto definition, it looks like this:
 
 ```proto
---8<-- "examples/cifar10/src/cifar10/config.proto:77:85"
+--8<-- "examples/cifar10/src/cifar10/config.proto:79:85"
 ```
 
 ### The project
@@ -63,17 +63,16 @@ To launch the training, we create a function that can do a range of things:
 Even though this sounds like a lot, with `pg-gen-ml` it is actually quite easy to do. The main function now becomes:
 
 ```python title="Entrypoint" linenums="1"
---8<-- "examples/cifar10/src/cifar10/train.py:142:163"
+--8<-- "examples/cifar10/src/cifar10/train.py:142:165"
 ```
 
 Let's break this down a bit more.
 
-- At line 6, we load the project config from one or more yaml files. This is where files will be merged before they are passed to the Pydantic model validator.
-- At line 7, we apply the CLI arguments to the config.
-- At line 9, we check if there are any sweep files. If there are, we load them and sample from them using Optuna. If there are no sweep files, we simply train the model and return the accuracy.
-- At line 14-18, we define an objective function for Optuna to use. This is the function that will be called to train the model and return the accuracy. Note that we are using the exact same `train_model` function that we used in line 10 earlier.
-- At line 13, we create an Optuna study and optimize the objective function.
-- At line 21 and 22 we set up the Optuna study and run the optimization.
+- At line 7, we load the project config from one or more yaml files. This is where files will be merged before they are passed to the Pydantic model validator.
+- At line 8, we apply the CLI arguments to the config.
+- At line 10, we check if there are any sweep files. If there are, we load them at line 14. If there are no sweep files, we simply train the model and return the accuracy.
+- At line 16-20, we define an objective function for Optuna to use. This is the function that will be called to train the model and return the accuracy. Note that we are using the exact same `train_model` function that we used in line 10 earlier.
+- At line 22 and 23, we create an Optuna study and optimize the objective function.
 
 ## The configuration
 
@@ -87,7 +86,7 @@ The configuration is defined in a yaml file. This is the file that we will use t
 
 To launch the training, we can use the following command:
 
-```bash
+```console
 python examples/cifar10/src/cifar10/train.py \
     --config-paths \
     configs/base/default.yaml
@@ -97,7 +96,7 @@ python examples/cifar10/src/cifar10/train.py \
 
 To show the CLI arguments, we can use the following command:
 
-```bash
+```console
 python examples/cifar10/src/cifar10/train.py --help
 ```
 
@@ -138,7 +137,7 @@ This is a sweep over the learning rate and beta1 parameters.
 
 To run the sweep, we can use the following command:
 
-```bash
+```console
 python examples/cifar10/src/cifar10/train.py \
     --config-paths \
     configs/base/default.yaml \

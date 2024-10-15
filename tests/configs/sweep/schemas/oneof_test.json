@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "Sweeper_Union_int__Choice_int___IntUniform__": {
+      "properties": {},
+      "title": "Sweeper[Union[int, Choice[int], IntUniform]]",
+      "type": "object"
+    },
+    "Sweeper_Union_str__Choice_str___": {
+      "properties": {},
+      "title": "Sweeper[Union[str, Choice[str]]]",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "value": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sweeper_Union_int__Choice_int___IntUniform__"
+        },
+        {
+          "$ref": "#/$defs/Sweeper_Union_str__Choice_str___"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Value"
+    },
+    "_defs_": {}
+  },
+  "title": "OneofTestSweep",
+  "type": "object"
+}

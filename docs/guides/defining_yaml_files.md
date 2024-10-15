@@ -1,8 +1,10 @@
-YAML files are used to define the configuration of your project. To make it easier to work with YAML files, `py-gen-ml` generates JSON schemas for each protobuf model. You can use these schemas to validate your YAML files.
+# 📝 Defining YAML Files
 
-## Default project structure
+YAML files are the backbone of your project's configuration in `py-gen-ml`. To make working with these files a breeze, `py-gen-ml` automatically generates JSON schemas for each protobuf model. These schemas are your secret weapon for validating YAML files with ease!
 
-By default, `py-gen-ml` generates the schemas under the following directories:
+## 🏗️ Default Project Structure
+
+When you use `py-gen-ml`, it sets up a neat and organized structure for your schemas:
 
 ```
 <project_root>/
@@ -12,46 +14,62 @@ By default, `py-gen-ml` generates the schemas under the following directories:
                 <message_name_a>.json
                 <message_name_b>.json
                 ...
+        patch/
+            schemas/
+                <message_name_a>.json
+                <message_name_b>.json
+                ...
         sweep/
             schemas/
                 <message_name_a>.json
                 <message_name_b>.json
                 ...
-        cli_args/
-            schemas/
-                <message_name_a>.json
-                <message_name_b>.json
-                ...
 ```
 
-## Using the schemas
-To use this schema in Visual Studio Code, you can install the [YAML plugin](https://marketplace.cursorapi.com/items?itemName=redhat.vscode-yaml) and add a the following line to the top of your YAML file:
+## 🛠️ Putting Schemas to Work
+
+Want to leverage these schemas in Visual Studio Code? It's simple! Just install the [YAML plugin](https://marketplace.cursorapi.com/items?itemName=redhat.vscode-yaml) and add this line to the top of your YAML file:
 
 ```yaml
 # yaml-language-server: $schema=schemas/<message_name>.json
 ```
-Here we assume that the file is located under `<project_root>/configs/base/`.
 
-Here's an example of what the YAML file should look like:
+(We're assuming your file is located under `<project_root>/configs/base/`.)
+
+Let's take the following proto as an example:
+
+```proto
+--8<-- "docs/snippets/proto/mlp.proto"
+``` 
+
+Here's a quick example of what your YAML file might look like:
 
 ```yaml linenums="1" hl_lines="1"
-# yaml-language-server: $schema=schemas/mlp.json
-num_layers: 3
-num_units: 100
-activation: relu
+--8<-- "docs/snippets/configs/base/mlp.yaml"
 ```
 
-Should you misconfigure the YAML file, you'll see a validation error in Visual Studio Code.
+Now, if you accidentally misconfigure your YAML file, Visual Studio Code will give you a friendly heads-up with a validation error.
 
+The video below shows how the editor leverages the schema to know exactly which fields can be added and when the field is invalid:
 
-### Nested messages
-Let's say we have the following protobuf with some nesting:
+![type:video](../assets/video/parsing.webm)
+
+You can see that:
+
+1. The leading comment we have added to the message in the proto shows at the top of the file.
+2. By pressing ++cmd+space++ (or ++ctrl+space++ on Linux) with an empty file, we see the list of possible fields.
+3. By pressing ++cmd+space++ (or ++ctrl+space++ on Linux) after typing `activation:`, we get a list of possible values for the field.
+4. By entering an invalid value for `num_units`, we get a validation error.
+
+## 🧩 Handling Nested Messages
+
+Let's kick things up a notch with a more complex protobuf that includes some nesting:
 
 ```proto
 --8<-- "docs/snippets/proto/advanced.proto"
 ```
 
-We can define the following YAML file:
+You can define a YAML file for this structure like so:
 
 ```yaml
 # configs/base/default.yaml
@@ -69,9 +87,9 @@ optimizer:
   learning_rate: 0.01
 ```
 
-As you can see, we can nest the messages as we see fit.
+As you can see, the nesting in the YAML file mirrors the nesting in the protobuf.
 
-We could then use this config to construct a model and an optimizer.
+Now, let's put this config to work by creating a model and an optimizer:
 
 ```python
 from pgml_out.advanced_base import Training
@@ -92,11 +110,9 @@ if __name__ == "__main__":
     optimizer = create_optimizer(model, config)
 ```
 
-## Internal references with `#`
+## 🔗 Internal References with `#`
 
-You can reuse values in your YAML file by replacing a value with a reference to another value.
-
-The reference syntax is `#<path_to_value>`. Where path to value is a '/' separated path to the value.
+Want to reuse values in your YAML file? `py-gen-ml` has got you covered! You can replace a value with a reference to another value using the `#<path_to_value>` syntax. Here's how it works:
 
 ```yaml linenums="1" hl_lines="7-10"
 # configs/base/default.yaml
@@ -114,11 +130,11 @@ optimizer:
   learning_rate: 0.01
 ```
 
-In this case the second layer and third layer will have the same number of units and activation function as the first layer.
+In this example, the second and third layers will mirror the number of units and activation function of the first layer. 
 
-### Using the `_defs_` field
+### 🎯 Using the `_defs_` Field
 
-You can also use the `_defs_` field to reuse values. This is useful if you want to reuse values with a shorter path and a definition that is more 'centralized'.
+For even more flexibility, you can use the `_defs_` field. It's perfect for reusing values with shorter paths and a more centralized definition:
 
 ```yaml linenums="1" hl_lines="5-7 11-14"
 # configs/base/default.yaml
@@ -137,9 +153,9 @@ _defs_:
     activation: relu
 ```
 
-### Using indices in lists
+### 📊 Using Indices in Lists
 
-You can use indices in lists to reference specific elements in the list.
+Need to reference specific elements in a list? No problem! You can use indices like this:
 
 ```yaml linenums="1" hl_lines="7"
 # configs/base/default.yaml
@@ -156,50 +172,80 @@ optimizer:
   learning_rate: 0.01
 ```
 
-## External references with `!`
+### 👪 Relative Internal References
 
-You can also reference values in other YAML files. This is useful if you want to reuse values across multiple YAML files.
+You can also use relative internal references. This is useful if you want to reuse values in a nested structure and the reference
+is close to the reused value.
+
+```yaml linenums="1" hl_lines="11"
+# configs/base/default.yaml
+# yaml-language-server: $schema=schemas/training.json
+foo:
+  bar:
+    data:
+      train_dataset:
+        path: train.csv
+        batch_size: 32
+      test_dataset:
+        path: test.csv
+        batch_size: '#../train_dataset/batch_size'
+optimizer:
+  type: sgd
+  learning_rate: 0.01
+```
+
+This allows you to skip the `/foo/bar` prefix to get to the `data` field. It also makes this part of the YAML
+file more self-contained: you can safely copy this part to a different YAML that follows a different schema
+yet the same relative structure for the `data` field.
+
+## 🌐 External References with `!`
+
+Want to reuse values across multiple YAML files? External references by prefixing the path with `!` is the way to go:
 
 ```yaml linenums="1" hl_lines="5-8"
 # configs/base/default.yaml
 # yaml-language-server: $schema=schemas/training.json
 mlp:
   layers:
-    - '!../layer.yaml'
-    - '!../layer.yaml'
-    - '!../layer.yaml'
-optimizer: '!../optimizer.yaml'
+    - '!layer.yaml'
+    - '!layer.yaml'
+    - '!layer.yaml'
+optimizer: '!optimizer.yaml'
 ```
-The two files referenced are:
+
+The referenced files might look like this:
+
 ```yaml
 # configs/base/layer.yaml
 num_units: 100
 activation: relu
 ```
-And the optimizer file:
+
 ```yaml
 # configs/base/optimizer.yaml
 type: sgd
 learning_rate: 0.01
 ```
 
-## Combining external and internal references
-You can also combine external references with internal references by appending the internal reference to the external reference.
+## 🔀 Combining External and Internal References
+
+For the ultimate flexibility, you can mix and match external and internal references:
 
 ```yaml linenums="1" hl_lines="5-7"
 # configs/base/default.yaml
 # yaml-language-server: $schema=schemas/training.json
 mlp:
   layers:
-    - '!../layer.yaml#/layer0'
-    - '!../layer.yaml#/layer1'
-    - '!../layer.yaml#/layer2'
+    - '!layer.yaml#/layer0'
+    - '!layer.yaml#/layer1'
+    - '!layer.yaml#/layer2'
 optimizer:
   type: sgd
   learning_rate: 0.01
 ```
 
-The other file can then look like this:
+With the corresponding `layer.yaml`:
+
 ```yaml
 # configs/base/layer.yaml
 layer0:
@@ -212,3 +258,5 @@ layer2:
     num_units: 100
     activation: relu
 ```
+
+And there you have it! With these powerful YAML configuration techniques at your fingertips, you're all set to create flexible and maintainable machine learning projects using `py-gen-ml`. Happy coding! 🚀

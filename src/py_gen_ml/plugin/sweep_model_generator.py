@@ -123,6 +123,8 @@ class SweepModelGenerator(Generator):
             path=f'{self._configs_dir}/sweep/schemas/' + snake_case(message.proto.name) + '.json',
         )
 
+        self._run_yapf(g)
+
     def _generate_sweep_field_for_enum(self, g: protogen.GeneratedFile, enum: protogen.Enum) -> None:
         """
         Generate the sweep field for a specific enum.
@@ -139,6 +141,7 @@ class SweepModelGenerator(Generator):
         g.P(f'{enum.proto.name}SweepField = typing.Union[')
         g.set_indent(4)
         g.P(f'{PGML_ALIAS}.Choice[{base_model}],')
+        g.P(f"typing.Literal['any'],")
         g.P(f'{base_model},')
         g.set_indent(0)
         g.P(']')

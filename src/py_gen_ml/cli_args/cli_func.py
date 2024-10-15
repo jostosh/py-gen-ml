@@ -135,7 +135,7 @@ def _command_from_func(
     # Create a new function with combined parameters
     def command_fn(**kwargs: Any) -> None:
         # Extract arguments for the Pydantic model
-        model_args = {k: v for k, v in kwargs.items() if k in model_class.__fields__}
+        model_args = {k: v for k, v in kwargs.items() if k in model_class.model_fields}
         # Create an instance of the Pydantic model
         model_instance = model_class(**model_args)
 

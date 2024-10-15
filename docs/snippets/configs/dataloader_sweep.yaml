@@ -1,4 +1,0 @@
-batch_size:
-  options:
-  - 32
-  - 64

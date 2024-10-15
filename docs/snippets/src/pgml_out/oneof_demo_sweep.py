@@ -19,7 +19,6 @@ class TransformerSweep(pgml.Sweeper[patch.TransformerPatch]):
     """Activation function"""
 
 
-
 TransformerSweepField = typing.Union[
     TransformerSweep,
     pgml.NestedChoice[TransformerSweep, patch.TransformerPatch],  # type: ignore
@@ -39,7 +38,6 @@ class ConvBlockSweep(pgml.Sweeper[patch.ConvBlockPatch]):
     """Activation function"""
 
 
-
 ConvBlockSweepField = typing.Union[
     ConvBlockSweep,
     pgml.NestedChoice[ConvBlockSweep, patch.ConvBlockPatch],  # type: ignore
@@ -53,7 +51,6 @@ class ConvNetSweep(pgml.Sweeper[patch.ConvNetPatch]):
     """Conv layer configuration"""
 
 
-
 ConvNetSweepField = typing.Union[
     ConvNetSweep,
     pgml.NestedChoice[ConvNetSweep, patch.ConvNetPatch],  # type: ignore
@@ -63,7 +60,9 @@ ConvNetSweepField = typing.Union[
 class ModelSweep(pgml.Sweeper[patch.ModelPatch]):
     """Model configuration"""
 
-    backbone: pgml.Sweeper[TransformerSweepField] | pgml.Sweeper[ConvNetSweepField] | None = None
+    backbone: pgml.Sweeper[TransformerSweepField] | pgml.Sweeper[ConvNetSweepField
+                                                                ] | None = None
+
 
 
 ModelSweepField = typing.Union[

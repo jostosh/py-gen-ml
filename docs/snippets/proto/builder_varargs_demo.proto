@@ -8,7 +8,7 @@ import "py_gen_ml/extensions.proto";
 
 // Linear layer configuration
 message Linear {
-    option (pgml.builder) = "torch.nn.Linear";
+    option (pgml.factory) = "torch.nn.Linear";
     // Number of input features
     uint32 in_features = 1;
     // Number of output features
@@ -19,7 +19,7 @@ message Linear {
 
 // MLP configuration
 message MLP {
-    option (pgml.builder) = "torch.nn.Sequential";
+    option (pgml.factory) = "torch.nn.Sequential";
     // Linear layers
     repeated Linear layers = 1 [(pgml.as_varargs) = true];
 }

@@ -1,4 +1,6 @@
-from collections import defaultdict
+import textwrap
+import typing
+from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TypeVar
@@ -6,14 +8,22 @@ from typing import TypeVar
 import networkx
 import protogen
 
-from py_gen_ml.extensions_pb2 import ArgRefs
+from py_gen_ml.extensions_pb2 import CLI
 from py_gen_ml.logging.setup_logger import setup_logger
 from py_gen_ml.plugin.common import (
+    WRAP_WIDTH,
     generate_docstring,
     get_element_subgraphs,
     get_extension_value,
+    py_import_for_source_file_derived_file,
+    snake_case,
 )
-from py_gen_ml.plugin.constants import BASE_MODEL_ALIAS, PGML_ALIAS
+from py_gen_ml.plugin.constants import (
+    BASE_MODEL_ALIAS,
+    CLI_ARGS_ALIAS,
+    PGML_ALIAS,
+    SWEEP_MODEL_ALIAS,
+)
 from py_gen_ml.plugin.generator import Generator
 from py_gen_ml.typing.some import some
 
@@ -61,6 +71,10 @@ class CliArgsGenerator(Generator):
         Returns:
             protogen.GeneratedFile: The generated file.
         """
+        if not any(
+            (cli := get_extension_value(message, 'cli', CLI)) is not None and cli.enable for message in file.messages
+        ):
+            return
         g = self._gen.new_generated_file(
             file.proto.name.replace('.proto', self._suffix),
             file.py_import_path,
@@ -84,6 +98,9 @@ class CliArgsGenerator(Generator):
                 if not isinstance(message, protogen.Message):
                     continue
                 self._generate_message_args(g, message, subgraph)
+                self._generate_entrypoint_script_for_message(message)
+
+        self._run_yapf(g)
 
     def _generate_message_args(
         self,
@@ -99,32 +116,146 @@ class CliArgsGenerator(Generator):
             message (protogen.Message): The proto message that we are currently processing.
             graph (networkx.DiGraph): The networkx graph that contains the message.
         """
-        descendant_fields = self._gather_descendant_fields(message, graph)
+        cli_proto = get_extension_value(message, 'cli', CLI)
+        if cli_proto is None or not cli_proto.enable:
+            return
+
         g.P(f'class {message.proto.name}Args({PGML_ALIAS}.YamlBaseModel):')
         g.set_indent(4)
 
         generate_docstring(g, message)
 
-        for field_paths in descendant_fields.values():
+        explicit_paths = set[tuple[str, ...]]()
+        for arg in cli_proto.arg:
+            path = arg.path.split('.')
+            field = self._get_field_by_path(message, path)
+            g.P(f'{arg.name}: {self.field_to_annotation(field, path)}')
+            generate_docstring(g, field)
+            explicit_paths.add(tuple(path))
+
+        descendant_fields = self._gather_descendant_fields(message, graph, explicit_paths)
+        for name, field_paths in descendant_fields.items():
             if len(field_paths) != 1:
                 continue
             field_path = field_paths[0]
-            g.P(f'{field_path.field.py_name}: {self.field_to_annotation(field=field_path.field, path=field_path.path)}')
+            g.P(f'{name}: {self.field_to_annotation(field=field_path.field, path=field_path.path)}')
             generate_docstring(g, field_path.field)
 
-        explicit_arg_refs = get_extension_value(message, 'arg_refs', ArgRefs)
-        if explicit_arg_refs is not None:
-            for arg_ref in explicit_arg_refs.item:
-                path = arg_ref.path.split('.')
-                field = self._get_field_by_path(message, path)
-                g.P(f'{arg_ref.name}: {self.field_to_annotation(field, path)}')
-                generate_docstring(g, field)
         g.P()
         g.P()
         g.set_indent(0)
 
-    def _gather_descendant_fields(self, message: protogen.Message,
-                                  graph: networkx.MultiDiGraph) -> dict[str, list[FieldPath]]:
+    def _generate_entrypoint_script_for_message(self, message: protogen.Message) -> None:
+        """
+        Generate the entrypoint script for a given message.
+
+        Args:
+            message (protogen.Message): The message to generate the entrypoint script for.
+        """
+        cli_proto = get_extension_value(message, 'cli', CLI)
+        if cli_proto is None or not cli_proto.enable:
+            return
+        g = self._gen.new_generated_file(
+            f'{snake_case(message.proto.name)}_entrypoint.py',
+            message.parent_file.py_import_path,
+        )
+        sweep_py_import = py_import_for_source_file_derived_file(g, '_sweep')
+        sweep_py_import = self._prepend_python_import(sweep_py_import)
+
+        base_py_import = py_import_for_source_file_derived_file(g, '_base')
+        base_py_import = self._prepend_python_import(base_py_import)
+
+        cli_args_py_import = py_import_for_source_file_derived_file(g, '_cli_args')
+        cli_args_py_import = self._prepend_python_import(cli_args_py_import)
+
+        g.P(f'import {base_py_import} as {BASE_MODEL_ALIAS}')
+        g.P(f'import {sweep_py_import} as {SWEEP_MODEL_ALIAS}')
+        g.P(f'import {cli_args_py_import} as {CLI_ARGS_ALIAS}')
+        g.P(f'import typer')
+        g.P(f'import py_gen_ml as {PGML_ALIAS}')
+        g.P(f'import optuna')
+        g.P('import typing')
+        g.P()
+        g.P(f'app = typer.Typer(pretty_exceptions_enable=False)')
+        g.P()
+        g.P(f'def run_trial(')
+        g.set_indent(4)
+        g.P(f'{snake_case(message.proto.name)}: {BASE_MODEL_ALIAS}.{message.proto.name},')
+        g.P('trial: typing.Optional[optuna.Trial] = None')
+        g.set_indent(0)
+        g.P(') -> typing.Union[float, typing.Sequence[float]]:')
+        g.set_indent(4)
+        g.P(f"\"\"\"")
+        lines = textwrap.wrap(
+            f'Run a trial with the given values for {snake_case(message.proto.name)}. The sampled '
+            f'hyperparameters have already been added to the trial.',
+            width=WRAP_WIDTH - 4,
+        )
+        for line in lines:
+            g.P(line)
+        g.P("\"\"\"")
+        g.P('# TODO: Implement this function')
+        g.P('return 0.0')
+        g.set_indent(0)
+        g.P()
+        g.P(f'@{PGML_ALIAS}.pgml_cmd(app=app)')
+        g.P(f'def main(')
+        g.set_indent(4)
+        g.P(f'config_paths: list[str] = typer.Option(..., help="Paths to config files"),')
+        g.P(f'sweep_paths: list[str] = typer.Option(')
+        g.set_indent(8)
+        g.P('default_factory=list,')
+        g.P('help="Paths to sweep files"')
+        g.set_indent(4)
+        g.P('),')
+        g.P(f'cli_args: {CLI_ARGS_ALIAS}.{message.proto.name}Args = typer.Option(...),')
+        g.set_indent(0)
+        g.P(f') -> None:')
+        g.set_indent(4)
+        g.P(f'{snake_case(message.proto.name)} = {BASE_MODEL_ALIAS}.{message.proto.name}.from_yaml_files(config_paths)')
+        g.P(f'{snake_case(message.proto.name)} = {snake_case(message.proto.name)}.apply_cli_args(cli_args)')
+        g.P(f'if len(sweep_paths) == 0:')
+        g.set_indent(8)
+        g.P(f'run_trial({snake_case(message.proto.name)})')
+        g.P('return')
+        g.set_indent(4)
+        g.P(
+            f'{snake_case(message.proto.name)}_sweep = {SWEEP_MODEL_ALIAS}.{message.proto.name}Sweep.from_yaml_files(sweep_paths)',
+        )
+        g.P()
+        g.P('def objective(trial: optuna.Trial) -> typing.Union[')
+        g.set_indent(8)
+        g.P('float,')
+        g.P('typing.Sequence[float]')
+        g.set_indent(4)
+        g.P(']:')
+        g.set_indent(8)
+        g.P(f'optuna_sampler = {PGML_ALIAS}.OptunaSampler(trial)')
+        g.P(f'{snake_case(message.proto.name)}_patch = optuna_sampler.sample({snake_case(message.proto.name)}_sweep)')
+        g.P(
+            f'{snake_case(message.proto.name)}_patched = {snake_case(message.proto.name)}.merge({snake_case(message.proto.name)}_patch)',
+        )
+        g.P(f'objective_value = run_trial({snake_case(message.proto.name)}_patched, trial)')
+        g.P('return objective_value')
+        g.set_indent(4)
+        g.P()
+        g.P("study = optuna.create_study(direction='maximize')")
+        g.P('study.optimize(objective, n_trials=100)')
+        g.set_indent(0)
+        g.P()
+        g.P()
+        g.P('if __name__ == "__main__":')
+        g.set_indent(4)
+        g.P('app()')
+
+        # self._run_yapf(g)
+
+    def _gather_descendant_fields(
+        self,
+        message: protogen.Message,
+        graph: networkx.MultiDiGraph,
+        explicit_paths: set[tuple[str, ...]],
+    ) -> dict[str, list[FieldPath]]:
         """
         Gathers descendant fields of the given message.
 
@@ -138,29 +269,43 @@ class CliArgsGenerator(Generator):
         Returns:
             dict[str, list[FieldPath]]: A mapping of field name to a list FieldPath objects.
         """
-        fields = defaultdict[str, list[FieldPath]](list)
+        fields = OrderedDict[str, list[FieldPath]]()
         for descendant in [message, *networkx.ancestors(graph, message)]:
             if isinstance(descendant, protogen.Enum):
                 continue
-            paths = list(networkx.all_simple_paths(graph, source=descendant, target=message))
-            if len(paths) != 1:
-                continue
-            edges = paths[0]
-            if len(edges) == 0:
-                continue
-            path_graph = networkx.path_graph(edges)
+            raw_paths = list(
+                networkx.all_simple_edge_paths(graph, source=descendant, target=message),
+            )  # type: ignore
+            # Filter out paths that are already in explicit_paths
+            paths = [tuple(edge[2] for edge in reversed(edges)) for edges in raw_paths]  # type: ignore
+            if len(paths) > 1:
+                max_len = max(len(path) for path in paths)
+                if max_len == 0:
+                    paths: list[tuple[str, ...]] = [()]
+                    shortcut_paths: list[tuple[str, ...]] = [()]
+                else:
+                    for shortcut_len in range(1, max_len + 1):
+                        shortcut_paths: list[tuple[str, ...]] = [edges[-shortcut_len:] for edges in paths]
+                        if len(set(shortcut_paths)) == len(paths):
+                            break
+                    else:
+                        raise ValueError(f'Could not find a unique path for message {message.proto.name}')
+            else:
+                paths: list[tuple[str, ...]] = [()]
+                shortcut_paths: list[tuple[str, ...]] = [()]
 
-            if any(graph.number_of_edges(source, target) > 1 for source, target in path_graph.edges()):
-                continue
-
-            path = list[str]()
-            for source, target in path_graph.edges():
-                path.append(graph.edges[source, target, 0]['field'])  # type: ignore
-            descendant: protogen.Message
             for field in descendant.fields:
                 if field.kind == protogen.Kind.MESSAGE:
                     continue
-                fields[field.py_name].append(FieldPath(path=[*reversed(path), field.py_name], field=field))
+                for shortcut_path, path in zip(shortcut_paths, paths):
+                    field_py_name = typing.cast(str, field.py_name)  # type: ignore
+                    if (*path, field_py_name) in explicit_paths:
+                        continue
+                    name = '_'.join([*shortcut_path, field_py_name])
+                    if name in fields:
+                        fields[name].append(FieldPath(path=[*path, field_py_name], field=field))
+                    else:
+                        fields[name] = [FieldPath(path=[*path, field_py_name], field=field)]
         return fields
 
     def field_to_annotation(self, field: protogen.Field, path: list[str]) -> str:
@@ -185,16 +330,16 @@ class CliArgsGenerator(Generator):
         if len(path) > 0:
             path_str = '.'.join(path)
             if field.location.leading_comments == '':
-                typer_option = f", typer.Option(help=\"Maps to {path_str}.{field.py_name}\")"
+                typer_option = f", typer.Option(help=\"Maps to {path_str}\")"
             else:
                 typer_option = f", typer.Option(help=\"{field.location.leading_comments.rstrip('.')}. Maps to '{path_str}'\")"
-            annotation = f"typing.Annotated[typing.Optional[{annotation}]{typer_option}, pydantic.Field(None), {PGML_ALIAS}.ArgRef(\"{path_str}\")]"
+            annotation = f"typing.Annotated[typing.Optional[{annotation}]{typer_option}, pydantic.Field(None), {PGML_ALIAS}.ArgRef(\"{path_str}\"),]"
         else:
             if field.location.leading_comments == '':
                 typer_option = f", typer.Option(help=\"Maps to {field.py_name}\")"
             else:
                 typer_option = f", typer.Option(help=\"{field.location.leading_comments.rstrip('.')}. Maps to '{field.py_name}'\")"
-            annotation = f'typing.Annotated[typing.Optional[{annotation}]{typer_option}, pydantic.Field(None)]'
+            annotation = f'typing.Annotated[typing.Optional[{annotation}]{typer_option}, pydantic.Field(None),]'
         return annotation
 
     def _get_field_by_path(self, message: protogen.Message, path: list[str]) -> protogen.Field:

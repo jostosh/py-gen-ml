@@ -11,6 +11,8 @@ jobs:
       uses: astral-sh/setup-uv@v3
     - name: Set up Python
       run: uv python install
+    - name: Sync
+      run: uv sync --all-extras
     - name: Run pre-commit
       run: |
         if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -19,3 +21,5 @@ jobs:
         else
           uv run pre-commit run --from-ref ${{ github.event.before }} --to-ref ${{ github.event.after }}
         fi
+    - name: Run test
+      run: uv run pytest
