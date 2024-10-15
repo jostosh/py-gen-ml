@@ -86,6 +86,8 @@ class Trainer:
         self._accuracy_metric_test.reset()
         self._test_loss_metric.reset()
         for images, labels in tqdm.tqdm(self._test_loader, position=1, desc='Evaluating'):
+            images = images.to(get_device())
+            labels = labels.to(get_device())
             outputs = self._model(images)
             loss = self._criterion(outputs, labels)
             self._test_loss_metric.update(loss)
@@ -110,7 +112,7 @@ def train_model(project: base.Project, trial: optuna.Trial | None = None) -> flo
     device = get_device()
     print(f'device {device}')
 
-    model = Model.from_config(config=project.net)
+    model = Model.from_config(config=project.net).to(device)
     path = pathlib.Path(f"{os.environ['HOME']}/gen_ml/logs/{uuid.uuid4()}")
     print(f'Storing logs at {path}')
 
@@ -118,8 +120,8 @@ def train_model(project: base.Project, trial: optuna.Trial | None = None) -> flo
     optimizer = optim.Adam(params=model.parameters(), lr=project.optimizer.learning_rate)
     accuracy_metric_train = get_accuracy_metric(num_classes=len(CLASSES))
     accuracy_metric_test = get_accuracy_metric(num_classes=len(CLASSES))
-    train_loss_metric = torchmetrics.MeanMetric()
-    test_loss_metric = torchmetrics.MeanMetric()
+    train_loss_metric = torchmetrics.MeanMetric().to(device)
+    test_loss_metric = torchmetrics.MeanMetric().to(device)
     trainer = Trainer(
         model=model,
         train_loader=train_loader,

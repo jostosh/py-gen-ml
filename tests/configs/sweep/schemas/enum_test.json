@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "Choice_Enum_": {
+      "properties": {
+        "options": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Enum"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an external object",
+                "minLength": 2,
+                "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an internal object",
+                "minLength": 2,
+                "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+              }
+            ]
+          },
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "title": "Choice[Enum]",
+      "type": "object"
+    },
+    "Enum": {
+      "enum": [
+        "VALUE_1",
+        "VALUE_2",
+        "VALUE_3"
+      ],
+      "title": "Enum",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "value": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Choice_Enum_"
+        },
+        {
+          "const": "any",
+          "enum": [
+            "any"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/Enum"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Value"
+    },
+    "_defs_": {}
+  },
+  "title": "EnumTestSweep",
+  "type": "object"
+}

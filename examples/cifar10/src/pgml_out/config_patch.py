@@ -14,7 +14,6 @@ class OptimizerPatch(pgml.YamlBaseModel):
     """Decay rate"""
 
 
-
 class DataPatch(pgml.YamlBaseModel):
     """Data configuration"""
 
@@ -23,7 +22,6 @@ class DataPatch(pgml.YamlBaseModel):
 
     num_epochs: int | None = None
     """Number of epochs to train"""
-
 
 
 class ConvBlockPatch(pgml.YamlBaseModel):
@@ -42,7 +40,6 @@ class ConvBlockPatch(pgml.YamlBaseModel):
     """Activation function"""
 
 
-
 class LinearBlockPatch(pgml.YamlBaseModel):
     """Linear layer configuration"""
 
@@ -51,7 +48,6 @@ class LinearBlockPatch(pgml.YamlBaseModel):
 
     activation: base.Activation | None = None
     """Activation function"""
-
 
 
 class ConvNetPatch(pgml.YamlBaseModel):
@@ -64,7 +60,6 @@ class ConvNetPatch(pgml.YamlBaseModel):
     """Number of layers"""
 
 
-
 class MLPPatch(pgml.YamlBaseModel):
     """Multi-layer perceptron configuration"""
 
@@ -75,7 +70,6 @@ class MLPPatch(pgml.YamlBaseModel):
     """Number of layers"""
 
 
-
 class ModelPatch(pgml.YamlBaseModel):
     """Model configuration"""
 
@@ -84,7 +78,6 @@ class ModelPatch(pgml.YamlBaseModel):
 
     head: MLPPatch | None = None
     """MLP head"""
-
 
 
 class ProjectPatch(pgml.YamlBaseModel):
@@ -98,5 +91,3 @@ class ProjectPatch(pgml.YamlBaseModel):
 
     data: DataPatch | None = None
     """Data configuration"""
-
-

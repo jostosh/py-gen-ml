@@ -12,5 +12,3 @@ class MLPPatch(pgml.YamlBaseModel):
 
     num_layers: int | None = None
     """Number of layers"""
-
-

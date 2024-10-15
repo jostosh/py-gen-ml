@@ -1,17 +1,17 @@
-# Quick Start Guide
+# 🚀 Quick Start Guide
 
-## Introduction
+## 🌟 Introduction
 
-In the context of `py-gen-ml`, a protobuf is a structured data format that is used to define the schema for your configuration. It is a language-neutral, platform-neutral, and extensible format that is used to serialize and deserialize data. The protobuf ecosystem allows custom plugins to generate code for other types of serialization formats. `py-gen-ml` uses this to generate Pydantic models and JSON schemas to enable a very flexible and powerful configuration system.
+`py-gen-ml` leverages protobufs, a powerful structured data format, to define the schema for your configuration. Protobufs are language-neutral, platform-neutral, and extensible, making them ideal for serializing and deserializing data. The protobuf ecosystem allows for custom plugins to generate code for various serialization formats. `py-gen-ml` takes advantage of this flexibility to generate Pydantic models and JSON schemas, creating a robust and versatile configuration system.
 
 !!! note
-    As of yet we do not yet lean into the language-neutral or platform-neutral features of protobuf in `py-gen-ml`. If you are not familiar with protobuf, you can read more about it [here](https://developers.google.com/protocol-buffers).
+    While `py-gen-ml` currently doesn't fully utilize the language-neutral or platform-neutral features of protobuf, these capabilities are available for future expansion. If you're new to protobufs, you can learn more about them [here](https://developers.google.com/protocol-buffers).
 
-## Defining
+## 📝 Defining Your Protobuf
 
-To define a protobuf, you need to create a `.proto` file. This file will contain the definition of the data structure that you want to use in your configuration.
+To create a protobuf, you'll need to write a `.proto` file. This file contains the definition of the data structure you want to use in your configuration.
 
-Here is an example of a protobuf definition:
+Here's a simple example of a protobuf definition:
 
 ```proto
 // proto_intro.proto
@@ -21,7 +21,6 @@ package example;
 
 import "py_gen_ml/extensions.proto";
 
-
 message MLP {
     int64 num_layers = 1;
     int64 num_units = 2;
@@ -29,32 +28,33 @@ message MLP {
 }
 ```
 
-## Generating
+## 🛠️ Generating Configuration Utilities
 
-Now you can generate configuration utilities using the following command:
+With your protobuf defined, you can now generate configuration utilities using this command:
 
-```bash
+```console
 py-gen-ml proto_intro.proto
 ```
 
-By default, generated code will be written to `src/pgml_out`. For changing this and other options, see the [py-gen-ml command](py-gen-ml-command.md) docs. The following files will be generated:
+By default, the generated code will be written to `src/pgml_out`. To customize this and explore other options, check out the [py-gen-ml command](py-gen-ml-command.md) documentation. The command will generate four files:
 
 - `proto_intro_base.py`
 - `proto_intro_patch.py`
 - `proto_intro_sweep.py`
 - `proto_intro_cli_args.py`
 
-Below, we'll cover the details of each file.
+Let's dive into the details of each file.
 
-## Generated Code
-### `proto_intro_base.py`
-```python
+## 🧩 Generated Code
+
+### 📊 `proto_intro_base.py`
+```python { .generated-code }
 --8<-- "docs/snippets/src/pgml_out/proto_intro_base.py"
 ```
 
-This file defines a Pydantic model for you configuration that directly corresponds to the protobuf message. You can use this file to load and validate configuration files written in YAML format.
+This file defines a Pydantic model for your configuration that directly corresponds to the protobuf message. Use this file to load and validate configuration files written in YAML format.
 
-For example, the following YAML file will be validated according to the schema defined in `proto_intro_base.py`:
+For instance, the following YAML file will be validated according to the schema defined in `proto_intro_base.py`:
 
 ```yaml
 # example.yaml
@@ -63,23 +63,22 @@ num_units: 100
 activation: relu
 ```
 
-### `proto_intro_patch.py`
+### 🔧 `proto_intro_patch.py`
 
-```python
+```python { .generated-code }
 --8<-- "docs/snippets/src/pgml_out/proto_intro_patch.py"
 ```
 
-This file defines a Pydantic model for you patch configuration. Note that all fields are optional, and you can use this file to load and validate patch files written in YAML format.
+This file defines a Pydantic model for your patch configuration. All fields are optional, allowing you to load and validate patch files written in YAML format.
 
-For example, the following YAML file will be validated according to the schema defined in `proto_intro_patch.py`:
+For example, this YAML file will be validated according to the schema in `proto_intro_patch.py`:
 
 ```yaml
 # example_patch.yaml
 num_layers: 3
 ```
 
-This is useful for updating only a subset of the configuration. You can easily load a base configuration and apply patches by using `.from_yaml_files` that is
-implemented for every descendant of `pgml.YamlBaseModel`:
+This is particularly useful for updating only a subset of the configuration. You can easily load a base configuration and apply patches using the `.from_yaml_files` method implemented for every descendant of `pgml.YamlBaseModel`:
 
 ```python
 # example.py
@@ -89,16 +88,15 @@ from pgml_out.proto_intro_patch import MLPPatch
 config_with_patches = MLP.from_yaml_files(["example.yaml", "example_patch.yaml"])
 ```
 
-### `proto_intro_sweep.py`
+### 🔍 `proto_intro_sweep.py`
 
-```python
+```python { .generated-code }
 --8<-- "docs/snippets/src/pgml_out/proto_intro_sweep.py"
 ```
 
-This file defines a `pgml.Sweeper` for your configuration. You can use this file to sweep over the values of your configuration. Sweeps should be defined as
-additional YAML files that are applied as patches on top of the base configuration.
+This file defines a `pgml.Sweeper` for your configuration, enabling you to sweep over the values of your configuration. Define sweeps as additional YAML files that are applied as patches on top of the base configuration.
 
-For example, the following YAML file will be validated according to the schema defined in `proto_intro_sweep.py`:
+Here's an example YAML file that will be validated according to the schema in `proto_intro_sweep.py`:
 
 ```yaml
 # example_sweep.yaml
@@ -107,7 +105,7 @@ num_layers:
     high: 5
 ```
 
-If you then want to run a hyperparameter sweep, you can do so by using the OptunaSampler:
+To run a hyperparameter sweep, you can use the OptunaSampler:
 
 ```python
 # example.py
@@ -131,7 +129,7 @@ if __name__ == "__main__":
     study.optimize(objective, n_trials=100)
 ```
 
-### `proto_intro_cli_args.py`
+### 💻 `proto_intro_cli_args.py`
 
 ```python
 # proto_intro_cli_args.py
@@ -158,8 +156,9 @@ class MLPArgs(pgml.YamlBaseModel):
     """Activation function"""
 ```
 
-This file defines a Pydantic model for you command line arguments. As you can see, we have chosen to rely on [typer](https://typer.tiangolo.com/)
-to handle command line arguments. We have added a convenience function to make the use of this class easier.
+This file defines a Pydantic model for your command line arguments. We've chosen to use [typer](https://typer.tiangolo.com/) to handle command line arguments, and we've added a convenience function to simplify the use of this class.
+
+Here's how you can use it in your script:
 
 ```python
 # example.py
@@ -186,13 +185,14 @@ if __name__ == "__main__":
     app()
 ```
 
-You can then run your script with command line arguments and configuration files:
+Now you can run your script with command line arguments and configuration files:
 
-```bash
+```console
 python example.py --help
 ```
 
-Which prints:
+This will display a helpful usage guide:
+
 ```
  Usage: example.py [OPTIONS]
 
@@ -213,15 +213,13 @@ Which prints:
 ╰───────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-You can set parameters both via command line arguments and configuration files:
+You can set parameters via both command line arguments and configuration files:
 
-```bash
+```console
 python example.py --num-layers 3
 ```
 
-This will set the `num_layers` parameter to `3` and the other parameters will be set to the values in the configuration file.
-
-So the script will output:
+This will set the `num_layers` parameter to `3`, while other parameters will be set to the values in the configuration file. The script will output:
 
 ```
 other_arg: other_arg
@@ -231,9 +229,9 @@ activation: None
 config: num_layers=3 num_units=100 activation='relu'
 ```
 
-Other args can be configured just as easily:
+Other arguments can be easily configured as well:
 
-```bash
+```console
 python example.py --other-arg "other_arg_2"
 ```
 
@@ -246,3 +244,5 @@ num_units: None
 activation: None
 config: num_layers=2 num_units=100 activation='relu'
 ```
+
+With these tools at your disposal, you're now ready to create flexible and powerful configurations for your machine learning projects using `py-gen-ml`! If you're looking for a more complex example, check out the [CIFAR 10 example project](example_projects/cifar10.md).

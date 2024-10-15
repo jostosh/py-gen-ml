@@ -25,7 +25,6 @@ class LinearBlockSweep(pgml.Sweeper[patch.LinearBlockPatch]):
     """Activation function"""
 
 
-
 LinearBlockSweepField = typing.Union[
     LinearBlockSweep,
     pgml.NestedChoice[LinearBlockSweep, patch.LinearBlockPatch],  # type: ignore

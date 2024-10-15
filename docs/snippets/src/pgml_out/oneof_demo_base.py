@@ -15,7 +15,6 @@ class Transformer(pgml.YamlBaseModel):
     """Activation function"""
 
 
-
 class ConvBlock(pgml.YamlBaseModel):
     """Conv block"""
 
@@ -29,7 +28,6 @@ class ConvBlock(pgml.YamlBaseModel):
     """Activation function"""
 
 
-
 class ConvNet(pgml.YamlBaseModel):
     """Convolutional neural network configuration"""
 
@@ -37,9 +35,7 @@ class ConvNet(pgml.YamlBaseModel):
     """Conv layer configuration"""
 
 
-
 class Model(pgml.YamlBaseModel):
     """Model configuration"""
 
     backbone: Transformer | ConvNet
-

@@ -3,8 +3,11 @@ syntax = "proto3";
 
 package cli_demo;
 
+import "py_gen_ml/extensions.proto";
+
 // Global configuration
-message Project {
+message CLIDemo {
+    option (pgml.cli).enable = true;
     // Dataset configuration
     Data data = 1;
     // Model configuration

@@ -13,7 +13,6 @@ class ModelSweep(pgml.Sweeper[patch.ModelPatch]):
     """Number of layers"""
 
 
-
 ModelSweepField = typing.Union[
     ModelSweep,
     pgml.NestedChoice[ModelSweep, patch.ModelPatch],  # type: ignore
@@ -27,7 +26,6 @@ class TrainingSweep(pgml.Sweeper[patch.TrainingPatch]):
     """Number of epochs"""
 
 
-
 TrainingSweepField = typing.Union[
     TrainingSweep,
     pgml.NestedChoice[TrainingSweep, patch.TrainingPatch],  # type: ignore
@@ -39,7 +37,6 @@ class DatasetSweep(pgml.Sweeper[patch.DatasetPatch]):
 
     path: pgml.StrSweep | None = None
     """Path to the dataset"""
-
 
 
 DatasetSweepField = typing.Union[
@@ -61,14 +58,13 @@ class DataSweep(pgml.Sweeper[patch.DataPatch]):
     """Number of workers for loading the dataset"""
 
 
-
 DataSweepField = typing.Union[
     DataSweep,
     pgml.NestedChoice[DataSweep, patch.DataPatch],  # type: ignore
 ]
 
 
-class ProjectSweep(pgml.Sweeper[patch.ProjectPatch]):
+class CliExtensionDemoSweep(pgml.Sweeper[patch.CliExtensionDemoPatch]):
     """Global configuration"""
 
     data: DataSweepField | None = None
@@ -82,8 +78,8 @@ class ProjectSweep(pgml.Sweeper[patch.ProjectPatch]):
 
 
 
-ProjectSweepField = typing.Union[
-    ProjectSweep,
-    pgml.NestedChoice[ProjectSweep, patch.ProjectPatch],  # type: ignore
+CliExtensionDemoSweepField = typing.Union[
+    CliExtensionDemoSweep,
+    pgml.NestedChoice[CliExtensionDemoSweep, patch.CliExtensionDemoPatch],  # type: ignore
 ]
 

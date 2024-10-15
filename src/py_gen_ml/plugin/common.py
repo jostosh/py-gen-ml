@@ -14,7 +14,7 @@ from py_gen_ml.typing.some import some
 
 logger = setup_logger(__name__)
 
-_WRAP_WIDTH: Final[int] = 120
+WRAP_WIDTH: Final[int] = 84
 
 T = TypeVar('T')
 
@@ -98,7 +98,7 @@ def field_to_default(field: protogen.Field, import_prefix: str = '') -> str | No
             default_value = f"\"{proto_default.string}\""
         case protogen.Kind.BYTES:
             default_field_name = 'bytes'
-            default_value = f"b\"{proto_default.bytes}\""
+            default_value = proto_default.bytes
         case protogen.Kind.UINT32:
             default_field_name = 'uint32'
             default_value = proto_default.uint32
@@ -117,7 +117,10 @@ def field_to_default(field: protogen.Field, import_prefix: str = '') -> str | No
         case protogen.Kind.ENUM:
             default_field_name = 'enum'
             enum = some(field.enum)
-            default_value = f'{import_prefix}{enum.py_ident.py_name}.{enum.proto.value[proto_default.enum].name}'
+            names = [v.name for v in enum.proto.value]
+            if proto_default.enum not in names:
+                raise ValueError(f'Invalid enum value: {proto_default.enum}')
+            default_value = f'{import_prefix}{enum.py_ident.py_name}.{proto_default.enum}'
         case _:
             raise ValueError(f'Default not supported for kind: {field.kind}')
     if field.kind in {
@@ -147,11 +150,11 @@ def generate_docstring(
     if not element.location.leading_comments:
         return
 
-    if _WRAP_WIDTH - 6 - 4 >= len(element.location.leading_comments):
+    if WRAP_WIDTH - 6 - 4 >= len(element.location.leading_comments):
         g.P(f'"""{element.location.leading_comments}"""')
     else:
         g.P('"""')
-        lines = textwrap.wrap(element.location.leading_comments, width=_WRAP_WIDTH - 4)
+        lines = textwrap.wrap(element.location.leading_comments, width=WRAP_WIDTH - 4)
         for line in lines:
             g.P(line)
         g.P('"""')
@@ -187,9 +190,9 @@ def get_element_subgraphs(
             if field.oneof is not None:
                 field_name = field.oneof.proto.name
             if field.kind == protogen.Kind.MESSAGE:
-                graph.add_edge(field.message, message, field=field_name)
+                graph.add_edge(field.message, message, key=field_name)
             elif field.kind == protogen.Kind.ENUM:
-                graph.add_edge(field.enum, message, field=field_name)
+                graph.add_edge(field.enum, message, key=field_name)
             else:
                 raise ValueError(f'Unsupported field kind: {field.kind}')
     return [graph.subgraph(c).copy() for c in networkx.connected_components(graph.to_undirected())]  # type: ignore

@@ -19,7 +19,6 @@ class LinearSweep(pgml.Sweeper[patch.LinearPatch]):
     """Bias"""
 
 
-
 LinearSweepField = typing.Union[
     LinearSweep,
     pgml.NestedChoice[LinearSweep, patch.LinearPatch],  # type: ignore

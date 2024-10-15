@@ -12,7 +12,6 @@ class LinearBlock(pgml.YamlBaseModel):
     """Activation function"""
 
 
-
 class Optimizer(pgml.YamlBaseModel):
     """Optimizer configuration"""
 
@@ -23,13 +22,11 @@ class Optimizer(pgml.YamlBaseModel):
     """Learning rate"""
 
 
-
 class MLP(pgml.YamlBaseModel):
     """Multi-layer perceptron configuration"""
 
     layers: list[LinearBlock]
     """List of linear blocks"""
-
 
 
 class Training(pgml.YamlBaseModel):
@@ -40,5 +37,3 @@ class Training(pgml.YamlBaseModel):
 
     optimizer: Optimizer
     """Optimizer configuration"""
-
-

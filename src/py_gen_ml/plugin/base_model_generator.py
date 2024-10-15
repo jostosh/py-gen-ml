@@ -59,7 +59,7 @@ class BaseModelGenerator(Generator):
             g.P()
         g.P(f'import py_gen_ml as {PGML_ALIAS}')
         g.P()
-        if not self._is_patch and len(builder_imports := self.gather_builder_imports(file)) > 0:
+        if not self._is_patch and len(builder_imports := self.gather_factory_imports(file)) > 0:
             g.P('from typing import TYPE_CHECKING')
             g.P()
             g.P('if TYPE_CHECKING:')
@@ -68,7 +68,7 @@ class BaseModelGenerator(Generator):
                 g.P(f'import {builder_import}')
             g.set_indent(0)
             g.P()
-        if self._is_patch:
+        if self._is_patch and len(file.enums) > 0:
             import_file_path = str(Path(file.proto.name.replace('.proto', '_base')).name)
             g.P(f'from . import {import_file_path} as {BASE_MODEL_ALIAS}')
             g.P()
@@ -88,6 +88,8 @@ class BaseModelGenerator(Generator):
                     continue
                 self._generate_message_base_model(g, message)
 
+        self._run_yapf(g)
+
     def _generate_enum_base_model(self, g: protogen.GeneratedFile, enum: protogen.Enum) -> None:
         """
         Generate the base model for an enum.
@@ -95,12 +97,12 @@ class BaseModelGenerator(Generator):
         This method generates the class definition for the base model of the given enum.
         It includes the class name, inheritance, and docstring.
         """
-        g.P(f'class {enum.proto.name}(enum.Enum):')
+        g.P(f'class {enum.proto.name}(str, enum.Enum):')
         g.set_indent(4)
         generate_docstring(g, enum)
 
         for value in enum.values:
-            g.P(f"{value.proto.name} = \"{value.proto.name.lower()}\"")
+            g.P(f"{value.proto.name} = \"{value.proto.name}\"")
             generate_docstring(g, value)
 
         g.set_indent(0)
@@ -120,22 +122,30 @@ class BaseModelGenerator(Generator):
         generate_docstring(g, message)
 
         for field in message.fields:
-            if field.oneof:
+            if field.oneof and len(field.oneof.fields) > 1:
                 continue
             g.P(f'{field.py_name}: {self.field_to_annotation(field)}')
             generate_docstring(g, field)
 
         # Add oneof fields
         for oneof in message.oneofs:
+            if len(oneof.fields) == 1:
+                continue
             self._generate_oneof_field(g, oneof)
 
         if self._is_patch:
             g.set_indent(0)
             g.P()
             g.P()
+
+            self._add_json_schema_gen_task(
+                obj_path=py_import_for_source_file_derived_file(g, '_patch'),
+                obj_name=message.py_ident.py_name + 'Patch',
+                path=f'{self._configs_dir}/patch/schemas/' + snake_case(message.proto.name) + '.json',
+            )
             return
 
-        if (builder_import_path := get_extension_value(message, 'builder', str)) is not None:
+        if (builder_import_path := get_extension_value(message, 'factory', str)) is not None:
             dot_index = builder_import_path.rfind('.')
             if dot_index == -1:
                 raise ValueError(f'Invalid builder import path: {builder_import_path}')
@@ -153,7 +163,7 @@ class BaseModelGenerator(Generator):
             g.set_indent(12)
             for field in message.fields:
                 if ((field_message := field.message) is not None and
-                    get_extension_value(field_message, 'builder', str) is not None):
+                    get_extension_value(field_message, 'factory', str) is not None):
                     build_field = True
                 else:
                     build_field = False
@@ -219,11 +229,11 @@ class BaseModelGenerator(Generator):
         return union_type
 
     @staticmethod
-    def gather_builder_imports(file: protogen.File) -> list[str]:
+    def gather_factory_imports(file: protogen.File) -> list[str]:
         """
         Gather the builder imports for a specific file.
 
-        This method collects the import paths for the builders of all messages in the given file.
+        This method collects the import paths for the factories of all messages in the given file.
         It ensures that each builder import path is unique and returns a sorted list of these paths.
 
         Args:
@@ -234,13 +244,13 @@ class BaseModelGenerator(Generator):
         """
         imports = set[str]()
         for message in file.messages:
-            builder_import_path = get_extension_value(message, 'builder', str)
-            if builder_import_path is None:
+            factory_import_path = get_extension_value(message, 'factory', str)
+            if factory_import_path is None:
                 continue
 
-            if (idx := builder_import_path.rfind('.')) == -1:
-                raise ValueError(f'Invalid builder import {builder_import_path}')
-            imports.add(builder_import_path[:idx])
+            if (idx := factory_import_path.rfind('.')) == -1:
+                raise ValueError(f'Invalid factory import {factory_import_path}')
+            imports.add(factory_import_path[:idx])
         return sorted(imports)
 
     def field_to_annotation(self, field: protogen.Field) -> str:

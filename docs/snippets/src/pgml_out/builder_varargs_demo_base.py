@@ -19,7 +19,6 @@ class Linear(pgml.YamlBaseModel):
     bias: bool
     """Bias"""
 
-
     def build(self) -> "torch.nn.Linear":
         import torch.nn
 
@@ -36,11 +35,9 @@ class MLP(pgml.YamlBaseModel):
     layers: list[Linear]
     """Linear layers"""
 
-
     def build(self) -> "torch.nn.Sequential":
         import torch.nn
 
         return torch.nn.Sequential(
             *(elem.build() for elem in self.layers),
         )
-

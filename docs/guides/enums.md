@@ -1,3 +1,4 @@
+# 🔠 Enums
 Enums can be used to represent a set of named values that can be assigned to a field.
 
 Protobuf provides a dedicated syntax for defining enums.
@@ -7,6 +8,6 @@ Protobuf provides a dedicated syntax for defining enums.
 
 The generated code will look like this:
 
-```python
+```python { .generated-code }
 --8<-- "docs/snippets/src/pgml_out/enum_demo_base.py"
 ```

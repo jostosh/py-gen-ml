@@ -5,9 +5,9 @@ import py_gen_ml as pgml
 from . import config_patch as patch
 from . import config_base as base
 
-
 ActivationSweepField = typing.Union[
     pgml.Choice[base.Activation],
+    typing.Literal['any'],
     base.Activation,
 ]
 
@@ -20,7 +20,6 @@ class OptimizerSweep(pgml.Sweeper[patch.OptimizerPatch]):
 
     beta1: pgml.FloatSweep | None = None
     """Decay rate"""
-
 
 
 OptimizerSweepField = typing.Union[
@@ -37,7 +36,6 @@ class DataSweep(pgml.Sweeper[patch.DataPatch]):
 
     num_epochs: pgml.IntSweep | None = None
     """Number of epochs to train"""
-
 
 
 DataSweepField = typing.Union[
@@ -62,7 +60,6 @@ class ConvBlockSweep(pgml.Sweeper[patch.ConvBlockPatch]):
     """Activation function"""
 
 
-
 ConvBlockSweepField = typing.Union[
     ConvBlockSweep,
     pgml.NestedChoice[ConvBlockSweep, patch.ConvBlockPatch],  # type: ignore
@@ -77,7 +74,6 @@ class LinearBlockSweep(pgml.Sweeper[patch.LinearBlockPatch]):
 
     activation: ActivationSweepField | None = None
     """Activation function"""
-
 
 
 LinearBlockSweepField = typing.Union[
@@ -96,7 +92,6 @@ class ConvNetSweep(pgml.Sweeper[patch.ConvNetPatch]):
     """Number of layers"""
 
 
-
 ConvNetSweepField = typing.Union[
     ConvNetSweep,
     pgml.NestedChoice[ConvNetSweep, patch.ConvNetPatch],  # type: ignore
@@ -113,7 +108,6 @@ class MLPSweep(pgml.Sweeper[patch.MLPPatch]):
     """Number of layers"""
 
 
-
 MLPSweepField = typing.Union[
     MLPSweep,
     pgml.NestedChoice[MLPSweep, patch.MLPPatch],  # type: ignore
@@ -128,7 +122,6 @@ class ModelSweep(pgml.Sweeper[patch.ModelPatch]):
 
     head: MLPSweepField | None = None
     """MLP head"""
-
 
 
 ModelSweepField = typing.Union[

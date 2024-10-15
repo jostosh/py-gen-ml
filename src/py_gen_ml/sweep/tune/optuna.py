@@ -1,7 +1,13 @@
-from typing import Any
+import enum
+import inspect
+from typing import Any, Literal, get_args
 
 import optuna
 from pydantic import BaseModel
+
+from py_gen_ml.logging.setup_logger import setup_logger
+
+logger = setup_logger(__name__)
 
 from py_gen_ml.sweep.sweep import (
     Choice,
@@ -13,13 +19,14 @@ from py_gen_ml.sweep.sweep import (
     SweepModel,
     SweepSampler,
     SweepSamplerContext,
+    SweepVisitor,
     TBaseModel,
     TScalar,
     TSweep,
 )
 
 
-class OptunaSampler(SweepSampler):
+class OptunaSampler(SweepSampler[TBaseModel]):
     """
     A sampler that uses Optuna for hyperparameter optimization.
 
@@ -35,8 +42,35 @@ class OptunaSampler(SweepSampler):
             trial (optuna.Trial): The optuna trial to use for hyperparameter optimization.
         """
         self._trial = trial
+        self._context = SweepSamplerContext(path_parts=[], ctx=trial)
+        self._visitor = OptunaVisitor()
 
-    def visit_float_log_uniform(self, log_uniform: FloatLogUniform, context: SweepSamplerContext) -> float:
+    def sample(self, sweep: Sweeper[TBaseModel]) -> TBaseModel:
+        """
+        Sample a model from the sweep.
+
+        Args:
+            sweep (TSweep): The sweep to sample from.
+
+        Returns:
+            TBaseModel: The sampled model.
+        """
+        return sweep.accept(self._visitor, context=self._context)
+
+
+class OptunaVisitor(SweepVisitor[optuna.Trial]):
+    """
+    A visitor that uses Optuna for hyperparameter optimization.
+
+    Args:
+        trial (optuna.Trial): The optuna trial to use for hyperparameter optimization.
+    """
+
+    def visit_float_log_uniform(
+        self,
+        log_uniform: FloatLogUniform,
+        context: SweepSamplerContext[optuna.Trial],
+    ) -> float:
         """
         Visit a float log uniform and resolve its value.
 
@@ -47,14 +81,14 @@ class OptunaSampler(SweepSampler):
         Returns:
             float: The resolved value.
         """
-        return self._trial.suggest_float(
+        return context.ctx.suggest_float(
             name=context.path,
             low=log_uniform.log_low,
             high=log_uniform.log_high,
             log=True,
         )
 
-    def visit_int_uniform(self, uniform: IntUniform, context: SweepSamplerContext) -> int:
+    def visit_int_uniform(self, uniform: IntUniform, context: SweepSamplerContext[optuna.Trial]) -> int:
         """
         Visit an int uniform and resolve its value.
 
@@ -65,14 +99,14 @@ class OptunaSampler(SweepSampler):
         Returns:
             int: The resolved value.
         """
-        return self._trial.suggest_int(
+        return context.ctx.suggest_int(
             name=context.path,
             low=uniform.low,
             high=uniform.high,
             step=uniform.step,
         )
 
-    def visit_float_uniform(self, uniform: FloatUniform, context: SweepSamplerContext) -> float:
+    def visit_float_uniform(self, uniform: FloatUniform, context: SweepSamplerContext[optuna.Trial]) -> float:
         """
         Visit a float uniform and resolve its value.
 
@@ -83,7 +117,7 @@ class OptunaSampler(SweepSampler):
         Returns:
             float: The resolved value.
         """
-        return self._trial.suggest_float(
+        return context.ctx.suggest_float(
             name=context.path,
             low=uniform.low,
             high=uniform.high,
@@ -93,7 +127,7 @@ class OptunaSampler(SweepSampler):
     def visit_nested_choice(
         self,
         sweep_choice: NestedChoice[TSweep, TBaseModel],
-        context: SweepSamplerContext,
+        context: SweepSamplerContext[optuna.Trial],
     ) -> TBaseModel:
         """
         Visit a nested choice and resolve its value.
@@ -105,14 +139,14 @@ class OptunaSampler(SweepSampler):
         Returns:
             TBaseModel: The resolved base model.
         """
-        random_choice = self._trial.suggest_categorical(
+        random_choice = context.ctx.suggest_categorical(
             name=context.path,
             choices=list(sweep_choice.nested_options.keys()),
         )
         value = sweep_choice.nested_options[random_choice]
         return value.accept(self, context=context)  # type: ignore
 
-    def visit_choice(self, choice: Choice[TScalar], context: SweepSamplerContext) -> TScalar:
+    def visit_choice(self, choice: Choice[TScalar], context: SweepSamplerContext[optuna.Trial]) -> TScalar:
         """
         Visit a choice and resolve its value.
 
@@ -123,12 +157,16 @@ class OptunaSampler(SweepSampler):
         Returns:
             TScalar: The resolved value.
         """
-        return self._trial.suggest_categorical(  # type: ignore
+        return context.ctx.suggest_categorical(  # type: ignore
             name=context.path,
             choices=choice.options,  # type: ignore
         )
 
-    def visit_sweep_model(self, sweep_model: Sweeper[TBaseModel], context: SweepSamplerContext) -> BaseModel:
+    def visit_sweep_model(
+        self,
+        sweep_model: Sweeper[TBaseModel],
+        context: SweepSamplerContext[optuna.Trial],
+    ) -> BaseModel:
         """
         Visit a sweep model and resolve its fields.
 
@@ -140,7 +178,7 @@ class OptunaSampler(SweepSampler):
             BaseModel: The resolved base model.
         """
         kwargs = dict[str, Any]()
-        for field_name in sweep_model.model_fields.keys():
+        for field_name, field in sweep_model.model_fields.items():
             field_value = getattr(sweep_model, field_name)
             if isinstance(field_value, SweepModel):
                 kwargs[field_name] = field_value.accept(self, context=context.step(field_name))
@@ -151,6 +189,28 @@ class OptunaSampler(SweepSampler):
                         resolved_list.append(item.accept(self, context=context.step(field_name, index=index)))
                     else:
                         raise ValueError(f'SweepModel field {field_name} is not a Node')
+            elif any(type_arg is Literal['any'] for type_arg in get_args(field.annotation)) and any(
+                type_arg is bool or (inspect.isclass(type_arg) and issubclass(type_arg, enum.Enum))
+                for type_arg in get_args(field.annotation)
+            ):
+                if field_value == 'any':
+                    if any(type_arg is bool for type_arg in get_args(field.annotation)):
+                        kwargs[field_name] = context.ctx.suggest_categorical(
+                            name=context.step(field_name).path,
+                            choices=[True, False],
+                        )
+                    elif any(
+                        inspect.isclass(enum_class := type_arg) and issubclass(enum_class, enum.Enum)
+                        for type_arg in get_args(field.annotation)
+                    ):
+                        kwargs[field_name] = context.ctx.suggest_categorical(
+                            name=context.step(field_name).path,
+                            choices=[enum_member.value for enum_member in enum_class],  # type: ignore
+                        )
+                    else:
+                        raise ValueError(f'Unsupported type: {field.annotation}')
+                else:
+                    kwargs[field_name] = field_value
             else:
                 kwargs[field_name] = field_value
         return sweep_model.new_base_model(**kwargs)

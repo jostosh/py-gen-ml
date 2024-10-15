@@ -19,5 +19,3 @@ class DataLoaderConfig(pgml.YamlBaseModel):
 
     prefetch_factor: int
     """Prefetch factor"""
-
-

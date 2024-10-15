@@ -7,22 +7,33 @@ extend google.protobuf.FileOptions {
 	optional bool enable = 1091;
 }
 
-message ArgRef {
+// Arg is a single argument to a CLI. These are added explicitly to a message
+// using the `cli` field.
+message Arg {
+	// Name of the argument. This is the name of the argument as it appears on the CLI.
     string name = 1;
+	// Path is the dotted path to the argument from the root of the message
+	// that enables the CLI extension.
     string path = 2;
 }
 
-message ArgRefs {
-    repeated ArgRef item = 1;
+// CLI enables the CLI extension for a message. This is used to add arguments
+// to a CLI. Arguments are added explicitly or implicitly.
+message CLI {
+	// Explicitly added arguments.
+    repeated Arg arg = 1;
+	// If true, the CLI extension will be enabled for this message. The extension will
+	// cause a CLI Pydantic model and parser to be generated for the message.
+	bool enable = 2;
 }
 
 extend google.protobuf.MessageOptions {
 	// Python import path for a class to instantiate using the values
 	// of this message.
-	string builder = 1091;
+	string factory = 1091;
     // Map of argument names to paths. The path is the dotted path to the argument
     // from the root of the CLI args class.
-    ArgRefs arg_refs = 1092;
+    CLI cli = 1092;
 }
 
 // Defaults values applied at the field level
@@ -54,7 +65,7 @@ message FieldDefaults {
 		bool bool = 13;
 		string string = 14;
 		bytes bytes = 15;
-		uint32 enum = 16;
+		string enum = 16;
 	}
 	reserved 18 to 20;
 }

@@ -5,6 +5,7 @@ import pathlib
 from dataclasses import dataclass
 
 import protogen
+from yapf.yapflib.yapf_api import FormatCode
 
 from py_gen_ml.logging.setup_logger import setup_logger
 from py_gen_ml.yaml.object_path import InsertAnyOfWithObjectPath
@@ -101,6 +102,19 @@ class Generator(abc.ABC):
             list[GenTask]: The list of JSON schema generation tasks.
         """
         return self._json_schema_gen_tasks
+
+    def _run_yapf(self, file: protogen.GeneratedFile) -> None:
+        """
+        Run yapf on the given file.
+
+        Args:
+            file (protogen.File): The file to run yapf on.
+        """
+        lines = file._buf
+        yapf_toml_path = pathlib.Path(__file__).parent / 'yapf_style.toml'
+        formatted_content, changed = FormatCode('\n'.join(lines), style_config=str(yapf_toml_path.absolute()))
+        if changed:
+            file._buf = formatted_content.split('\n')  # type: ignore
 
 
 class InitGenerator(Generator):

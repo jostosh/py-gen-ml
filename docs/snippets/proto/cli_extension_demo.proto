@@ -1,16 +1,17 @@
-// cli_demo_extension.proto
+// cli_extension_demo.proto
 syntax = "proto3";
 
-package cli_demo;
+package cli_extension_demo;
 
 import "py_gen_ml/extensions.proto";
 
 
 // Global configuration
-message Project {
-    option (pgml.arg_refs) = {
-        item: { name: "train_path", path: "data.train_dataset.path" }
-        item: { name: "test_path", path: "data.test_dataset.path" }
+message CliExtensionDemo {
+    option (pgml.cli) = {
+        enable: true
+        arg: { name: "train_path", path: "data.train_dataset.path" }
+        arg: { name: "test_path", path: "data.test_dataset.path" }
     };
     // Dataset configuration
     Data data = 1;

@@ -4,15 +4,14 @@ import enum
 import py_gen_ml as pgml
 
 
-class Activation(enum.Enum):
+class Activation(str, enum.Enum):
     """Activation function"""
 
-    RELU = "relu"
+    RELU = "RELU"
     """ReLU activation"""
 
-    GELU = "gelu"
+    GELU = "GELU"
     """Gelu activation"""
-
 
 
 class MLP(pgml.YamlBaseModel):
@@ -23,5 +22,3 @@ class MLP(pgml.YamlBaseModel):
 
     num_layers: int
     """Number of layers"""
-
-

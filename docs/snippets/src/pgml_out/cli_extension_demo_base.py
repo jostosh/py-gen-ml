@@ -9,7 +9,6 @@ class Model(pgml.YamlBaseModel):
     """Number of layers"""
 
 
-
 class Training(pgml.YamlBaseModel):
     """Training configuration"""
 
@@ -17,13 +16,11 @@ class Training(pgml.YamlBaseModel):
     """Number of epochs"""
 
 
-
 class Dataset(pgml.YamlBaseModel):
     """Dataset configuration"""
 
     path: str
     """Path to the dataset"""
-
 
 
 class Data(pgml.YamlBaseModel):
@@ -39,8 +36,7 @@ class Data(pgml.YamlBaseModel):
     """Number of workers for loading the dataset"""
 
 
-
-class Project(pgml.YamlBaseModel):
+class CliExtensionDemo(pgml.YamlBaseModel):
     """Global configuration"""
 
     data: Data
@@ -51,5 +47,3 @@ class Project(pgml.YamlBaseModel):
 
     training: Training
     """Training configuration"""
-
-

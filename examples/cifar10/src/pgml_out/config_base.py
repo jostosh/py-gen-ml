@@ -9,15 +9,14 @@ if TYPE_CHECKING:
     import cifar10.modules
 
 
-class Activation(enum.Enum):
+class Activation(str, enum.Enum):
     """Activation function"""
 
-    GELU = "gelu"
+    GELU = "GELU"
     """GELU activation"""
 
-    RELU = "relu"
+    RELU = "RELU"
     """ReLU activation"""
-
 
 
 class Optimizer(pgml.YamlBaseModel):
@@ -30,7 +29,6 @@ class Optimizer(pgml.YamlBaseModel):
     """Decay rate"""
 
 
-
 class Data(pgml.YamlBaseModel):
     """Data configuration"""
 
@@ -39,7 +37,6 @@ class Data(pgml.YamlBaseModel):
 
     num_epochs: int = 10
     """Number of epochs to train"""
-
 
 
 class ConvBlock(pgml.YamlBaseModel):
@@ -56,7 +53,6 @@ class ConvBlock(pgml.YamlBaseModel):
 
     activation: Activation = Activation.GELU
     """Activation function"""
-
 
     def build(self) -> "cifar10.modules.ConvBlock":
         import cifar10.modules
@@ -78,7 +74,6 @@ class LinearBlock(pgml.YamlBaseModel):
     activation: Activation = Activation.GELU
     """Activation function"""
 
-
     def build(self) -> "cifar10.modules.LinearBlock":
         import cifar10.modules
 
@@ -98,7 +93,6 @@ class ConvNet(pgml.YamlBaseModel):
     """Number of layers"""
 
 
-
 class MLP(pgml.YamlBaseModel):
     """Multi-layer perceptron configuration"""
 
@@ -109,7 +103,6 @@ class MLP(pgml.YamlBaseModel):
     """Number of layers"""
 
 
-
 class Model(pgml.YamlBaseModel):
     """Model configuration"""
 
@@ -118,7 +111,6 @@ class Model(pgml.YamlBaseModel):
 
     head: MLP
     """MLP head"""
-
 
 
 class Project(pgml.YamlBaseModel):
@@ -132,5 +124,3 @@ class Project(pgml.YamlBaseModel):
 
     data: Data
     """Data configuration"""
-
-

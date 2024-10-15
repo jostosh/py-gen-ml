@@ -1,10 +1,139 @@
-# 🚀 py-gen-ml Documentation
+---
+hide:
+  - navigation
+  - toc
+---
+
+<div align="center">
+  <img src="assets/images/logo.svg" alt="py-gen-ml logo" width="200" />
+  
+  <h1>py-gen-ml</h1>
+  <p>A library for generating machine learning code from protobuf schemas.</p>
+</div>
+
 
 ## 🌟 Project Introduction
 
-`py-gen-ml` simplifies the configuration and management of machine learning projects. It leverages Protocol Buffers (protobufs) to provide a robust, strongly typed, and extensible way to define and manipulate configuration schemas for machine learning projects.
+`py-gen-ml` simplifies the configuration and management of machine learning projects. It leverages [Protocol Buffers](https://protobuf.dev/) (protobufs) to provide a robust, strongly typed, and extensible way to define and manipulate configuration schemas for machine learning projects.
 
-### 🔑 Key Features
+
+## ✨ Brief Overview
+
+A real quick overview of what you can do with `py-gen-ml`:
+
+<div class="grid cards" markdown>
+
+-   :material-code-block-braces:{ .lg .middle } __Define protos__
+
+    ---
+
+    ```proto
+    --8<-- "docs/snippets/proto/proto_intro.proto:8:17"
+    ```
+
+-   :material-creation-outline:{ .lg .middle } __Generated Base Model__
+
+    ---
+
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/proto_intro_base.py:5:15"
+    ```
+
+-   :material-creation-outline:{ .lg .middle } __Generated Patch Config__
+
+    ---
+
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/proto_intro_patch.py:5:19"
+    ```
+
+    ---
+
+-   :material-creation-outline:{ .lg .middle } __Generated Sweep Config__
+
+    ---
+
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/proto_intro_sweep.py:9:19"
+    ```
+
+    ---
+
+
+
+-   :material-creation-outline:{ .lg .middle } __Generated CLI Parser__
+
+    ---
+
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/proto_intro_cli_args.py:11:28"
+    # Remaining code...
+    ```
+
+-   :material-creation-outline:{ .lg .middle } __Generated Entrypoint__
+
+    ---
+
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/mlp_entrypoint.py:23:44"
+    ```
+
+-   :material-arm-flex-outline:{ .lg .middle } __Flexible YAML Config__
+
+    ---
+
+    ```yaml
+    # base.yaml
+    layers:
+    - num_units: 100
+      activation: "#/_defs/activation"
+    - num_units: 50
+      activation: "#/_defs/activation"
+    optimizer:
+      type: adamw
+      learning_rate: 1e-4
+      schedule: '!cosine_schedule.yaml'
+    _defs_:
+      activation: relu
+    ```
+
+    ```yaml
+    # cosine_schedule.yaml
+    min_lr: 1e-5
+    max_lr: 1e-3
+    ```
+
+-   :material-arm-flex-outline:{ .lg .middle } __Flexible YAML sweeps__
+
+    ---
+
+    ```yaml
+    layers:
+    - num_units:  # Sample from a list
+      - 100
+      - 50
+      activation: "#/_defs/activation"
+    - num_units:  # Sample from a range
+        low: 10
+        high: 100
+        step: 10
+      activation: "#/_defs/activation"
+    _defs_:
+      activation: relu
+    ```
+
+
+-   :material-arm-flex-outline:{ .lg .middle } __Instant YAML validation w/ JSON schemas__
+
+    ---
+
+    ![type:video](assets/video/zoom-in-yaml-parsing.webm)
+
+
+</div>
+
+
+## 🔑 Key Features
 
 **📌 Single Source of Truth**:
 
@@ -30,7 +159,7 @@
 
 To start using py-gen-ml, you can install it via pip:
 
-```bash
+```console
 pip install py-gen-ml
 ```
 
@@ -69,5 +198,5 @@ Consider using `py-gen-ml` when you need to:
 - [Quickstart](quickstart.md): A quick intro to the most important concepts.
 - [Command Line Interface](guides/cli_argument_parsing.md): How to use the generated CLI parser.
 - [Parameter Sweeps](guides/sweep.md): How to run parameter sweeps.
-- [Builders](guides/builders.md): How to use the builders to instantiate your classes.
+- [Generated factories](guides/builders.md): How to generate factories to instantiate your classes.
 - [Cifar 10 example project](example_projects/cifar10.md): A more elaborate example of a machine learning project using `py-gen-ml`.

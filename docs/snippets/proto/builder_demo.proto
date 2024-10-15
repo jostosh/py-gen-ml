@@ -9,7 +9,7 @@ import "py_gen_ml/extensions.proto";
 
 // Linear layer configuration
 message Linear {
-    option (pgml.builder) = "torch.nn.Linear";
+    option (pgml.factory) = "torch.nn.Linear";
     // Number of input features
     uint32 in_features = 1;
     // Number of output features

@@ -1,37 +1,5 @@
 {
   "$defs": {
-    "Choice_bool_": {
-      "properties": {
-        "options": {
-          "items": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "string",
-                "description": "An object path to an external object",
-                "minLength": 2,
-                "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-              },
-              {
-                "type": "string",
-                "description": "An object path to an internal object",
-                "minLength": 2,
-                "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-              }
-            ]
-          },
-          "title": "Options",
-          "type": "array"
-        }
-      },
-      "required": [
-        "options"
-      ],
-      "title": "Choice[bool]",
-      "type": "object"
-    },
     "Choice_int_": {
       "properties": {
         "options": {
@@ -205,7 +173,11 @@
           "type": "boolean"
         },
         {
-          "$ref": "#/$defs/Choice_bool_"
+          "const": "any",
+          "enum": [
+            "any"
+          ],
+          "type": "string"
         },
         {
           "type": "null"
@@ -232,7 +204,11 @@
           "type": "boolean"
         },
         {
-          "$ref": "#/$defs/Choice_bool_"
+          "const": "any",
+          "enum": [
+            "any"
+          ],
+          "type": "string"
         },
         {
           "type": "null"

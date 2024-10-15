@@ -1,4 +1,4 @@
-# Parameter Sweeping
+# 🔍 Parameter Sweeping
 
 For parameter sweeps, `py-gen-ml` generates a Pydantic base model that replaces the types in the original config with structures that allow for defining the sampling space for each parameter.
 
@@ -6,11 +6,11 @@ The sweep config is then passed to a `py_gen_ml.OptunaSampler` which will sample
 
 Your training code shouldn't have to be changed for a parameter sweep. It will receive the modified config as input and can remain oblivious to the fact that it has been sampled from a larger space.
 
-## Defining a parameter sweep
+## 🧪 Defining a parameter sweep
 
 Let's do a benchmark on how to iterate throug a `torch.utils.data.DataLoader` as fast as possible.
 
-### The schema
+### 🔧 The schema
 We will define a simple schema with some parameter that influence the dataloader.
 
 ```proto
@@ -19,7 +19,7 @@ We will define a simple schema with some parameter that influence the dataloader
 
 When we run `py-gen-ml` it will generate a Pydantic model for parameter sweeps for us.
 
-```python
+```python { .generated-code }
 --8<-- "docs/snippets/src/pgml_out/dataloader_sweep.py"
 ```
 
@@ -30,15 +30,15 @@ You can see that it replaced the types in the original config with structures th
 
 The `pgml.BoolSweep` type allows for sampling from a boolean space.
 
-## The base config
+## ⚾ The base config
 To run a benchmark we need a base config. Any sweeps will be applied to the base config by overlaying the sampled parameters.
 
 The defaultYAML config is given below:
 ```yaml
---8<-- "docs/snippets/configs/dataloader_base.yaml"
+--8<-- "docs/snippets/configs/base/dataloader_base.yaml"
 ```
 
-## The script
+## ✍️ The script
 We will load this config in the following script:
 
 ```python linenums="1" hl_lines="3 7 9-10"
@@ -49,11 +49,11 @@ We will load this config in the following script:
 - Line 7: we parse the config file
 - line 9, 10: if there is no sweep file given, we run a benchmark on the base config
 
-## The sweep config
+## 🛠️ The sweep config
 Next, we'll define a minimalistic sweep config to sweep over the batch size.
 
 ```yaml
---8<-- "docs/snippets/configs/dataloader_sweep.yaml"
+--8<-- "docs/snippets/configs/sweep/dataloader_sweep.yaml"
 ```
 
 In the `run` function we load this sweep config and set a few things related to Optuna.
@@ -71,7 +71,7 @@ In the `run` function we load this sweep config and set a few things related to 
 
 We can now run the sweep with the following command:
 
-```bash
+```console
 python sweep_dataloader.py \
   --config_paths \
   configs/base/default.yaml \
@@ -93,23 +93,23 @@ Time taken: 1.3076978921890259
 Best value: 1.173576545715332 (params: {'batch_size': 64})
 ```
 
-### Benchmark code
+### 💻 Benchmark
 The code that actually runs the benchmark is the following:
 
 ```python linenums="1"
 --8<-- "docs/snippets/src/snippets/sweep_dataloader.py:36:58"
 ```
 
-## Full sweep
+## ⏳ Full sweep
 A more elaborate sweep can be configured as follows:
 
 ```yaml
---8<-- "docs/snippets/configs/dataloader_sweep_full.yaml"
+--8<-- "docs/snippets/configs/sweep/dataloader_sweep_full.yaml"
 ```
 
 We'll keep the batch size fixed at 64 and sweep over the other parameters.
 
-```bash
+```console
 python sweep_dataloader.py \
   --config_paths \
   configs/base/default.yaml \
@@ -120,7 +120,7 @@ python sweep_dataloader.py \
 
 After running this for a while, open up Optuna dashboard to see the results:
 
-```bash
+```console
 optuna-dashboard sqlite:///sweep_dataloader.db
 ```
 
@@ -130,12 +130,12 @@ It will show you a web interface to inspect the results. Here's what it looks li
 
 You can then quickly see the optimal set of parameters in the bottom left corner.
 
-## Other sweep types
+## 🤸‍♂️ Other sweep types
 Below, we give an overview of how built in types and custom types map to the different sampling strategies.
 
-### Built-in types
+### 🏗️ Built-in types
 
-#### `pgml.IntSweep`
+#### 1️⃣ `pgml.IntSweep`
 For an `int` field, `pgml.IntSweep` will offer the following sampling strategies:
 
 - Uniform sampling: `low`, `high` and optionally `step` must be set.
@@ -171,7 +171,7 @@ int_field:
 int_field: 5
 ```
 
-#### `pgml.FloatSweep`
+#### ⛵ `pgml.FloatSweep`
 For a `float` field, `pgml.FloatSweep` will offer the following sampling strategies:
 
 - Uniform sampling: `low`, `high` and optionally `step` must be set.
@@ -214,10 +214,10 @@ float_field:
 float_field: 5.0
 ```
 
-#### `pgml.BoolSweep`
+#### ✅ `pgml.BoolSweep`
 For a `bool` field, `pgml.BoolSweep` will offer the following sampling strategies:
 
-- Choice: provide a list of bools to choose from
+- Any: use a string `"any"`. This samples from both `True` and `False`.
 - Fixed: just provide a bool
 
 Imagine we have the following schema:
@@ -231,17 +231,14 @@ message Example {
 This allows us to create any of the following YAML files:
 
 ```yaml
-bool_field:
-  options:
-  - true
-  - false
+bool_field: any
 ```
 
 ```yaml
 bool_field: true
 ```
 
-#### `pgml.StringSweep`
+#### ⛓️ `pgml.StringSweep`
 For a `string` field, `pgml.StringSweep` will offer the following sampling strategies:
 
 - Choice: provide a list of strings to choose from
@@ -268,7 +265,7 @@ string_field:
 string_field: hello
 ```
 
-#### `pgml.BytesSweep`
+#### 8️⃣ `pgml.BytesSweep`
 For a `bytes` field, `pgml.BytesSweep` will offer the following sampling strategies:
 
 - Choice: provide a list of bytes to choose from
@@ -297,10 +294,10 @@ bytes_field: hello
 
 
 
-### Custom types
+### 🧱 Custom types
 
 
-#### Nested configs
+#### 🐣 Nested configs
 With nested configs, the ways to sweep are slightly different. Let's say we have the following schema:
 
 ```proto
@@ -346,10 +343,11 @@ config_field:
 
 For the nested sweep, we'll sample categorically between `first` and `second`. We then sample uniformly between 1 and 10 for the `int_field` in case of `first` and choose from 1, 2 or 3 for the `int_field` in case of `second`.
 
-#### Enums
+#### 🔠 Enums
 For an `enum` field, `py-gen-ml` generates a type that enables the following sampling strategies:
 
-- Choice: provide a list of enums to choose from
+- Choice: provide a list of enums to choose 
+- Any: use a string `"any"`. This samples from all the enum values.
 - Fixed: just provide an enum
 
 Imagine we have the following schema:
@@ -374,6 +372,10 @@ color_field:
   - RED
   - GREEN
   - BLUE
+```
+
+```yaml
+color_field: any
 ```
 
 ```yaml

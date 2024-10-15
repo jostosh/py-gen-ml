@@ -2,25 +2,30 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass
-from typing import Any, Generic, Optional, TypeVar
+from dataclasses import replace as dataclass_replace
+from typing import Any, Generic, Literal, Optional, TypeVar
 
 from pydantic import BaseModel
 
 from py_gen_ml.yaml.yaml_model import YamlBaseModel
 
 T = TypeVar('T')
+Tb = TypeVar('Tb')
 TScalar = TypeVar('TScalar', float, int, bool, str, bytes)
 TBaseModel = TypeVar('TBaseModel', bound=BaseModel)
 
 
 @dataclass
-class SweepSamplerContext:
+class SweepSamplerContext(Generic[T]):
     """A context for a sweep sampler."""
 
     path_parts: list[str]
     """The path parts of the sweep sampler context."""
 
-    def step(self, name: str, index: Optional[int] = None) -> SweepSamplerContext:
+    ctx: T
+    """The context of the sweep sampler."""
+
+    def step(self, name: str, index: Optional[int] = None) -> SweepSamplerContext[T]:
         """
         Step into a nested object.
 
@@ -33,7 +38,7 @@ class SweepSamplerContext:
         """
         if index is not None:
             name = f'{name}[{index}]'
-        return SweepSamplerContext(path_parts=[*self.path_parts, name])
+        return dataclass_replace(self, path_parts=[*self.path_parts, name])
 
     @property
     def path(self) -> str:
@@ -54,43 +59,28 @@ class SweepModel(YamlBaseModel, Generic[T], abc.ABC):
     """
 
     @abc.abstractmethod
-    def accept(self, visitor: SweepSampler, context: SweepSamplerContext) -> T:
+    def accept(self, visitor: SweepVisitor[Tb], context: SweepSamplerContext[Tb]) -> T:
         """
         Accept a visitor.
 
         Args:
-            visitor (SweepSampler): The visitor to accept.
-            context (SweepSamplerContext): The context to use for the visitor.
+            visitor (SweepVisitor[Tb]): The visitor to accept.
+            context (SweepSamplerContext[Tb]): The context to use for the visitor.
 
         Returns:
             T: The result of the visitor.
         """
 
 
-class SweepSampler(abc.ABC):
+class SweepVisitor(abc.ABC, Generic[T]):
     """
     A sweep sampler.
 
     Defines a visitor pattern for sampling a model from a sweep configuration.
     """
 
-    def sample(self, sweep_model: Sweeper[TBaseModel]) -> TBaseModel:
-        """
-        Sample a model.
-
-        The sample should be a patch that is then applied to the corresponding base model.
-
-        Args:
-            sweep_model (Sweeper[TBaseModel]): The model to sample.
-
-        Returns:
-            TBaseModel: The sampled model.
-        """
-        context = SweepSamplerContext(path_parts=[])
-        return sweep_model.accept(self, context=context)
-
     @abc.abstractmethod
-    def visit_float_log_uniform(self, log_uniform: FloatLogUniform, context: SweepSamplerContext) -> float:
+    def visit_float_log_uniform(self, log_uniform: FloatLogUniform, context: SweepSamplerContext[T]) -> float:
         """
         Visit a float log uniform.
 
@@ -103,7 +93,7 @@ class SweepSampler(abc.ABC):
         """
 
     @abc.abstractmethod
-    def visit_int_uniform(self, uniform: IntUniform, context: SweepSamplerContext) -> int:
+    def visit_int_uniform(self, uniform: IntUniform, context: SweepSamplerContext[T]) -> int:
         """
         Visit an int uniform.
 
@@ -116,7 +106,7 @@ class SweepSampler(abc.ABC):
         """
 
     @abc.abstractmethod
-    def visit_float_uniform(self, uniform: FloatUniform, context: SweepSamplerContext) -> float:
+    def visit_float_uniform(self, uniform: FloatUniform, context: SweepSamplerContext[T]) -> float:
         """
         Visit a float uniform.
 
@@ -129,7 +119,7 @@ class SweepSampler(abc.ABC):
         """
 
     @abc.abstractmethod
-    def visit_sweep_model(self, sweep_model: Sweeper[TBaseModel], context: SweepSamplerContext) -> TBaseModel:
+    def visit_sweep_model(self, sweep_model: Sweeper[TBaseModel], context: SweepSamplerContext[T]) -> TBaseModel:
         """
         Visit a sweep model.
 
@@ -145,7 +135,7 @@ class SweepSampler(abc.ABC):
     def visit_nested_choice(
         self,
         sweep_choice: NestedChoice[TSweep, TBaseModel],
-        context: SweepSamplerContext,
+        context: SweepSamplerContext[T],
     ) -> TBaseModel:
         """
         Visit a nested choice.
@@ -159,7 +149,7 @@ class SweepSampler(abc.ABC):
         """
 
     @abc.abstractmethod
-    def visit_choice(self, choice: Choice[TScalar], context: SweepSamplerContext) -> TScalar:
+    def visit_choice(self, choice: Choice[TScalar], context: SweepSamplerContext[T]) -> TScalar:
         """
         Visit a choice.
 
@@ -172,6 +162,28 @@ class SweepSampler(abc.ABC):
         """
 
 
+class SweepSampler(abc.ABC, Generic[TBaseModel]):
+    """
+    A sweep sampler.
+
+    Defines a visitor pattern for sampling a model from a sweep configuration.
+    """
+
+    @abc.abstractmethod
+    def sample(self, sweep_model: Sweeper[TBaseModel]) -> TBaseModel:
+        """
+        Sample a model.
+
+        The sample should be a patch that is then applied to the corresponding base model.
+
+        Args:
+            sweep_model (Sweeper[TBaseModel]): The model to sample.
+
+        Returns:
+            TBaseModel: The sampled model.
+        """
+
+
 class Sweeper(SweepModel[TBaseModel]):
     """
     A sweeper.
@@ -179,13 +191,13 @@ class Sweeper(SweepModel[TBaseModel]):
     Sweepers allow for sampling a model from a set of options.
     """
 
-    def accept(self, visitor: SweepSampler, context: SweepSamplerContext) -> TBaseModel:
+    def accept(self, visitor: SweepVisitor[T], context: SweepSamplerContext[T]) -> TBaseModel:
         """
         Accept a visitor.
 
         Args:
-            visitor (SweepSampler): The visitor to accept.
-            context (SweepSamplerContext): The context to use for the visitor.
+            visitor (SweepVisitor[T]): The visitor to accept.
+            context (SweepSamplerContext[T]): The context to use for the visitor.
 
         Returns:
             TBaseModel: The sampled model.
@@ -219,13 +231,13 @@ class FloatLogUniform(SweepModel[float]):
     log_low: float
     log_high: float
 
-    def accept(self, visitor: SweepSampler, context: SweepSamplerContext) -> float:
+    def accept(self, visitor: SweepVisitor[T], context: SweepSamplerContext[T]) -> float:
         """
         Visit a float log uniform.
 
         Args:
-            visitor (SweepSampler): The visitor to accept.
-            context (SweepSamplerContext): The context to use for the visitor.
+            visitor (SweepVisitor[T]): The visitor to accept.
+            context (SweepSamplerContext[T]): The context to use for the visitor.
 
         Returns:
             float: The sampled float.
@@ -244,13 +256,13 @@ class IntUniform(SweepModel[int]):
     high: int
     step: int = 1
 
-    def accept(self, visitor: SweepSampler, context: SweepSamplerContext) -> int:
+    def accept(self, visitor: SweepVisitor[T], context: SweepSamplerContext[T]) -> int:
         """
         Visit an int uniform.
 
         Args:
-            visitor (SweepSampler): The visitor to accept.
-            context (SweepSamplerContext): The context to use for the visitor.
+            visitor (SweepVisitor[T]): The visitor to accept.
+            context (SweepSamplerContext[T]): The context to use for the visitor.
 
         Returns:
             int: The sampled int.
@@ -269,13 +281,13 @@ class FloatUniform(SweepModel[float]):
     high: float
     step: Optional[float] = None
 
-    def accept(self, visitor: SweepSampler, context: SweepSamplerContext) -> float:
+    def accept(self, visitor: SweepVisitor[T], context: SweepSamplerContext[T]) -> float:
         """
         Visit a float uniform.
 
         Args:
-            visitor (SweepSampler): The visitor to accept.
-            context (SweepSamplerContext): The context to use for the visitor.
+            visitor (SweepVisitor[T]): The visitor to accept.
+            context (SweepSamplerContext[T]): The context to use for the visitor.
 
         Returns:
             float: The sampled float.
@@ -299,13 +311,13 @@ class NestedChoice(SweepModel[TBaseModel], Generic[TSweep, TBaseModel]):
 
     nested_options: dict[str, TSweep]
 
-    def accept(self, visitor: SweepSampler, context: SweepSamplerContext) -> TBaseModel:
+    def accept(self, visitor: SweepVisitor[T], context: SweepSamplerContext[T]) -> TBaseModel:
         """
         Visit a nested choice.
 
         Args:
-            visitor (SweepSampler): The visitor to accept.
-            context (SweepSamplerContext): The context to use for the visitor.
+            visitor (SweepVisitor[T]): The visitor to accept.
+            context (SweepSamplerContext[T]): The context to use for the visitor.
 
         Returns:
             TBaseModel: The sampled model.
@@ -322,13 +334,13 @@ class Choice(SweepModel[TScalar]):
 
     options: list[TScalar]
 
-    def accept(self, visitor: SweepSampler, context: SweepSamplerContext) -> TScalar:
+    def accept(self, visitor: SweepVisitor[T], context: SweepSamplerContext[T]) -> TScalar:
         """
         Visit a choice.
 
         Args:
-            visitor (SweepSampler): The visitor to accept.
-            context (SweepSamplerContext): The context to use for the visitor.
+            visitor (SweepVisitor[T]): The visitor to accept.
+            context (SweepSamplerContext[T]): The context to use for the visitor.
 
         Returns:
             TScalar: The sampled value.
@@ -338,6 +350,6 @@ class Choice(SweepModel[TScalar]):
 
 IntSweep = int | Choice[int] | IntUniform
 FloatSweep = float | Choice[float] | FloatLogUniform | FloatUniform
-BoolSweep = bool | Choice[bool]
+BoolSweep = bool | Literal['any']
 StrSweep = str | Choice[str]
 BytesSweep = bytes | Choice[bytes]

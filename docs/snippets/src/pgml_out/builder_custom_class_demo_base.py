@@ -25,7 +25,6 @@ class LinearBlock(pgml.YamlBaseModel):
     activation: str
     """Activation function"""
 
-
     def build(self) -> "example_project.modules.LinearBlock":
         import example_project.modules
 
@@ -43,5 +42,3 @@ class MLP(pgml.YamlBaseModel):
 
     layers: list[LinearBlock]
     """Linear blocks"""
-
-
