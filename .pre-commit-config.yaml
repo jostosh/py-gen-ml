@@ -45,7 +45,7 @@ repos:
     language: python
     types: [file, yaml]
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.1.0
+  rev: v5.0.0
   hooks:
   - id: check-added-large-files
   - id: check-ast
