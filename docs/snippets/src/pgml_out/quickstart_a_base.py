@@ -2,14 +2,14 @@
 import py_gen_ml as pgml
 
 
-class MLPPatch(pgml.YamlBaseModel):
+class MLPQuickstart(pgml.YamlBaseModel):
     """Multi-layer perceptron configuration"""
 
-    num_layers: int | None = None
+    num_layers: int
     """Number of layers"""
 
-    num_units: int | None = None
+    num_units: int
     """Number of units"""
 
-    activation: str | None = None
+    activation: str
     """Activation function"""

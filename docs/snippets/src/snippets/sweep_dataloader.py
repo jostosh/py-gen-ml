@@ -1,7 +1,7 @@
 import os
 import time
 from functools import lru_cache
-from typing import Any
+from typing import Any, List
 
 import optuna
 import torch
@@ -70,8 +70,8 @@ class RepeatPruner(optuna.pruners.BasePruner):
 
 @app.command()
 def run(
-    config_paths: list[str] = typer.Option(..., help='Paths to config files'),
-    sweep_paths: list[str] = typer.Option(default_factory=list, help='Paths to sweep files'),
+    config_paths: List[str] = typer.Option(..., help='Paths to config files'),
+    sweep_paths: List[str] = typer.Option(default_factory=list, help='Paths to sweep files'),
     num_trials: int = typer.Option(50, help='Number of trials to run')
 ) -> None:
     dataloader_config = DataLoaderConfig.from_yaml_files(config_paths)

@@ -36,17 +36,17 @@ Let's examine an example.
 
 1. The proto
 ```proto
---8<-- "docs/snippets/proto/proto_intro.proto:8:17"
+--8<-- "docs/snippets/proto/quickstart_a.proto"
 ```
 
 2. The generated base model
 ```py { .generated-code }
---8<-- "docs/snippets/src/pgml_out/proto_intro_base.py:5:15"
+--8<-- "docs/snippets/src/pgml_out/quickstart_a_base.py"
 ```
 
 3. The generated patch model
 ```py { .generated-code }
---8<-- "docs/snippets/src/pgml_out/proto_intro_patch.py:5:19"
+--8<-- "docs/snippets/src/pgml_out/quickstart_a_patch.py"
 ```
 
 As you can observe in (3), we can choose to omit any fields that we don't want to change, as their defaults are set to `None`.

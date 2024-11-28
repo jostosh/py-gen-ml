@@ -28,9 +28,6 @@
 - **Minimal Change Amplification**: Automatically generated code reduces cascading manual changes when modifying configurations.
 - **Flexible Patching**: Easily modify base configurations with patches for quick experimentation.
 - **Flexible YAML**: Use human-readable YAML with support for advanced references within and across files.
-
-**🧪 Experiment Management**:
-
 - **Hyperparameter Sweeps**: Effortlessly define and manage hyperparameter tuning.
 - **CLI Argument Parsing**: Automatically generate command-line interfaces from your configuration schemas.
 
@@ -46,6 +43,8 @@ To start using py-gen-ml, you can install it via pip:
 ```console
 pip install py-gen-ml
 ```
+
+For a quick example of how to use py-gen-ml in your project, check out our [Quick Start Guide](https://jostosh.github.io/py-gen-ml/quickstart/).
 
 # 💡 Motivation
 
@@ -74,3 +73,11 @@ Consider using `py-gen-ml` when you need to:
 - 🔬 Streamline experiment running and hyperparameter tuning
 - 🛡️ Reduce the impact of configuration changes on your workflow
 - 💻 Leverage type safety and IDE support in your ML workflows
+
+## 📚 Where to go from here
+
+- [Quickstart](https://jostosh.github.io/py-gen-ml/quickstart/): A quick intro to the most important concepts.
+- [Command Line Interface](https://jostosh.github.io/py-gen-ml/guides/cli_argument_parsing/): How to use the generated CLI parser.
+- [Parameter Sweeps](https://jostosh.github.io/py-gen-ml/guides/sweep/): How to run parameter sweeps.
+- [Generated factories](https://jostosh.github.io/py-gen-ml/guides/builders/): How to generate factories to instantiate your classes.
+- [Cifar 10 example project](https://jostosh.github.io/py-gen-ml/example_projects/cifar10/): A more elaborate example of a machine learning project using `py-gen-ml`.

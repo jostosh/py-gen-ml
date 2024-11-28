@@ -21,8 +21,8 @@ def run_trial(
 
 @pgml.pgml_cmd(app=app)
 def main(
-    config_paths: list[str] = typer.Option(..., help="Paths to config files"),
-    sweep_paths: list[str] = typer.Option(
+    config_paths: typing.List[str] = typer.Option(..., help="Paths to config files"),
+    sweep_paths: typing.List[str] = typer.Option(
         default_factory=list,
         help="Paths to sweep files"
     ),

@@ -9,13 +9,13 @@ from . import oneof_demo_base as base
 class TransformerSweep(pgml.Sweeper[patch.TransformerPatch]):
     """Transformer configuration"""
 
-    num_layers: pgml.IntSweep | None = None
+    num_layers: typing.Optional[pgml.IntSweep] = None
     """Number of layers"""
 
-    num_heads: pgml.IntSweep | None = None
+    num_heads: typing.Optional[pgml.IntSweep] = None
     """Number of heads"""
 
-    activation: pgml.StrSweep | None = None
+    activation: typing.Optional[pgml.StrSweep] = None
     """Activation function"""
 
 
@@ -28,13 +28,13 @@ TransformerSweepField = typing.Union[
 class ConvBlockSweep(pgml.Sweeper[patch.ConvBlockPatch]):
     """Conv block"""
 
-    out_channels: pgml.IntSweep | None = None
+    out_channels: typing.Optional[pgml.IntSweep] = None
     """Number of output channels"""
 
-    kernel_size: pgml.IntSweep | None = None
+    kernel_size: typing.Optional[pgml.IntSweep] = None
     """Kernel size"""
 
-    activation: pgml.StrSweep | None = None
+    activation: typing.Optional[pgml.StrSweep] = None
     """Activation function"""
 
 
@@ -47,7 +47,7 @@ ConvBlockSweepField = typing.Union[
 class ConvNetSweep(pgml.Sweeper[patch.ConvNetPatch]):
     """Convolutional neural network configuration"""
 
-    layers: ConvBlockSweepField | None = None
+    layers: typing.Optional[ConvBlockSweepField] = None
     """Conv layer configuration"""
 
 
@@ -60,8 +60,8 @@ ConvNetSweepField = typing.Union[
 class ModelSweep(pgml.Sweeper[patch.ModelPatch]):
     """Model configuration"""
 
-    backbone: pgml.Sweeper[TransformerSweepField] | pgml.Sweeper[ConvNetSweepField
-                                                                ] | None = None
+    backbone: typing.Optional[typing.Union[pgml.Sweeper[TransformerSweepField],
+                                           pgml.Sweeper[ConvNetSweepField]]] = None
 
 
 

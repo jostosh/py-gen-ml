@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, replace
-from typing import Any, Final, TypeVar
+from typing import Any, Final, Optional, TypeVar
 
 from pydantic import BaseModel
 from pydantic.json_schema import GenerateJsonSchema, JsonSchemaMode
@@ -26,16 +26,13 @@ class ObjectStep:
     name: str
     """The name of the step."""
 
-    index: int | None = None
+    index: Optional[int] = None
     """The index of the step."""
 
 
 @dataclass
 class ObjectPath:
     """A path to an object."""
-
-    steps: list[ObjectStep] = field(default_factory=list)
-    """The steps to the object."""
 
     steps: list[ObjectStep] = field(default_factory=list)
     """The steps to the object."""
@@ -82,7 +79,7 @@ class ObjectPath:
         Returns:
             ObjectPath: The created object path.
         """
-        steps = list[ObjectStep]()
+        steps: list[ObjectStep] = []
 
         path = path.removeprefix('#')
         if path.startswith('/'):

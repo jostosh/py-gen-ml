@@ -18,7 +18,7 @@ logger = setup_logger(__name__)
 class _Plugin:
 
     def __init__(self) -> None:
-        self._gen_tasks = list[GenTask]()
+        self._gen_tasks: list[GenTask] = []
 
     def generate(self, plugin: protogen.Plugin) -> None:
         """

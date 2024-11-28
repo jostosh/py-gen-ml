@@ -2,59 +2,48 @@
 
 ## 🌟 Introduction
 
-`py-gen-ml` leverages protobufs, a powerful structured data format, to define the schema for your configuration. Protobufs are language-neutral, platform-neutral, and extensible, making them ideal for serializing and deserializing data. The protobuf ecosystem allows for custom plugins to generate code for various serialization formats. `py-gen-ml` takes advantage of this flexibility to generate Pydantic models and JSON schemas, creating a robust and versatile configuration system.
+`py-gen-ml` leverages [protobufs](https://developers.google.com/protocol-buffers) to define the schema for your configuration. `py-gen-ml` uses the language agnostic schema to generate code and JSON schemas from the protobuf definitions, creating a robust and versatile configuration system for machine learning projects.
 
 !!! note
     While `py-gen-ml` currently doesn't fully utilize the language-neutral or platform-neutral features of protobuf, these capabilities are available for future expansion. If you're new to protobufs, you can learn more about them [here](https://developers.google.com/protocol-buffers).
 
 ## 📝 Defining Your Protobuf
 
-To create a protobuf, you'll need to write a `.proto` file. This file contains the definition of the data structure you want to use in your configuration.
+To create a protobuf schema, you'll need to write a `.proto` file. This file contains the definition of the data structure you want to use in your configuration. The protobuf counterpart of a data object is called a `message`. Most generated files we'll see later on will contain one class per message in the protobuf file.
 
 Here's a simple example of a protobuf definition:
 
 ```proto
-// proto_intro.proto
-syntax = "proto3";
-
-package example;
-
-import "py_gen_ml/extensions.proto";
-
-message MLP {
-    int64 num_layers = 1;
-    int64 num_units = 2;
-    string activation = 3;
-}
+--8<-- "docs/snippets/proto/quickstart_a.proto"
 ```
 
 ## 🛠️ Generating Configuration Utilities
 
-With your protobuf defined, you can now generate configuration utilities using this command:
+With your protobuf defined, you can now **✨ generate ✨** configuration objects using this command:
 
 ```console
-py-gen-ml proto_intro.proto
+py-gen-ml quickstart_a.proto
 ```
 
-By default, the generated code will be written to `src/pgml_out`. To customize this and explore other options, check out the [py-gen-ml command](py-gen-ml-command.md) documentation. The command will generate four files:
+By default, the generated code will be written to `src/pgml_out`. To customize this and explore other options, check out the [py-gen-ml command](py-gen-ml-command.md) documentation. The command will generate the following files:
 
-- `proto_intro_base.py`
-- `proto_intro_patch.py`
-- `proto_intro_sweep.py`
-- `proto_intro_cli_args.py`
+- `quickstart_a_base.py`
+- `quickstart_a_patch.py`
+- `quickstart_a_sweep.py`
 
 Let's dive into the details of each file.
 
 ## 🧩 Generated Code
 
-### 📊 `proto_intro_base.py`
+### 📊 Generated Base Model
+One of the files generated is a Pydantic model for your main configuration. 
 ```python { .generated-code }
---8<-- "docs/snippets/src/pgml_out/proto_intro_base.py"
+--8<-- "docs/snippets/src/pgml_out/quickstart_a_base.py"
 ```
 
-This file defines a Pydantic model for your configuration that directly corresponds to the protobuf message. Use this file to load and validate configuration files written in YAML format.
+ Use this file to load and validate configuration files written in YAML format. As you can see, it inherits from `pgml.YamlBaseModel` which is a convenience base class that provides methods for loading configurations from YAML files.
 
-For instance, the following YAML file will be validated according to the schema defined in `proto_intro_base.py`:
+For instance, the following YAML file will be validated according to the schema defined in `quickstart_a_base.py`:
 
 ```yaml
 # example.yaml
@@ -63,54 +52,64 @@ num_units: 100
 activation: relu
 ```
 
-### 🔧 `proto_intro_patch.py`
-
-```python { .generated-code }
---8<-- "docs/snippets/src/pgml_out/proto_intro_patch.py"
-```
-
-This file defines a Pydantic model for your patch configuration. All fields are optional, allowing you to load and validate patch files written in YAML format.
-
-For example, this YAML file will be validated according to the schema in `proto_intro_patch.py`:
-
-```yaml
-# example_patch.yaml
-num_layers: 3
-```
-
-This is particularly useful for updating only a subset of the configuration. You can easily load a base configuration and apply patches using the `.from_yaml_files` method implemented for every descendant of `pgml.YamlBaseModel`:
+You can load the configuration like so:
 
 ```python
 # example.py
-from pgml_out.proto_intro_base import MLP
-from pgml_out.proto_intro_patch import MLPPatch
+from pgml_out.quickstart_a_base import MLPQuickstart
 
-config_with_patches = MLP.from_yaml_files(["example.yaml", "example_patch.yaml"])
+config = MLPQuickstart.from_yaml_file("example.yaml")
 ```
 
-### 🔍 `proto_intro_sweep.py`
+
+### 🔧 Generated Patch
 
 ```python { .generated-code }
---8<-- "docs/snippets/src/pgml_out/proto_intro_sweep.py"
+--8<-- "docs/snippets/src/pgml_out/quickstart_a_patch.py"
 ```
 
-This file defines a `pgml.Sweeper` for your configuration, enabling you to sweep over the values of your configuration. Define sweeps as additional YAML files that are applied as patches on top of the base configuration.
+This file defines a Pydantic model for your patch configuration. All fields are optional. This allows you to express experiments in terms of changes with respect to a base configuration. 
 
-Here's an example YAML file that will be validated according to the schema in `proto_intro_sweep.py`:
+Consequently:
+
+- Changes are small and additive
+- You can easily compose multiple patches together
+
+You can load a base configuration and apply patches using the `.from_yaml_files` method. This method is automatically inherited from `pgml.YamlBaseModel`:
+
+```python
+# example.py
+from pgml_out.quickstart_a_base import MLPQuickstart
+from pgml_out.quickstart_a_patch import MLPQuickstartPatch
+
+config_with_patches = MLPQuickstart.from_yaml_files(["example.yaml", "example_patch.yaml"])
+```
+
+### 🔍 Generated Sweep Configuration
+
+Upon running the command, you'll also get a `quickstart_a_sweep.py` file:
+
+```python { .generated-code }
+--8<-- "docs/snippets/src/pgml_out/quickstart_a_sweep.py"
+```
+
+This file defines a `pgml.Sweeper` for your configuration, enabling you to sweep over the values of your configuration. `py_gen_ml` comes with tooling to traverse the config and construct a search space for your trials. Currently, it supports [Optuna](https://optuna.org/) but we'll add more frameworks in the future.
+
+Here's an example YAML file that will be validated according to the schema in `quickstart_a_sweep.py`:
 
 ```yaml
 # example_sweep.yaml
 num_layers:
-    low: 1
-    high: 5
+  low: 1
+  high: 5
 ```
 
 To run a hyperparameter sweep, you can use the OptunaSampler:
 
 ```python
 # example.py
-from pgml_out.proto_intro_base import MLP
-from pgml_out.proto_intro_sweep import MLPSweep
+from pgml_out.quickstart_base import MLP
+from pgml_out.quickstart_sweep import MLPSweep
 
 def train_model(config: MLP) -> float:
     """Train a model and return the accuracy"""
@@ -129,120 +128,54 @@ if __name__ == "__main__":
     study.optimize(objective, n_trials=100)
 ```
 
-### 💻 `proto_intro_cli_args.py`
+## 🪄 Generating a Command Line Interface
 
-```python
-# proto_intro_cli_args.py
-# Autogenerated code. DO NOT EDIT.
-import py_gen_ml as pgml
-import typing
+To generate a command line interface, you'll need to add the following option to your protobuf:
 
-import pydantic
-import typer
+```proto
+option (pgml.cli).enable = true;
+```
 
-from . import proto_intro_base as base
+Like so:
 
+```proto hl_lines="6 10"
+--8<-- "docs/snippets/proto/quickstart_b.proto"
+```
 
-class MLPArgs(pgml.YamlBaseModel):
-    """Multi-layer perceptron configuration"""
+When running `py-gen-ml`, you'll now get a `quickstart_b_cli_args.py` file:
 
-    num_layers: typing.Annotated[typing.Optional[int], typer.Option(help="Number of layers"), pydantic.Field(None)]
-    """Number of layers"""
+```console
+py-gen-ml quickstart_b.proto
+```
 
-    num_units: typing.Annotated[typing.Optional[int], typer.Option(help="Number of units"), pydantic.Field(None)]
-    """Number of units"""
+### 💻 Generated CLI
 
-    activation: typing.Annotated[typing.Optional[str], typer.Option(help="Activation function"), pydantic.Field(None)]
-    """Activation function"""
+```python { .generated-code }
+--8<-- "docs/snippets/src/pgml_out/quickstart_b_cli_args.py"
 ```
 
 This file defines a Pydantic model for your command line arguments. We've chosen to use [typer](https://typer.tiangolo.com/) to handle command line arguments, and we've added a convenience function to simplify the use of this class.
 
-Here's how you can use it in your script:
+The easiest way to use the CLI is to copy the generated entrypoint script. The entrypoint name is the snake case version of the name of the message with the `pgml.cli` option with `_entrypoint.py` appended.
 
-```python
-# example.py
-from pgml_out.proto_intro_base import MLP
-from pgml_out.proto_intro_cli_args import MLPArgs
-import py_gen_ml as pgml
-import typer
+### 🚀 Generated Entrypoint
 
-app = typer.Typer(pretty_exceptions_enable=False)
-
-@pgml.pgml_cmd(app)
-def main(other_arg: str = "other_arg", config_path: str = "example.yaml", cli_args: MLPArgs = typer.Option(...)) -> None:
-    print(f"other_arg: {other_arg}")
-    print(f"num_layers: {cli_args.num_layers}")
-    print(f"num_units: {cli_args.num_units}")
-    print(f"activation: {cli_args.activation}")
-
-    config = MLP.from_yaml_file(config_path)
-    config = config.apply_cli_args(cli_args)
-    print(f"config: {config}")
-
-
-if __name__ == "__main__":
-    app()
+```python { .generated-code }
+--8<-- "docs/snippets/src/pgml_out/mlp_quickstart_entrypoint.py"
 ```
+
+The magic happens in the `pgml.pgml_cmd` decorator. This decorator is used to wrap the `main` function and add the necessary arguments and options to the CLI.
 
 Now you can run your script with command line arguments and configuration files:
 
 ```console
-python example.py --help
-```
-
-This will display a helpful usage guide:
-
-```
- Usage: example.py [OPTIONS]
-
-╭─ Options ─────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --other-arg                 TEXT                             [default: other_arg]                     │
-│ --config-path               TEXT                             [default: example.yaml]                  │
-│ --num-layers                INTEGER                          Number of layers [default: None]         │
-│ --num-units                 INTEGER                          Number of units [default: None]          │
-│ --activation                TEXT                             Activation function [default: None]      │
-│ --install-completion        [bash|zsh|fish|powershell|pwsh]  Install completion for the specified     │
-│                                                              shell.                                   │
-│                                                              [default: None]                          │
-│ --show-completion           [bash|zsh|fish|powershell|pwsh]  Show completion for the specified shell, │
-│                                                              to copy it or customize the              │
-│                                                              installation.                            │
-│                                                              [default: None]                          │
-│ --help                                                       Show this message and exit.              │
-╰───────────────────────────────────────────────────────────────────────────────────────────────────────╯
+python mlp_quickstart_entrypoint.py --help
 ```
 
 You can set parameters via both command line arguments and configuration files:
 
 ```console
-python example.py --num-layers 3
-```
-
-This will set the `num_layers` parameter to `3`, while other parameters will be set to the values in the configuration file. The script will output:
-
-```
-other_arg: other_arg
-num_layers: 3
-num_units: None
-activation: None
-config: num_layers=3 num_units=100 activation='relu'
-```
-
-Other arguments can be easily configured as well:
-
-```console
-python example.py --other-arg "other_arg_2"
-```
-
-Which will print:
-
-```
-other_arg: other_arg_2
-num_layers: None
-num_units: None
-activation: None
-config: num_layers=2 num_units=100 activation='relu'
+python mlp_quickstart_entrypoint.py --config-paths example.yaml --num-layers 3
 ```
 
 With these tools at your disposal, you're now ready to create flexible and powerful configurations for your machine learning projects using `py-gen-ml`! If you're looking for a more complex example, check out the [CIFAR 10 example project](example_projects/cifar10.md).

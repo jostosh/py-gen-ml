@@ -9,19 +9,19 @@ from . import dataloader_base as base
 class DataLoaderConfigSweep(pgml.Sweeper[patch.DataLoaderConfigPatch]):
     """DataLoader configuration"""
 
-    batch_size: pgml.IntSweep | None = None
+    batch_size: typing.Optional[pgml.IntSweep] = None
     """Batch size"""
 
-    num_workers: pgml.IntSweep | None = None
+    num_workers: typing.Optional[pgml.IntSweep] = None
     """Number of workers"""
 
-    pin_memory: pgml.BoolSweep | None = None
+    pin_memory: typing.Optional[pgml.BoolSweep] = None
     """Pin memory"""
 
-    persistent_workers: pgml.BoolSweep | None = None
+    persistent_workers: typing.Optional[pgml.BoolSweep] = None
     """Persistent workers"""
 
-    prefetch_factor: pgml.IntSweep | None = None
+    prefetch_factor: typing.Optional[pgml.IntSweep] = None
     """Prefetch factor"""
 
 

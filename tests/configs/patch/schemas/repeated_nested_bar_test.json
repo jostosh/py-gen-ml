@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "NestedBarTestPatch": {
+      "properties": {
+        "foo_0": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NestedFooTestPatch"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null
+        },
+        "foo_1": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NestedFooTestPatch"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "NestedBarTestPatch",
+      "type": "object"
+    },
+    "NestedFooTestPatch": {
+      "properties": {
+        "foo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Foo"
+        }
+      },
+      "title": "NestedFooTestPatch",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "bar": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/NestedBarTestPatch"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Bar"
+    },
+    "_defs_": {}
+  },
+  "title": "RepeatedNestedBarTestPatch",
+  "type": "object"
+}

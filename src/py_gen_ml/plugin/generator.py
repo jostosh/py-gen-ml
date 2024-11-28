@@ -8,6 +8,7 @@ import protogen
 from yapf.yapflib.yapf_api import FormatCode
 
 from py_gen_ml.logging.setup_logger import setup_logger
+from py_gen_ml.plugin.common import field_requires_typing_import
 from py_gen_ml.yaml.object_path import InsertAnyOfWithObjectPath
 
 logger = setup_logger(__name__)
@@ -62,7 +63,7 @@ class Generator(abc.ABC):
             gen (protogen.Plugin): The protogen plugin instance.
         """
         self._gen = gen
-        self._json_schema_gen_tasks = list[GenTask]()
+        self._json_schema_gen_tasks: list[GenTask] = []
         self._source_root = self._gen.parameter['source_root']
         self._output_dir = self._gen.parameter['output_dir']
         self._configs_dir = self._gen.parameter['configs_dir']
@@ -76,6 +77,13 @@ class Generator(abc.ABC):
         """
         for file in self._gen.files_to_generate:
             self._generate_code_for_file(file)
+
+    def _requires_typing_import(self, file: protogen.File) -> bool:
+        for message in file.messages:
+            for field in message.fields:
+                if field_requires_typing_import(field):
+                    return True
+        return False
 
     @abc.abstractmethod
     def _generate_code_for_file(self, file: protogen.File) -> None:
@@ -99,7 +107,7 @@ class Generator(abc.ABC):
         Get the list of JSON schema generation tasks.
 
         Returns:
-            list[GenTask]: The list of JSON schema generation tasks.
+            List[GenTask]: The list of JSON schema generation tasks.
         """
         return self._json_schema_gen_tasks
 

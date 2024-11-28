@@ -1,7 +1,8 @@
 import os
 import pathlib
+import typing
 import uuid
-from typing import Any
+from typing import Any, Optional
 
 import optuna
 import pgml_out.config_base as base
@@ -35,7 +36,7 @@ class Trainer:
         accuracy_metric_test: torchmetrics.classification.MulticlassAccuracy,
         train_loss_metric: torchmetrics.MeanMetric,
         test_loss_metric: torchmetrics.MeanMetric,
-        trial: optuna.Trial | None = None,
+        trial: Optional[optuna.Trial] = None,
     ) -> None:
         self._train_loader = train_loader
         self._test_loader = test_loader
@@ -102,7 +103,7 @@ def get_accuracy_metric(num_classes: int) -> torchmetrics.Metric:
     return torchmetrics.classification.MulticlassAccuracy(num_classes=num_classes).to(device)
 
 
-def train_model(project: base.Project, trial: optuna.Trial | None = None) -> float:
+def train_model(project: base.Project, trial: typing.Optional[optuna.Trial] = None) -> float:
     rich.print(project)
 
     transform = get_transform()

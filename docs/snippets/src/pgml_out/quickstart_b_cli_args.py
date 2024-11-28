@@ -5,10 +5,10 @@ import typing
 import pydantic
 import typer
 
-from . import proto_intro_base as base
+from . import quickstart_b_base as base
 
 
-class MLPArgs(pgml.YamlBaseModel):
+class MLPQuickstartArgs(pgml.YamlBaseModel):
     """Multi-layer perceptron configuration"""
 
     num_layers: typing.Annotated[

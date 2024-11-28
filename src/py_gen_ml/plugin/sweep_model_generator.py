@@ -185,7 +185,7 @@ class SweepModelGenerator(Generator):
             str: The sweep annotation as a string.
         """
         annotation = self.field_to_sweep_type(field)
-        return f'{annotation} | None = None'
+        return f'typing.Optional[{annotation}] = None'
 
     def field_to_sweep_type(self, field: protogen.Field) -> str:
         """
@@ -200,43 +200,42 @@ class SweepModelGenerator(Generator):
         Returns:
             str: The sweep type as a string.
         """
-        match field.kind:
-            case protogen.Kind.MESSAGE:
-                return some(field.message).py_ident.py_name + 'SweepField'
-            case protogen.Kind.ENUM:
-                return some(field.enum).py_ident.py_name + 'SweepField'
-            case protogen.Kind.DOUBLE:
-                return f'{PGML_ALIAS}.FloatSweep'
-            case protogen.Kind.FLOAT:
-                return f'{PGML_ALIAS}.FloatSweep'
-            case protogen.Kind.INT64:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.UINT64:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.INT32:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.FIXED64:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.FIXED32:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.BOOL:
-                return f'{PGML_ALIAS}.BoolSweep'
-            case protogen.Kind.STRING:
-                return f'{PGML_ALIAS}.StrSweep'
-            case protogen.Kind.BYTES:
-                return f'{PGML_ALIAS}.BytesSweep'
-            case protogen.Kind.UINT32:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.SFIXED32:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.SFIXED64:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.SINT32:
-                return f'{PGML_ALIAS}.IntSweep'
-            case protogen.Kind.SINT64:
-                return f'{PGML_ALIAS}.IntSweep'
-            case _:
-                raise ValueError(f'Unknown field kind: {field.kind}')
+        if field.kind == protogen.Kind.MESSAGE:
+            return some(field.message).py_ident.py_name + 'SweepField'
+        elif field.kind == protogen.Kind.ENUM:
+            return some(field.enum).py_ident.py_name + 'SweepField'
+        elif field.kind == protogen.Kind.DOUBLE:
+            return f'{PGML_ALIAS}.FloatSweep'
+        elif field.kind == protogen.Kind.FLOAT:
+            return f'{PGML_ALIAS}.FloatSweep'
+        elif field.kind == protogen.Kind.INT64:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.UINT64:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.INT32:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.FIXED64:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.FIXED32:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.BOOL:
+            return f'{PGML_ALIAS}.BoolSweep'
+        elif field.kind == protogen.Kind.STRING:
+            return f'{PGML_ALIAS}.StrSweep'
+        elif field.kind == protogen.Kind.BYTES:
+            return f'{PGML_ALIAS}.BytesSweep'
+        elif field.kind == protogen.Kind.UINT32:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.SFIXED32:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.SFIXED64:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.SINT32:
+            return f'{PGML_ALIAS}.IntSweep'
+        elif field.kind == protogen.Kind.SINT64:
+            return f'{PGML_ALIAS}.IntSweep'
+        else:
+            raise ValueError(f'Unknown field kind: {field.kind}')
 
     def _generate_oneof_field(self, g: protogen.GeneratedFile, oneof: protogen.OneOf) -> None:
         oneof_name = oneof.proto.name
@@ -245,5 +244,5 @@ class SweepModelGenerator(Generator):
 
     def _oneof_to_annotation(self, oneof: protogen.OneOf) -> str:
         types = [f'{PGML_ALIAS}.Sweeper[{self.field_to_sweep_type(field)}]' for field in oneof.fields]
-        union_type = ' | '.join(types)
-        return f'{union_type} | None = None'
+        union_type = ', '.join(types)
+        return f'typing.Optional[typing.Union[{union_type}]] = None'

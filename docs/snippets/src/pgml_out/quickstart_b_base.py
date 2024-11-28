@@ -2,7 +2,7 @@
 import py_gen_ml as pgml
 
 
-class MLP(pgml.YamlBaseModel):
+class MLPQuickstart(pgml.YamlBaseModel):
     """Multi-layer perceptron configuration"""
 
     num_layers: int

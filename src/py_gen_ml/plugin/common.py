@@ -1,6 +1,7 @@
 import re
 import textwrap
-from typing import Final, Literal, TypeVar
+import typing
+from typing import Final, Literal, Optional, TypeVar, Union
 
 import google.protobuf.json_format
 import more_itertools
@@ -20,10 +21,10 @@ T = TypeVar('T')
 
 
 def get_extension_value(
-    element: protogen.Field | protogen.Message | protogen.File,
+    element: Union[protogen.Field, protogen.Message, protogen.File],
     extension_name: str,
     extension_type: type[T],
-) -> T | None:
+) -> Optional[T]:
     """
     Get the value of an extension field from the proto options.
 
@@ -32,14 +33,14 @@ def get_extension_value(
     If found, it returns the value of the extension field. Otherwise, it returns None.
 
     Args:
-        element (protogen.Field | protogen.Message | protogen.File): The element to search for the extension field.
+        element (typing.Union[protogen.Field, protogen.Message, protogen.File]): The element to search for the extension field.
         extension_name (str): The name of the extension field to search for.
         extension_type (type[T]): The type of the extension field.
 
     Returns:
-        T | None: The value of the extension field if found, otherwise None.
+        Optional[T]: The value of the extension field if found, otherwise None.
     """
-    option: tuple[FieldDescriptor, T] | None = more_itertools.first_true(
+    option: typing.Optional[tuple[FieldDescriptor, T]] = more_itertools.first_true(
         element.proto.options.ListFields(),
         None,
         lambda x: x[0].name == extension_name,
@@ -50,7 +51,7 @@ def get_extension_value(
     return option[1]
 
 
-def field_to_default(field: protogen.Field, import_prefix: str = '') -> str | None:
+def field_to_default(field: protogen.Field, import_prefix: str = '') -> typing.Optional[str]:
     """
     Convert the default value of a field to its corresponding Python representation.
 
@@ -63,66 +64,65 @@ def field_to_default(field: protogen.Field, import_prefix: str = '') -> str | No
         import_prefix (str): The prefix to use for imports in the generated code.
 
     Returns:
-        str | None: The default value of the field as a Python string, or None if no default is set.
+        Optional[str]: The default value of the field as a Python string, or None if no default is set.
     """
     proto_default = get_extension_value(field, 'default', FieldDefaults)
     if proto_default is None:
         return None
-    match field.kind:
-        case protogen.Kind.DOUBLE:
-            default_field_name = 'double'
-            default_value = proto_default.double
-        case protogen.Kind.FLOAT:
-            default_field_name = 'float'
-            default_value = proto_default.float
-        case protogen.Kind.INT64:
-            default_field_name = 'int64'
-            default_value = proto_default.int64
-        case protogen.Kind.UINT64:
-            default_field_name = 'uint64'
-            default_value = proto_default.uint64
-        case protogen.Kind.INT32:
-            default_field_name = 'int32'
-            default_value = proto_default.int32
-        case protogen.Kind.FIXED64:
-            default_field_name = 'fixed64'
-            default_value = proto_default.fixed64
-        case protogen.Kind.FIXED32:
-            default_field_name = 'fixed32'
-            default_value = proto_default.fixed32
-        case protogen.Kind.BOOL:
-            default_field_name = 'bool'
-            default_value = proto_default.bool
-        case protogen.Kind.STRING:
-            default_field_name = 'string'
-            default_value = f"\"{proto_default.string}\""
-        case protogen.Kind.BYTES:
-            default_field_name = 'bytes'
-            default_value = proto_default.bytes
-        case protogen.Kind.UINT32:
-            default_field_name = 'uint32'
-            default_value = proto_default.uint32
-        case protogen.Kind.SFIXED32:
-            default_field_name = 'sfixed32'
-            default_value = proto_default.sfixed32
-        case protogen.Kind.SFIXED64:
-            default_field_name = 'sfixed64'
-            default_value = proto_default.sfixed64
-        case protogen.Kind.SINT32:
-            default_field_name = 'sint32'
-            default_value = proto_default.sint32
-        case protogen.Kind.SINT64:
-            default_field_name = 'sint64'
-            default_value = proto_default.sint64
-        case protogen.Kind.ENUM:
-            default_field_name = 'enum'
-            enum = some(field.enum)
-            names = [v.name for v in enum.proto.value]
-            if proto_default.enum not in names:
-                raise ValueError(f'Invalid enum value: {proto_default.enum}')
-            default_value = f'{import_prefix}{enum.py_ident.py_name}.{proto_default.enum}'
-        case _:
-            raise ValueError(f'Default not supported for kind: {field.kind}')
+    if field.kind == protogen.Kind.DOUBLE:
+        default_field_name = 'double'
+        default_value = proto_default.double
+    elif field.kind == protogen.Kind.FLOAT:
+        default_field_name = 'float'
+        default_value = proto_default.float
+    elif field.kind == protogen.Kind.INT64:
+        default_field_name = 'int64'
+        default_value = proto_default.int64
+    elif field.kind == protogen.Kind.UINT64:
+        default_field_name = 'uint64'
+        default_value = proto_default.uint64
+    elif field.kind == protogen.Kind.INT32:
+        default_field_name = 'int32'
+        default_value = proto_default.int32
+    elif field.kind == protogen.Kind.FIXED64:
+        default_field_name = 'fixed64'
+        default_value = proto_default.fixed64
+    elif field.kind == protogen.Kind.FIXED32:
+        default_field_name = 'fixed32'
+        default_value = proto_default.fixed32
+    elif field.kind == protogen.Kind.BOOL:
+        default_field_name = 'bool'
+        default_value = proto_default.bool
+    elif field.kind == protogen.Kind.STRING:
+        default_field_name = 'string'
+        default_value = f"\"{proto_default.string}\""
+    elif field.kind == protogen.Kind.BYTES:
+        default_field_name = 'bytes'
+        default_value = proto_default.bytes
+    elif field.kind == protogen.Kind.UINT32:
+        default_field_name = 'uint32'
+        default_value = proto_default.uint32
+    elif field.kind == protogen.Kind.SFIXED32:
+        default_field_name = 'sfixed32'
+        default_value = proto_default.sfixed32
+    elif field.kind == protogen.Kind.SFIXED64:
+        default_field_name = 'sfixed64'
+        default_value = proto_default.sfixed64
+    elif field.kind == protogen.Kind.SINT32:
+        default_field_name = 'sint32'
+        default_value = proto_default.sint32
+    elif field.kind == protogen.Kind.SINT64:
+        default_field_name = 'sint64'
+        default_value = proto_default.sint64
+    elif field.kind == protogen.Kind.ENUM:
+        default_field_name = 'enum'
+        enum = some(field.enum)
+        names = [v.name for v in enum.proto.value]
+        if proto_default.enum not in names:
+            raise ValueError(f'Invalid enum value: {proto_default.enum}')
+        default_value = f'{import_prefix}{enum.py_ident.py_name}.{proto_default.enum}'
+    else:
+        raise ValueError(f'Default not supported for kind: {field.kind}')
     if field.kind in {
         protogen.Kind.FLOAT,
         protogen.Kind.DOUBLE,
@@ -135,7 +135,7 @@ def field_to_default(field: protogen.Field, import_prefix: str = '') -> str | No
 
 def generate_docstring(
     g: protogen.GeneratedFile,
-    element: protogen.Field | protogen.Message | protogen.Enum | protogen.EnumValue | protogen.OneOf,
+    element: Union[protogen.Field, protogen.Message, protogen.Enum, protogen.EnumValue, protogen.OneOf],
 ) -> None:
     """
     Generate a docstring for the given element.
@@ -145,7 +145,7 @@ def generate_docstring(
 
     Args:
         g (protogen.GeneratedFile): The generated file to write the docstring to.
-        element (protogen.Field | protogen.Message | protogen.Enum | protogen.EnumValue): The element to generate a docstring for.
+        element (Union[protogen.Field, protogen.Message, protogen.Enum, protogen.EnumValue]): The element to generate a docstring for.
     """
     if not element.location.leading_comments:
         return
@@ -163,7 +163,7 @@ def generate_docstring(
 
 def get_element_subgraphs(
     file: protogen.File,
-    include_elements: set[Literal[protogen.Kind.MESSAGE, protogen.Kind.ENUM]] | None = None,
+    include_elements: Optional[set[Literal[protogen.Kind.MESSAGE, protogen.Kind.ENUM]]] = None,
 ) -> list[networkx.MultiDiGraph]:
     """
     Get the message subgraphs from a file.
@@ -176,7 +176,7 @@ def get_element_subgraphs(
         file (protogen.File): The file to get the message subgraphs from.
 
     Returns:
-        list[networkx.MultiDiGraph]: The list of message subgraphs.
+        List[networkx.MultiDiGraph]: The list of message subgraphs.
     """
     if include_elements is None:
         include_elements = {protogen.Kind.MESSAGE}
@@ -243,3 +243,27 @@ def py_import_for_source_file_derived_file(file: protogen.GeneratedFile, name: s
         str: The Python import path for the derived file.
     """
     return file._py_import_path._path.replace('_pb2', f'{name}')
+
+
+def field_requires_typing_import(field: protogen.Field) -> bool:
+    """
+    Determine if field requires a typing import.
+
+    Will be True if any of the following is true:
+    - Field is part of a oneof
+    - Field is optional
+    - Field is repeated
+
+    Args:
+        field (protogen.Field): Field to check.
+
+    Returns:
+        bool: True if annotating the field requires a typing import
+    """
+    if field.oneof is not None:
+        return True
+    if field.proto.proto3_optional:
+        return True
+    if field.is_list():
+        return True
+    return False

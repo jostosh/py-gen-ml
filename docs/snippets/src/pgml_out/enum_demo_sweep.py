@@ -15,10 +15,10 @@ ActivationSweepField = typing.Union[
 class MLPSweep(pgml.Sweeper[patch.MLPPatch]):
     """MLP configuration"""
 
-    activation: ActivationSweepField | None = None
+    activation: typing.Optional[ActivationSweepField] = None
     """Activation function"""
 
-    num_layers: pgml.IntSweep | None = None
+    num_layers: typing.Optional[pgml.IntSweep] = None
     """Number of layers"""
 
 

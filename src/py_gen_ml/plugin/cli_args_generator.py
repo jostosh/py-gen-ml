@@ -125,7 +125,7 @@ class CliArgsGenerator(Generator):
 
         generate_docstring(g, message)
 
-        explicit_paths = set[tuple[str, ...]]()
+        explicit_paths: set[tuple[str, ...]] = set()
         for arg in cli_proto.arg:
             path = arg.path.split('.')
             field = self._get_field_by_path(message, path)
@@ -201,8 +201,8 @@ class CliArgsGenerator(Generator):
         g.P(f'@{PGML_ALIAS}.pgml_cmd(app=app)')
         g.P(f'def main(')
         g.set_indent(4)
-        g.P(f'config_paths: list[str] = typer.Option(..., help="Paths to config files"),')
-        g.P(f'sweep_paths: list[str] = typer.Option(')
+        g.P(f'config_paths: typing.List[str] = typer.Option(..., help="Paths to config files"),')
+        g.P(f'sweep_paths: typing.List[str] = typer.Option(')
         g.set_indent(8)
         g.P('default_factory=list,')
         g.P('help="Paths to sweep files"')
@@ -267,7 +267,7 @@ class CliArgsGenerator(Generator):
             graph (networkx.MultiDiGraph): A networkx graph that contains the message.
 
         Returns:
-            dict[str, list[FieldPath]]: A mapping of field name to a list FieldPath objects.
+            dict[str, List[FieldPath]]: A mapping of field name to a list FieldPath objects.
         """
         fields = OrderedDict[str, list[FieldPath]]()
         for descendant in [message, *networkx.ancestors(graph, message)]:
@@ -316,15 +316,15 @@ class CliArgsGenerator(Generator):
 
         Args:
             field (protogen.Field): Field in the protobuf Message
-            path (list[str]): Path to the field in the base model that this field
+            path (List[str]): Path to the field in the base model that this field
                 maps to.
 
         Returns:
-            list[str]: A list of strings to append.
+            List[str]: A list of strings to append.
         """
         annotation = self.field_to_type(field)
         if field.is_list() and len(path) == 0:
-            annotation = f'list[{annotation}]'
+            annotation = f'List[{annotation}]'
         typer_option = ''
 
         if len(path) > 0:
@@ -348,7 +348,7 @@ class CliArgsGenerator(Generator):
 
         Args:
             message (protogen.Message): The message to get the field from.
-            path (list[str]): The path to the field.
+            path (List[str]): The path to the field.
 
         Returns:
             protogen.Field: The field at the given path.
@@ -378,40 +378,39 @@ class CliArgsGenerator(Generator):
         Returns:
             str: A string representation of the type.
         """
-        match field.kind:
-            case protogen.Kind.MESSAGE:
-                return f'{some(field.message).py_ident.py_name}Args'
-            case protogen.Kind.DOUBLE:
-                return 'float'
-            case protogen.Kind.FLOAT:
-                return 'float'
-            case protogen.Kind.INT64:
-                return 'int'
-            case protogen.Kind.UINT64:
-                return 'int'
-            case protogen.Kind.INT32:
-                return 'int'
-            case protogen.Kind.FIXED64:
-                return 'int'
-            case protogen.Kind.FIXED32:
-                return 'int'
-            case protogen.Kind.BOOL:
-                return 'bool'
-            case protogen.Kind.STRING:
-                return 'str'
-            case protogen.Kind.BYTES:
-                return 'bytes'
-            case protogen.Kind.UINT32:
-                return 'int'
-            case protogen.Kind.ENUM:
-                return f'{BASE_MODEL_ALIAS}.{some(field.enum).py_ident.py_name}'
-            case protogen.Kind.SFIXED32:
-                return 'int'
-            case protogen.Kind.SFIXED64:
-                return 'int'
-            case protogen.Kind.SINT32:
-                return 'int'
-            case protogen.Kind.SINT64:
-                return 'int'
-            case _:
-                raise ValueError(f'Unknown field kind: {field.kind}')
+        if field.kind == protogen.Kind.MESSAGE:
+            return f'{some(field.message).py_ident.py_name}Args'
+        elif field.kind == protogen.Kind.DOUBLE:
+            return 'float'
+        elif field.kind == protogen.Kind.FLOAT:
+            return 'float'
+        elif field.kind == protogen.Kind.INT64:
+            return 'int'
+        elif field.kind == protogen.Kind.UINT64:
+            return 'int'
+        elif field.kind == protogen.Kind.INT32:
+            return 'int'
+        elif field.kind == protogen.Kind.FIXED64:
+            return 'int'
+        elif field.kind == protogen.Kind.FIXED32:
+            return 'int'
+        elif field.kind == protogen.Kind.BOOL:
+            return 'bool'
+        elif field.kind == protogen.Kind.STRING:
+            return 'str'
+        elif field.kind == protogen.Kind.BYTES:
+            return 'bytes'
+        elif field.kind == protogen.Kind.UINT32:
+            return 'int'
+        elif field.kind == protogen.Kind.ENUM:
+            return f'{BASE_MODEL_ALIAS}.{some(field.enum).py_ident.py_name}'
+        elif field.kind == protogen.Kind.SFIXED32:
+            return 'int'
+        elif field.kind == protogen.Kind.SFIXED64:
+            return 'int'
+        elif field.kind == protogen.Kind.SINT32:
+            return 'int'
+        elif field.kind == protogen.Kind.SINT64:
+            return 'int'
+        else:
+            raise ValueError(f'Unknown field kind: {field.kind}')

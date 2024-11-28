@@ -80,7 +80,7 @@ def generate(
         )
 
     # Expand any glob patterns in the proto_file arguments
-    proto_files = list[pathlib.Path]()
+    proto_files: list[pathlib.Path] = []
     for path in proto_file:
         as_path = pathlib.Path(path)
         if as_path.is_absolute():
@@ -93,7 +93,7 @@ def generate(
         raise ValueError('No protobuf files found.')
 
     if proto_root is None:
-        proto_file_parents = set[str]()
+        proto_file_parents: set[str] = set()
         for pf in proto_files:
             proto_file_parents.add(str(pf.parent))
         pgml_root = pathlib.Path(pgml.__file__).parent

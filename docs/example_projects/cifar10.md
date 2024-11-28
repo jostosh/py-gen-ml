@@ -16,7 +16,7 @@ The schema is defined in a proto file. This is the file that we will use to trai
 The model definition is a simple convolutional neural network followed by a multi-layer perceptron. In proto definition, it looks like this:
 
 ```proto
---8<-- "examples/cifar10/src/cifar10/config.proto:24:76"
+--8<-- "examples/cifar10/src/cifar10/config.proto:25:77"
 ```
 
 Concepts that we've used here are:
@@ -63,7 +63,7 @@ To launch the training, we create a function that can do a range of things:
 Even though this sounds like a lot, with `pg-gen-ml` it is actually quite easy to do. The main function now becomes:
 
 ```python title="Entrypoint" linenums="1"
---8<-- "examples/cifar10/src/cifar10/train.py:142:165"
+--8<-- "examples/cifar10/src/cifar10/train.py:145:167"
 ```
 
 Let's break this down a bit more.
@@ -166,12 +166,12 @@ We have defined the data module here:
 We have defined the trainer here:
 
 ```python title="Trainer"
---8<-- "examples/cifar10/src/cifar10/train.py:23:95"
+--8<-- "examples/cifar10/src/cifar10/train.py:26:98"
 ```
 
 ### Train function
 The train function that instantiates all the components and calls the trainer is defined here:
 
 ```python title="Train function"
---8<-- "examples/cifar10/src/cifar10/train.py:103:136"
+--8<-- "examples/cifar10/src/cifar10/train.py:106:139"
 ```

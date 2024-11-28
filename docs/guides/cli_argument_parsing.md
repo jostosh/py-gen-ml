@@ -32,23 +32,39 @@ python src/pgml_out/cli_demo_entrypoint.py --help
 
 Which should show something like:
 
-**Usage**:
-
-```console
-$ command-fn [OPTIONS]
+```console 
+                                                                            
+ Usage: cli_demo_entrypoint.py [OPTIONS]                                    
+                                                                            
+╭─ Options ────────────────────────────────────────────────────────────────╮
+│ *  --config-paths              TEXT     Paths to config files            │
+│                                         [default: None]                  │
+│                                         [required]                       │
+│    --sweep-paths               TEXT     Paths to sweep files             │
+│                                         [default: <class 'list'>]        │
+│    --num-epochs                INTEGER  Number of epochs. Maps to        │
+│                                         'num_epochs'                     │
+│                                         [default: None]                  │
+│    --path                      TEXT     Path to the dataset. Maps to     │
+│                                         'path'                           │
+│                                         [default: None]                  │
+│    --num-layers                INTEGER  Number of layers. Maps to        │
+│                                         'num_layers'                     │
+│                                         [default: None]                  │
+│    --num-workers               INTEGER  Number of workers for loading    │
+│                                         the dataset. Maps to             │
+│                                         'num_workers'                    │
+│                                         [default: None]                  │
+│    --install-completion                 Install completion for the       │
+│                                         current shell.                   │
+│    --show-completion                    Show completion for the current  │
+│                                         shell, to copy it or customize   │
+│                                         the installation.                │
+│    --help                               Show this message and exit.      │
+╰──────────────────────────────────────────────────────────────────────────╯
 ```
 
-**Options**:
-
-* `--config-paths TEXT`: Paths to config files  [required]
-* `--sweep-paths TEXT`: Paths to sweep files  [default: <class 'list'>]
-* `--path TEXT`: Path to the dataset. Maps to 'data.dataset.path'
-* `--num-layers INTEGER`: Number of layers. Maps to 'model.num_layers'
-* `--num-epochs INTEGER`: Number of epochs. Maps to 'training.num_epochs'
-* `--num-workers INTEGER`: Number of workers for loading the dataset. Maps to 'data.num_workers'
-* `--install-completion`: Install completion for the current shell.
-* `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
-* `--help`: Show this message and exit.
+Notice how the names of the args are just the names of the fields in the innermost message of the nested structure. The names are unique globally, so these short names suffice for finding the intended field within the full structure.
 
 ### 💡 Workflow
 

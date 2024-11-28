@@ -9,19 +9,19 @@ from . import builder_custom_class_demo_base as base
 class LinearBlockSweep(pgml.Sweeper[patch.LinearBlockPatch]):
     """Linear block configuration"""
 
-    in_features: pgml.IntSweep | None = None
+    in_features: typing.Optional[pgml.IntSweep] = None
     """Number of input features"""
 
-    out_features: pgml.IntSweep | None = None
+    out_features: typing.Optional[pgml.IntSweep] = None
     """Number of output features"""
 
-    bias: pgml.BoolSweep | None = None
+    bias: typing.Optional[pgml.BoolSweep] = None
     """Bias"""
 
-    dropout: pgml.FloatSweep | None = None
+    dropout: typing.Optional[pgml.FloatSweep] = None
     """Dropout probability"""
 
-    activation: pgml.StrSweep | None = None
+    activation: typing.Optional[pgml.StrSweep] = None
     """Activation function"""
 
 
@@ -34,7 +34,7 @@ LinearBlockSweepField = typing.Union[
 class MLPSweep(pgml.Sweeper[patch.MLPPatch]):
     """MLP configuration"""
 
-    layers: LinearBlockSweepField | None = None
+    layers: typing.Optional[LinearBlockSweepField] = None
     """Linear blocks"""
 
 
