@@ -1,7 +1,7 @@
 import importlib
 import pathlib
 import sys
-from typing import Optional
+from typing import List, Optional, Set
 
 import grpc_tools
 import grpc_tools.protoc
@@ -17,7 +17,7 @@ app = typer.Typer(pretty_exceptions_enable=False)
 
 @app.command()
 def generate(
-    proto_file: list[str] = typer.Argument(..., help='Path to the protobuf file.'),
+    proto_file: List[str] = typer.Argument(..., help='Path to the protobuf file.'),
     proto_root: Optional[str] = typer.Option(
         None,
         help=(
@@ -93,7 +93,7 @@ def generate(
         raise ValueError('No protobuf files found.')
 
     if proto_root is None:
-        proto_file_parents: set[str] = set()
+        proto_file_parents: Set[str] = set()
         for pf in proto_files:
             proto_file_parents.add(str(pf.parent))
         pgml_root = pathlib.Path(pgml.__file__).parent

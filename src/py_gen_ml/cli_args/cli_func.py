@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 import typer
 import typer.core
@@ -14,7 +14,7 @@ def pgml_cmd(
     name: Optional[str] = None,
     *,
     cls: Optional[type[typer.core.TyperCommand]] = None,
-    context_settings: Optional[dict[Any, Any]] = None,
+    context_settings: Optional[Dict[Any, Any]] = None,
     help: Optional[str] = None,
     epilog: Optional[str] = None,
     short_help: Optional[str] = None,
@@ -38,7 +38,7 @@ def pgml_cmd(
         app (typer.Typer): The Typer app to add the command to.
         name (Optional[str]): The name of the command.
         cls (Optional[type[typer.core.TyperCommand]]): The Typer command class to use.
-        context_settings (Optional[dict[Any, Any]]): Context settings for the command.
+        context_settings (Optional[Dict[Any, Any]]): Context settings for the command.
         help (Optional[str]): The help text for the command.
         epilog (Optional[str]): The epilog text for the command.
         short_help (Optional[str]): The short help text for the command.
@@ -77,7 +77,7 @@ def _command_from_func(
     name: Optional[str] = None,
     *,
     cls: Optional[type[typer.core.TyperCommand]] = None,
-    context_settings: Optional[dict[Any, Any]] = None,
+    context_settings: Optional[Dict[Any, Any]] = None,
     help: Optional[str] = None,
     epilog: Optional[str] = None,
     short_help: Optional[str] = None,
@@ -105,7 +105,7 @@ def _command_from_func(
         func (Callable[..., Any]): The function to create a command from.
         name (Optional[str]): The name of the command.
         cls (Optional[type[typer.core.TyperCommand]]): The Typer command class to use.
-        context_settings (Optional[dict[Any, Any]]): Context settings for the command.
+        context_settings (Optional[Dict[Any, Any]]): Context settings for the command.
         help (Optional[str]): The help text for the command.
         epilog (Optional[str]): The epilog text for the command.
         short_help (Optional[str]): The short help text for the command.

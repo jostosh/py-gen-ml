@@ -3,7 +3,7 @@ import typing
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeVar
+from typing import Dict, List, Set, Tuple, TypeVar
 
 import networkx
 import protogen
@@ -35,7 +35,7 @@ T = TypeVar('T')
 @dataclass
 class FieldPath:
     """A path to a field in a message."""
-    path: list[str]
+    path: List[str]
     field: protogen.Field
 
 
@@ -125,7 +125,7 @@ class CliArgsGenerator(Generator):
 
         generate_docstring(g, message)
 
-        explicit_paths: set[tuple[str, ...]] = set()
+        explicit_paths: Set[Tuple[str, ...]] = set()
         for arg in cli_proto.arg:
             path = arg.path.split('.')
             field = self._get_field_by_path(message, path)
@@ -248,14 +248,12 @@ class CliArgsGenerator(Generator):
         g.set_indent(4)
         g.P('app()')
 
-        # self._run_yapf(g)
-
     def _gather_descendant_fields(
         self,
         message: protogen.Message,
         graph: networkx.MultiDiGraph,
-        explicit_paths: set[tuple[str, ...]],
-    ) -> dict[str, list[FieldPath]]:
+        explicit_paths: Set[Tuple[str, ...]],
+    ) -> Dict[str, list[FieldPath]]:
         """
         Gathers descendant fields of the given message.
 
@@ -267,9 +265,9 @@ class CliArgsGenerator(Generator):
             graph (networkx.MultiDiGraph): A networkx graph that contains the message.
 
         Returns:
-            dict[str, List[FieldPath]]: A mapping of field name to a list FieldPath objects.
+            OrderedDict[str, List[FieldPath]]: A mapping of field name to a list FieldPath objects.
         """
-        fields = OrderedDict[str, list[FieldPath]]()
+        fields = OrderedDict[str, List[FieldPath]]()
         for descendant in [message, *networkx.ancestors(graph, message)]:
             if isinstance(descendant, protogen.Enum):
                 continue
@@ -308,7 +306,7 @@ class CliArgsGenerator(Generator):
                         fields[name] = [FieldPath(path=[*path, field_py_name], field=field)]
         return fields
 
-    def field_to_annotation(self, field: protogen.Field, path: list[str]) -> str:
+    def field_to_annotation(self, field: protogen.Field, path: List[str]) -> str:
         """
         Get the annotation for a field and a path.
 
@@ -342,7 +340,7 @@ class CliArgsGenerator(Generator):
             annotation = f'typing.Annotated[typing.Optional[{annotation}]{typer_option}, pydantic.Field(None),]'
         return annotation
 
-    def _get_field_by_path(self, message: protogen.Message, path: list[str]) -> protogen.Field:
+    def _get_field_by_path(self, message: protogen.Message, path: List[str]) -> protogen.Field:
         """
         Get the field at a given path in a message.
 

@@ -1,6 +1,6 @@
 import pathlib
 import warnings
-from typing import Any
+from typing import Any, Dict, List
 
 with warnings.catch_warnings():
     warnings.filterwarnings('ignore', category=DeprecationWarning, module='jsonmerge')
@@ -49,7 +49,7 @@ class YamlBaseModel(BaseModel):
         return cls.from_yaml_files([path])
 
     @classmethod
-    def load_data_with_references(cls, path: str) -> dict[str, Any]:
+    def load_data_with_references(cls, path: str) -> Dict[str, Any]:
         """
         Load data from a yaml file and resolve references.
 
@@ -57,7 +57,7 @@ class YamlBaseModel(BaseModel):
             path (str): The path to the yaml file.
 
         Returns:
-            dict[str, Any]: The loaded data.
+            Dict[str, Any]: The loaded data.
         """
         with open(path) as f:
             data = yaml.load(f)
@@ -65,7 +65,7 @@ class YamlBaseModel(BaseModel):
         return data
 
     @classmethod
-    def from_yaml_files(cls, paths: list[str]) -> Self:
+    def from_yaml_files(cls, paths: List[str]) -> Self:
         """
         Create a new instance of the model by merging the data from multiple yaml files.
 
@@ -79,7 +79,7 @@ class YamlBaseModel(BaseModel):
         Returns:
             The new instance of the model.
         """
-        data: dict[str, Any] = {}
+        data: Dict[str, Any] = {}
         for path in paths:
             new_data = cls.load_data_with_references(path)
 
@@ -100,7 +100,7 @@ class YamlBaseModel(BaseModel):
         """
         return self.merge_json(other.model_dump(mode='json', exclude_none=True, exclude_defaults=True))
 
-    def merge_json(self, other: dict[str, Any]) -> Self:
+    def merge_json(self, other: Dict[str, Any]) -> Self:
         """
         Merges a json representation.
 
@@ -128,7 +128,7 @@ class YamlBaseModel(BaseModel):
         return apply_args(self, other)
 
 
-def _resolve_object_paths_recursively(root_path: str, root: dict[str, Any], path_to_ref: ObjectPath, data: Any) -> None:
+def _resolve_object_paths_recursively(root_path: str, root: Dict[str, Any], path_to_ref: ObjectPath, data: Any) -> None:
     """
     Recursively resolves object paths in the data.
 

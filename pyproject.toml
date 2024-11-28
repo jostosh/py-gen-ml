@@ -80,11 +80,7 @@ select = [
     "PERF",
     "PLE",
     "COM812",
-    "UP006",
     "F401",
-]
-extend-safe-fixes = [
-    "UP006",
 ]
 ignore = [
     "C408",

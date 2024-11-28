@@ -2,7 +2,7 @@ import os
 import pathlib
 import typing
 import uuid
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 import optuna
 import pgml_out.config_base as base
@@ -144,8 +144,8 @@ app = typer.Typer(pretty_exceptions_enable=False)
 
 @pgml.pgml_cmd(app=app)
 def main(
-    config_paths: list[str] = typer.Option(..., help='Paths to config files'),
-    sweep_paths: list[str] = typer.Option(default_factory=list, help='Paths to sweep files'),
+    config_paths: List[str] = typer.Option(..., help='Paths to config files'),
+    sweep_paths: List[str] = typer.Option(default_factory=list, help='Paths to sweep files'),
     cli_args: cli_args.ProjectArgs = typer.Option(...),
 ) -> None:
     config = base.Project.from_yaml_files(config_paths)

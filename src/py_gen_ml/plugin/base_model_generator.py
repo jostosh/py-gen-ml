@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TypeVar
+from typing import List, Set, TypeVar
 
 import networkx
 import protogen
@@ -234,7 +234,7 @@ class BaseModelGenerator(Generator):
         return f'typing.Union[{union_type}]'
 
     @staticmethod
-    def gather_factory_imports(file: protogen.File) -> list[str]:
+    def gather_factory_imports(file: protogen.File) -> List[str]:
         """
         Gather the builder imports for a specific file.
 
@@ -247,7 +247,7 @@ class BaseModelGenerator(Generator):
         Returns:
             List[str]: A sorted list of unique builder import paths.
         """
-        imports: set[str] = set()
+        imports: Set[str] = set()
         for message in file.messages:
             factory_import_path = get_extension_value(message, 'factory', str)
             if factory_import_path is None:

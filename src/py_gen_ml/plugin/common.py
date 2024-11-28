@@ -1,7 +1,7 @@
 import re
 import textwrap
 import typing
-from typing import Final, Literal, Optional, TypeVar, Union
+from typing import Final, Literal, Optional, Set, TypeVar, Union
 
 import google.protobuf.json_format
 import more_itertools
@@ -163,7 +163,7 @@ def generate_docstring(
 
 def get_element_subgraphs(
     file: protogen.File,
-    include_elements: Optional[set[Literal[protogen.Kind.MESSAGE, protogen.Kind.ENUM]]] = None,
+    include_elements: Optional[Set[Literal[protogen.Kind.MESSAGE, protogen.Kind.ENUM]]] = None,
 ) -> list[networkx.MultiDiGraph]:
     """
     Get the message subgraphs from a file.
