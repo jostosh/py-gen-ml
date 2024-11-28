@@ -9,10 +9,10 @@ from . import advanced_base as base
 class LinearBlockSweep(pgml.Sweeper[patch.LinearBlockPatch]):
     """Linear block configuration"""
 
-    num_units: pgml.IntSweep | None = None
+    num_units: typing.Optional[pgml.IntSweep] = None
     """Number of units"""
 
-    activation: pgml.StrSweep | None = None
+    activation: typing.Optional[pgml.StrSweep] = None
     """Activation function"""
 
 
@@ -25,10 +25,10 @@ LinearBlockSweepField = typing.Union[
 class OptimizerSweep(pgml.Sweeper[patch.OptimizerPatch]):
     """Optimizer configuration"""
 
-    type: pgml.StrSweep | None = None
+    type: typing.Optional[pgml.StrSweep] = None
     """Type of optimizer"""
 
-    learning_rate: pgml.FloatSweep | None = None
+    learning_rate: typing.Optional[pgml.FloatSweep] = None
     """Learning rate"""
 
 
@@ -41,7 +41,7 @@ OptimizerSweepField = typing.Union[
 class MLPSweep(pgml.Sweeper[patch.MLPPatch]):
     """Multi-layer perceptron configuration"""
 
-    layers: LinearBlockSweepField | None = None
+    layers: typing.Optional[LinearBlockSweepField] = None
     """List of linear blocks"""
 
 
@@ -54,10 +54,10 @@ MLPSweepField = typing.Union[
 class TrainingSweep(pgml.Sweeper[patch.TrainingPatch]):
     """Training configuration"""
 
-    mlp: MLPSweepField | None = None
+    mlp: typing.Optional[MLPSweepField] = None
     """Multi-layer perceptron configuration"""
 
-    optimizer: OptimizerSweepField | None = None
+    optimizer: typing.Optional[OptimizerSweepField] = None
     """Optimizer configuration"""
 
 

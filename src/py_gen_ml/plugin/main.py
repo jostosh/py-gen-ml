@@ -1,5 +1,6 @@
 import io
 import sys
+from typing import Dict
 
 import google.protobuf.compiler.plugin_pb2
 import google.protobuf.json_format
@@ -18,7 +19,7 @@ logger = setup_logger(__name__)
 class _Plugin:
 
     def __init__(self) -> None:
-        self._gen_tasks = list[GenTask]()
+        self._gen_tasks: list[GenTask] = []
 
     def generate(self, plugin: protogen.Plugin) -> None:
         """
@@ -60,7 +61,7 @@ def run() -> None:
     request.ParseFromString(input_stream.read())
 
     if request.HasField('parameter') and request.parameter:
-        parameter: dict[str, str] = {}
+        parameter: Dict[str, str] = {}
         for param in request.parameter.split(','):
             if param == '':
                 # Ignore empty parameters.

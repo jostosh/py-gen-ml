@@ -13,7 +13,7 @@ EnumSweepField = typing.Union[
 
 
 class Int32TestSweep(pgml.Sweeper[patch.Int32TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Int32TestSweepField = typing.Union[
@@ -23,7 +23,7 @@ Int32TestSweepField = typing.Union[
 
 
 class Int64TestSweep(pgml.Sweeper[patch.Int64TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Int64TestSweepField = typing.Union[
@@ -33,7 +33,7 @@ Int64TestSweepField = typing.Union[
 
 
 class Uint32TestSweep(pgml.Sweeper[patch.Uint32TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Uint32TestSweepField = typing.Union[
@@ -43,7 +43,7 @@ Uint32TestSweepField = typing.Union[
 
 
 class Uint64TestSweep(pgml.Sweeper[patch.Uint64TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Uint64TestSweepField = typing.Union[
@@ -53,7 +53,7 @@ Uint64TestSweepField = typing.Union[
 
 
 class Sint32TestSweep(pgml.Sweeper[patch.Sint32TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sint32TestSweepField = typing.Union[
@@ -63,7 +63,7 @@ Sint32TestSweepField = typing.Union[
 
 
 class Sint64TestSweep(pgml.Sweeper[patch.Sint64TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sint64TestSweepField = typing.Union[
@@ -73,7 +73,7 @@ Sint64TestSweepField = typing.Union[
 
 
 class Fixed32TestSweep(pgml.Sweeper[patch.Fixed32TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Fixed32TestSweepField = typing.Union[
@@ -83,7 +83,7 @@ Fixed32TestSweepField = typing.Union[
 
 
 class Fixed64TestSweep(pgml.Sweeper[patch.Fixed64TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Fixed64TestSweepField = typing.Union[
@@ -93,7 +93,7 @@ Fixed64TestSweepField = typing.Union[
 
 
 class Sfixed32TestSweep(pgml.Sweeper[patch.Sfixed32TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sfixed32TestSweepField = typing.Union[
@@ -103,7 +103,7 @@ Sfixed32TestSweepField = typing.Union[
 
 
 class Sfixed64TestSweep(pgml.Sweeper[patch.Sfixed64TestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sfixed64TestSweepField = typing.Union[
@@ -113,7 +113,7 @@ Sfixed64TestSweepField = typing.Union[
 
 
 class BoolTestSweep(pgml.Sweeper[patch.BoolTestPatch]):
-    value: pgml.BoolSweep | None = None
+    value: typing.Optional[pgml.BoolSweep] = None
 
 
 BoolTestSweepField = typing.Union[
@@ -123,7 +123,7 @@ BoolTestSweepField = typing.Union[
 
 
 class FloatTestSweep(pgml.Sweeper[patch.FloatTestPatch]):
-    value: pgml.FloatSweep | None = None
+    value: typing.Optional[pgml.FloatSweep] = None
 
 
 FloatTestSweepField = typing.Union[
@@ -133,7 +133,7 @@ FloatTestSweepField = typing.Union[
 
 
 class DoubleTestSweep(pgml.Sweeper[patch.DoubleTestPatch]):
-    value: pgml.FloatSweep | None = None
+    value: typing.Optional[pgml.FloatSweep] = None
 
 
 DoubleTestSweepField = typing.Union[
@@ -143,7 +143,7 @@ DoubleTestSweepField = typing.Union[
 
 
 class StringTestSweep(pgml.Sweeper[patch.StringTestPatch]):
-    value: pgml.StrSweep | None = None
+    value: typing.Optional[pgml.StrSweep] = None
 
 
 StringTestSweepField = typing.Union[
@@ -153,7 +153,7 @@ StringTestSweepField = typing.Union[
 
 
 class BytesTestSweep(pgml.Sweeper[patch.BytesTestPatch]):
-    value: pgml.BytesSweep | None = None
+    value: typing.Optional[pgml.BytesSweep] = None
 
 
 BytesTestSweepField = typing.Union[
@@ -163,7 +163,7 @@ BytesTestSweepField = typing.Union[
 
 
 class EnumTestSweep(pgml.Sweeper[patch.EnumTestPatch]):
-    value: EnumSweepField | None = None
+    value: typing.Optional[EnumSweepField] = None
 
 
 EnumTestSweepField = typing.Union[
@@ -173,7 +173,7 @@ EnumTestSweepField = typing.Union[
 
 
 class EnumDefaultTestSweep(pgml.Sweeper[patch.EnumDefaultTestPatch]):
-    value: EnumSweepField | None = None
+    value: typing.Optional[EnumSweepField] = None
 
 
 EnumDefaultTestSweepField = typing.Union[
@@ -183,7 +183,7 @@ EnumDefaultTestSweepField = typing.Union[
 
 
 class OneofTestSweep(pgml.Sweeper[patch.OneofTestPatch]):
-    value: pgml.Sweeper[pgml.IntSweep] | pgml.Sweeper[pgml.StrSweep] | None = None
+    value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep], pgml.Sweeper[pgml.StrSweep]]] = None
 
 
 OneofTestSweepField = typing.Union[
@@ -193,7 +193,7 @@ OneofTestSweepField = typing.Union[
 
 
 class RepeatedTestSweep(pgml.Sweeper[patch.RepeatedTestPatch]):
-    values: pgml.IntSweep | None = None
+    values: typing.Optional[pgml.IntSweep] = None
 
 
 RepeatedTestSweepField = typing.Union[
@@ -203,7 +203,7 @@ RepeatedTestSweepField = typing.Union[
 
 
 class OptionalTestSweep(pgml.Sweeper[patch.OptionalTestPatch]):
-    _value: pgml.Sweeper[pgml.IntSweep] | None = None
+    _value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep]]] = None
 
 
 OptionalTestSweepField = typing.Union[
@@ -213,7 +213,7 @@ OptionalTestSweepField = typing.Union[
 
 
 class Int32DefaultTestSweep(pgml.Sweeper[patch.Int32DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Int32DefaultTestSweepField = typing.Union[
@@ -223,7 +223,7 @@ Int32DefaultTestSweepField = typing.Union[
 
 
 class Int64DefaultTestSweep(pgml.Sweeper[patch.Int64DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Int64DefaultTestSweepField = typing.Union[
@@ -233,7 +233,7 @@ Int64DefaultTestSweepField = typing.Union[
 
 
 class Uint32DefaultTestSweep(pgml.Sweeper[patch.Uint32DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Uint32DefaultTestSweepField = typing.Union[
@@ -243,7 +243,7 @@ Uint32DefaultTestSweepField = typing.Union[
 
 
 class Uint64DefaultTestSweep(pgml.Sweeper[patch.Uint64DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Uint64DefaultTestSweepField = typing.Union[
@@ -253,7 +253,7 @@ Uint64DefaultTestSweepField = typing.Union[
 
 
 class Sint32DefaultTestSweep(pgml.Sweeper[patch.Sint32DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sint32DefaultTestSweepField = typing.Union[
@@ -263,7 +263,7 @@ Sint32DefaultTestSweepField = typing.Union[
 
 
 class Sint64DefaultTestSweep(pgml.Sweeper[patch.Sint64DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sint64DefaultTestSweepField = typing.Union[
@@ -273,7 +273,7 @@ Sint64DefaultTestSweepField = typing.Union[
 
 
 class Fixed32DefaultTestSweep(pgml.Sweeper[patch.Fixed32DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Fixed32DefaultTestSweepField = typing.Union[
@@ -283,7 +283,7 @@ Fixed32DefaultTestSweepField = typing.Union[
 
 
 class Fixed64DefaultTestSweep(pgml.Sweeper[patch.Fixed64DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Fixed64DefaultTestSweepField = typing.Union[
@@ -293,7 +293,7 @@ Fixed64DefaultTestSweepField = typing.Union[
 
 
 class Sfixed32DefaultTestSweep(pgml.Sweeper[patch.Sfixed32DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sfixed32DefaultTestSweepField = typing.Union[
@@ -303,7 +303,7 @@ Sfixed32DefaultTestSweepField = typing.Union[
 
 
 class Sfixed64DefaultTestSweep(pgml.Sweeper[patch.Sfixed64DefaultTestPatch]):
-    value: pgml.IntSweep | None = None
+    value: typing.Optional[pgml.IntSweep] = None
 
 
 Sfixed64DefaultTestSweepField = typing.Union[
@@ -313,7 +313,7 @@ Sfixed64DefaultTestSweepField = typing.Union[
 
 
 class BoolDefaultTestSweep(pgml.Sweeper[patch.BoolDefaultTestPatch]):
-    value: pgml.BoolSweep | None = None
+    value: typing.Optional[pgml.BoolSweep] = None
 
 
 BoolDefaultTestSweepField = typing.Union[
@@ -323,7 +323,7 @@ BoolDefaultTestSweepField = typing.Union[
 
 
 class FloatDefaultTestSweep(pgml.Sweeper[patch.FloatDefaultTestPatch]):
-    value: pgml.FloatSweep | None = None
+    value: typing.Optional[pgml.FloatSweep] = None
 
 
 FloatDefaultTestSweepField = typing.Union[
@@ -333,7 +333,7 @@ FloatDefaultTestSweepField = typing.Union[
 
 
 class DoubleDefaultTestSweep(pgml.Sweeper[patch.DoubleDefaultTestPatch]):
-    value: pgml.FloatSweep | None = None
+    value: typing.Optional[pgml.FloatSweep] = None
 
 
 DoubleDefaultTestSweepField = typing.Union[
@@ -343,7 +343,7 @@ DoubleDefaultTestSweepField = typing.Union[
 
 
 class StringDefaultTestSweep(pgml.Sweeper[patch.StringDefaultTestPatch]):
-    value: pgml.StrSweep | None = None
+    value: typing.Optional[pgml.StrSweep] = None
 
 
 StringDefaultTestSweepField = typing.Union[
@@ -353,7 +353,7 @@ StringDefaultTestSweepField = typing.Union[
 
 
 class BytesDefaultTestSweep(pgml.Sweeper[patch.BytesDefaultTestPatch]):
-    value: pgml.BytesSweep | None = None
+    value: typing.Optional[pgml.BytesSweep] = None
 
 
 BytesDefaultTestSweepField = typing.Union[
@@ -363,7 +363,7 @@ BytesDefaultTestSweepField = typing.Union[
 
 
 class OneofDefaultTestSweep(pgml.Sweeper[patch.OneofDefaultTestPatch]):
-    value: pgml.Sweeper[pgml.IntSweep] | pgml.Sweeper[pgml.StrSweep] | None = None
+    value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep], pgml.Sweeper[pgml.StrSweep]]] = None
 
 
 OneofDefaultTestSweepField = typing.Union[
@@ -373,7 +373,7 @@ OneofDefaultTestSweepField = typing.Union[
 
 
 class OptionalDefaultTestSweep(pgml.Sweeper[patch.OptionalDefaultTestPatch]):
-    _value: pgml.Sweeper[pgml.IntSweep] | None = None
+    _value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep]]] = None
 
 
 OptionalDefaultTestSweepField = typing.Union[
@@ -383,7 +383,7 @@ OptionalDefaultTestSweepField = typing.Union[
 
 
 class ExplicitCLIArgTestSweep(pgml.Sweeper[patch.ExplicitCLIArgTestPatch]):
-    bar: pgml.StrSweep | None = None
+    bar: typing.Optional[pgml.StrSweep] = None
 
 
 ExplicitCLIArgTestSweepField = typing.Union[
@@ -393,7 +393,7 @@ ExplicitCLIArgTestSweepField = typing.Union[
 
 
 class ImplicitCLIArgTestSweep(pgml.Sweeper[patch.ImplicitCLIArgTestPatch]):
-    bar: pgml.StrSweep | None = None
+    bar: typing.Optional[pgml.StrSweep] = None
 
 
 ImplicitCLIArgTestSweepField = typing.Union[
@@ -403,7 +403,7 @@ ImplicitCLIArgTestSweepField = typing.Union[
 
 
 class NestedFooTestSweep(pgml.Sweeper[patch.NestedFooTestPatch]):
-    foo: pgml.StrSweep | None = None
+    foo: typing.Optional[pgml.StrSweep] = None
 
 
 NestedFooTestSweepField = typing.Union[
@@ -413,8 +413,8 @@ NestedFooTestSweepField = typing.Union[
 
 
 class NestedBarTestSweep(pgml.Sweeper[patch.NestedBarTestPatch]):
-    foo_0: NestedFooTestSweepField | None = None
-    foo_1: NestedFooTestSweepField | None = None
+    foo_0: typing.Optional[NestedFooTestSweepField] = None
+    foo_1: typing.Optional[NestedFooTestSweepField] = None
 
 
 NestedBarTestSweepField = typing.Union[
@@ -424,7 +424,7 @@ NestedBarTestSweepField = typing.Union[
 
 
 class RepeatedNestedBarTestSweep(pgml.Sweeper[patch.RepeatedNestedBarTestPatch]):
-    bar: NestedBarTestSweepField | None = None
+    bar: typing.Optional[NestedBarTestSweepField] = None
 
 
 RepeatedNestedBarTestSweepField = typing.Union[

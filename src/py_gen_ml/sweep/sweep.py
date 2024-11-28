@@ -3,7 +3,7 @@ from __future__ import annotations
 import abc
 from dataclasses import dataclass
 from dataclasses import replace as dataclass_replace
-from typing import Any, Generic, Literal, Optional, TypeVar
+from typing import Any, Dict, Generic, List, Literal, Optional, TypeVar, Union
 
 from pydantic import BaseModel
 
@@ -19,7 +19,7 @@ TBaseModel = TypeVar('TBaseModel', bound=BaseModel)
 class SweepSamplerContext(Generic[T]):
     """A context for a sweep sampler."""
 
-    path_parts: list[str]
+    path_parts: List[str]
     """The path parts of the sweep sampler context."""
 
     ctx: T
@@ -309,7 +309,7 @@ class NestedChoice(SweepModel[TBaseModel], Generic[TSweep, TBaseModel]):
     deep.
     """
 
-    nested_options: dict[str, TSweep]
+    nested_options: Dict[str, TSweep]
 
     def accept(self, visitor: SweepVisitor[T], context: SweepSamplerContext[T]) -> TBaseModel:
         """
@@ -348,8 +348,8 @@ class Choice(SweepModel[TScalar]):
         return visitor.visit_choice(self, context=context)
 
 
-IntSweep = int | Choice[int] | IntUniform
-FloatSweep = float | Choice[float] | FloatLogUniform | FloatUniform
-BoolSweep = bool | Literal['any']
-StrSweep = str | Choice[str]
-BytesSweep = bytes | Choice[bytes]
+IntSweep = Union[int, Choice[int], IntUniform]
+FloatSweep = Union[float, Choice[float], FloatLogUniform, FloatUniform]
+BoolSweep = Union[bool, Literal['any']]
+StrSweep = Union[str, Choice[str]]
+BytesSweep = Union[bytes, Choice[bytes]]

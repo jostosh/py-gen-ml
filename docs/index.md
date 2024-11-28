@@ -14,8 +14,7 @@ hide:
 
 ## 🌟 Project Introduction
 
-`py-gen-ml` simplifies the configuration and management of machine learning projects. It leverages [Protocol Buffers](https://protobuf.dev/) (protobufs) to provide a robust, strongly typed, and extensible way to define and manipulate configuration schemas for machine learning projects.
-
+`py-gen-ml` simplifies the configuration and management of machine learning projects. It leverages [Protocol Buffers](https://protobuf.dev/) (protobufs) to provide a robust, strongly typed, and extensible way to define and manipulate configuration schemas for machine learning projects. The protobuf schemas provide a single source of truth from which many things ✨ **are generated automatically** ✨.
 
 ## ✨ Brief Overview
 
@@ -28,7 +27,7 @@ A real quick overview of what you can do with `py-gen-ml`:
     ---
 
     ```proto
-    --8<-- "docs/snippets/proto/proto_intro.proto:8:17"
+    --8<-- "docs/snippets/proto/quickstart_b.proto:8:17"
     ```
 
 -   :material-creation-outline:{ .lg .middle } __Generated Base Model__
@@ -36,7 +35,7 @@ A real quick overview of what you can do with `py-gen-ml`:
     ---
 
     ```py
-    --8<-- "docs/snippets/src/pgml_out/proto_intro_base.py:5:15"
+    --8<-- "docs/snippets/src/pgml_out/quickstart_b_base.py:5:15"
     ```
 
 -   :material-creation-outline:{ .lg .middle } __Generated Patch Config__
@@ -44,7 +43,7 @@ A real quick overview of what you can do with `py-gen-ml`:
     ---
 
     ```py
-    --8<-- "docs/snippets/src/pgml_out/proto_intro_patch.py:5:19"
+    --8<-- "docs/snippets/src/pgml_out/quickstart_b_patch.py:5:19"
     ```
 
     ---
@@ -54,7 +53,7 @@ A real quick overview of what you can do with `py-gen-ml`:
     ---
 
     ```py
-    --8<-- "docs/snippets/src/pgml_out/proto_intro_sweep.py:9:19"
+    --8<-- "docs/snippets/src/pgml_out/quickstart_b_sweep.py:9:19"
     ```
 
     ---
@@ -66,7 +65,7 @@ A real quick overview of what you can do with `py-gen-ml`:
     ---
 
     ```py
-    --8<-- "docs/snippets/src/pgml_out/proto_intro_cli_args.py:11:28"
+    --8<-- "docs/snippets/src/pgml_out/quickstart_b_cli_args.py:11:28"
     # Remaining code...
     ```
 
@@ -75,7 +74,8 @@ A real quick overview of what you can do with `py-gen-ml`:
     ---
 
     ```py
-    --8<-- "docs/snippets/src/pgml_out/mlp_entrypoint.py:23:44"
+    --8<-- "docs/snippets/src/pgml_out/mlp_quickstart_entrypoint.py:22:35"
+        # Remaining code....
     ```
 
 -   :material-arm-flex-outline:{ .lg .middle } __Flexible YAML Config__
@@ -144,9 +144,6 @@ A real quick overview of what you can do with `py-gen-ml`:
 - **Minimal Change Amplification**: Automatically generated code reduces cascading manual changes when modifying configurations.
 - **Flexible Patching**: Easily modify base configurations with patches for quick experimentation.
 - **Flexible YAML**: Use human-readable YAML with support for advanced references within and across files.
-
-**🧪 Experiment Management**:
-
 - **Hyperparameter Sweeps**: Effortlessly define and manage hyperparameter tuning.
 - **CLI Argument Parsing**: Automatically generate command-line interfaces from your configuration schemas.
 

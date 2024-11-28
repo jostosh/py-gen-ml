@@ -33,7 +33,7 @@ The `pgml.BoolSweep` type allows for sampling from a boolean space.
 ## ⚾ The base config
 To run a benchmark we need a base config. Any sweeps will be applied to the base config by overlaying the sampled parameters.
 
-The defaultYAML config is given below:
+The default YAML config is given below:
 ```yaml
 --8<-- "docs/snippets/configs/base/dataloader_base.yaml"
 ```
@@ -130,8 +130,8 @@ It will show you a web interface to inspect the results. Here's what it looks li
 
 You can then quickly see the optimal set of parameters in the bottom left corner.
 
-## 🤸‍♂️ Other sweep types
-Below, we give an overview of how built in types and custom types map to the different sampling strategies.
+## 🤸‍♂️ Sweep type reference
+Below, we give an overview of how field types map to the different options for sweep sampling strategies.
 
 ### 🏗️ Built-in types
 
@@ -150,16 +150,16 @@ message Example {
 }
 ```
 
-This allows us to create any of the following YAML files:
+For example, this allows you to create the following YAML structures:
 
-```yaml
+```yaml title="Uniform"
 int_field:
   low: 1
   high: 10
   step: 1
 ```
 
-```yaml
+```yaml title="Discrete"
 int_field:
   options:
   - 1
@@ -167,7 +167,7 @@ int_field:
   - 3
 ```
 
-```yaml
+```yaml title="Constant"
 int_field: 5
 ```
 
@@ -187,30 +187,30 @@ message Example {
 }
 ```
 
-This allows us to create any of the following YAML files:
+This allows you to create the following YAML structures:
 
-```yaml
+```yaml title="Uniform"
 float_field:
   low: 1.0
   high: 10.0
   step: 1.0
 ```
 
-```yaml
+```yaml title="Log uniform"
 float_field:
   log_low: 1.0
   log_high: 10.0
 ```
 
-```yaml
+```yaml title="Discrete uniform"
 float_field:
   options:
   - 1.0
   - 2.0
-  - 3.0
+  - 5.0
 ```
 
-```yaml
+```yaml title="Constant"
 float_field: 5.0
 ```
 
@@ -230,11 +230,11 @@ message Example {
 
 This allows us to create any of the following YAML files:
 
-```yaml
+```yaml title="Uniform"
 bool_field: any
 ```
 
-```yaml
+```yaml title="Constant"
 bool_field: true
 ```
 
@@ -254,44 +254,16 @@ message Example {
 
 This allows us to create any of the following YAML files:
 
-```yaml
+```yaml title="Uniform"
 string_field:
   options:
   - hello
   - world
 ```
 
-```yaml
+```yaml title="Constant"
 string_field: hello
 ```
-
-#### 8️⃣ `pgml.BytesSweep`
-For a `bytes` field, `pgml.BytesSweep` will offer the following sampling strategies:
-
-- Choice: provide a list of bytes to choose from
-- Fixed: just provide bytes
-
-Imagine we have the following schema:
-
-```proto
-message Example {
-    bytes bytes_field = 1;
-}
-```
-
-This allows us to create any of the following YAML files:
-
-```yaml
-bytes_field:
-  options:
-  - hello
-  - world
-```
-
-```yaml
-bytes_field: hello
-```
-
 
 
 ### 🧱 Custom types
@@ -366,7 +338,7 @@ message Example {
 
 This allows us to create any of the following YAML files:
 
-```yaml
+```yaml title="Discrete with options"
 color_field:
   options:
   - RED
@@ -374,10 +346,10 @@ color_field:
   - BLUE
 ```
 
-```yaml
+```yaml title="Discrete with all options"
 color_field: any
 ```
 
-```yaml
+```yaml title="Fixed"
 color_field: RED
 ```

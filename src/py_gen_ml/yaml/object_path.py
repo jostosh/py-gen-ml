@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field, replace
-from typing import Any, Final, TypeVar
+from typing import Any, Dict, Final, Optional, TypeVar
 
 from pydantic import BaseModel
 from pydantic.json_schema import GenerateJsonSchema, JsonSchemaMode
@@ -26,16 +26,13 @@ class ObjectStep:
     name: str
     """The name of the step."""
 
-    index: int | None = None
+    index: Optional[int] = None
     """The index of the step."""
 
 
 @dataclass
 class ObjectPath:
     """A path to an object."""
-
-    steps: list[ObjectStep] = field(default_factory=list)
-    """The steps to the object."""
 
     steps: list[ObjectStep] = field(default_factory=list)
     """The steps to the object."""
@@ -82,7 +79,7 @@ class ObjectPath:
         Returns:
             ObjectPath: The created object path.
         """
-        steps = list[ObjectStep]()
+        steps: list[ObjectStep] = []
 
         path = path.removeprefix('#')
         if path.startswith('/'):
@@ -114,12 +111,12 @@ class ObjectPath:
         return ObjectPath(steps=self.steps.copy() + other.steps.copy())
 
 
-def resolve_inner_ref(root: dict[str, Any], path_to_ref: ObjectPath, path_at_ref: ObjectPath) -> Any:
+def resolve_inner_ref(root: Dict[str, Any], path_to_ref: ObjectPath, path_at_ref: ObjectPath) -> Any:
     """
     Resolve a reference in a nested structure that is rooted at `root`.
 
     Args:
-        root (dict[str, Any]): The root of the nested structure.
+        root (Dict[str, Any]): The root of the nested structure.
         path_to_ref (ObjectPath): The path to the reference.
         path_at_ref (ObjectPath): The path at the reference.
 
@@ -156,16 +153,16 @@ class InsertAnyOfWithObjectPath(GenerateJsonSchema):
         self,
         schema: CoreSchema,
         mode: JsonSchemaMode = 'validation',
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         """
         Generate a JSON schema with anyOf with object path schemas.
 
         Args:
-            schema (dict[str, Any]): The schema to generate the anyOf with object path schemas for.
+            schema (Dict[str, Any]): The schema to generate the anyOf with object path schemas for.
             mode (str): The mode to generate the schema for.
 
         Returns:
-            dict[str, Any]: The generated schema.
+            Dict[str, Any]: The generated schema.
         """
         json_schema = super().generate(schema, mode)
         self._traverse_properties(json_schema['properties'], mode)
@@ -177,7 +174,7 @@ class InsertAnyOfWithObjectPath(GenerateJsonSchema):
         json_schema['properties']['_defs_'] = {}
         return json_schema
 
-    def _get_external_object_path_schema(self) -> dict[str, Any]:
+    def _get_external_object_path_schema(self) -> Dict[str, Any]:
         return {
             'type': 'string',
             'description': 'An object path to an external object',
@@ -185,7 +182,7 @@ class InsertAnyOfWithObjectPath(GenerateJsonSchema):
             'pattern': EXTERNAL_OBJECT_PATH_PATTERN,
         }
 
-    def _get_internal_object_path_schema(self) -> dict[str, Any]:
+    def _get_internal_object_path_schema(self) -> Dict[str, Any]:
         return {
             'type': 'string',
             'description': 'An object path to an internal object',
@@ -193,7 +190,7 @@ class InsertAnyOfWithObjectPath(GenerateJsonSchema):
             'pattern': INTERNAL_OBJECT_PATH_PATTERN,
         }
 
-    def _traverse_properties(self, properties: dict[str, Any], mode: str) -> None:
+    def _traverse_properties(self, properties: Dict[str, Any], mode: str) -> None:
         # Traverse the schema and insert the object path schema
         for property in properties.values():
             if 'anyOf' in property:

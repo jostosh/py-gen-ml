@@ -1,7 +1,8 @@
 import os
 import pathlib
+import typing
 import uuid
-from typing import Any
+from typing import Any, List, Optional
 
 import optuna
 import pgml_out.config_base as base
@@ -35,7 +36,7 @@ class Trainer:
         accuracy_metric_test: torchmetrics.classification.MulticlassAccuracy,
         train_loss_metric: torchmetrics.MeanMetric,
         test_loss_metric: torchmetrics.MeanMetric,
-        trial: optuna.Trial | None = None,
+        trial: Optional[optuna.Trial] = None,
     ) -> None:
         self._train_loader = train_loader
         self._test_loader = test_loader
@@ -102,7 +103,7 @@ def get_accuracy_metric(num_classes: int) -> torchmetrics.Metric:
     return torchmetrics.classification.MulticlassAccuracy(num_classes=num_classes).to(device)
 
 
-def train_model(project: base.Project, trial: optuna.Trial | None = None) -> float:
+def train_model(project: base.Project, trial: typing.Optional[optuna.Trial] = None) -> float:
     rich.print(project)
 
     transform = get_transform()
@@ -143,8 +144,8 @@ app = typer.Typer(pretty_exceptions_enable=False)
 
 @pgml.pgml_cmd(app=app)
 def main(
-    config_paths: list[str] = typer.Option(..., help='Paths to config files'),
-    sweep_paths: list[str] = typer.Option(default_factory=list, help='Paths to sweep files'),
+    config_paths: List[str] = typer.Option(..., help='Paths to config files'),
+    sweep_paths: List[str] = typer.Option(default_factory=list, help='Paths to sweep files'),
     cli_args: cli_args.ProjectArgs = typer.Option(...),
 ) -> None:
     config = base.Project.from_yaml_files(config_paths)

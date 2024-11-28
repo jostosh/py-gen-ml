@@ -9,10 +9,10 @@ from . import default_base as base
 class OptimizerSweep(pgml.Sweeper[patch.OptimizerPatch]):
     """Optimizer configuration"""
 
-    type: pgml.StrSweep | None = None
+    type: typing.Optional[pgml.StrSweep] = None
     """Optimizer type"""
 
-    learning_rate: pgml.FloatSweep | None = None
+    learning_rate: typing.Optional[pgml.FloatSweep] = None
     """Learning rate"""
 
 

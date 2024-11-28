@@ -15,13 +15,13 @@ ActivationSweepField = typing.Union[
 class LinearSweep(pgml.Sweeper[patch.LinearPatch]):
     """Linear layer"""
 
-    in_features: pgml.IntSweep | None = None
+    in_features: typing.Optional[pgml.IntSweep] = None
     """Number of input features"""
 
-    out_features: pgml.IntSweep | None = None
+    out_features: typing.Optional[pgml.IntSweep] = None
     """Number of output features"""
 
-    activation: ActivationSweepField | None = None
+    activation: typing.Optional[ActivationSweepField] = None
     """Activation function"""
 
 

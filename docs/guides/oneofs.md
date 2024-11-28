@@ -8,6 +8,6 @@ To allow for a union of types, you can use the protobuf `oneof` keyword.
 
 The generated code will look like this:
 
-```python { hl_lines="41" .generated-code }
+```python { hl_lines="42" .generated-code }
 --8<-- "docs/snippets/src/pgml_out/oneof_demo_base.py"
 ```

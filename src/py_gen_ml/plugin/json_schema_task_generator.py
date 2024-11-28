@@ -16,7 +16,7 @@ class JsonSchemaTaskGenerator(Generator):
 
         Args:
             gen (protogen.Plugin): The plugin instance.
-            tasks (list[GenTask]): The list of tasks to generate.
+            tasks (List[GenTask]): The list of tasks to generate.
         """
         super().__init__(gen)
         self._tasks = tasks

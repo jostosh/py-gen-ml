@@ -1,14 +1,14 @@
-from typing import TypeVar
+from typing import Optional, TypeVar
 
 T = TypeVar('T')
 
 
-def some(value: T | None) -> T:
+def some(value: Optional[T]) -> T:
     """
     Get the value if it is not None.
 
     Args:
-        value (T | None): The value to get.
+        value (Optional[T]): The value to get.
 
     Raises:
         ValueError: If the value is None.

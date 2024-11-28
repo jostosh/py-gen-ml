@@ -8,12 +8,6 @@ import py_gen_ml as pgml
 
 
 class ExplicitCLIArgTestArgs(pgml.YamlBaseModel):
-    bar: typing.Annotated[
-        typing.Optional[str],
-        typer.Option(help='Maps to bar'),
-        pydantic.Field(None),
-        pgml.ArgRef('bar'),
-    ]
     foo: typing.Annotated[
         typing.Optional[str],
         typer.Option(help='Maps to bar'),

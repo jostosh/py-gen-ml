@@ -4,7 +4,7 @@ site_author: Jos van de Wolfshaar
 site_description: A library for generating machine learning tooling
 
 repo_name: jostosh/py-gen-ml
-repo_url: https://jostosh.github.io/py-gen-ml/
+repo_url: https://github.com/jostosh/py-gen-ml
 
 theme:
   name: material
@@ -90,7 +90,7 @@ nav:
 - Basics:
   - Quick Start: quickstart.md
   - py-gen-ml script: py-gen-ml-command.md
-  - Protobuf Crash course: guides/protobuf.md
+  - Protobuf crash course: guides/protobuf.md
 - Guides:
   - YAML configuration: guides/defining_yaml_files.md
   - Patching: guides/patching.md

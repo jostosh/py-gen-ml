@@ -9,7 +9,7 @@ from . import cli_demo_base as base
 class ModelSweep(pgml.Sweeper[patch.ModelPatch]):
     """Model configuration"""
 
-    num_layers: pgml.IntSweep | None = None
+    num_layers: typing.Optional[pgml.IntSweep] = None
     """Number of layers"""
 
 
@@ -22,7 +22,7 @@ ModelSweepField = typing.Union[
 class TrainingSweep(pgml.Sweeper[patch.TrainingPatch]):
     """Training configuration"""
 
-    num_epochs: pgml.IntSweep | None = None
+    num_epochs: typing.Optional[pgml.IntSweep] = None
     """Number of epochs"""
 
 
@@ -35,7 +35,7 @@ TrainingSweepField = typing.Union[
 class DatasetSweep(pgml.Sweeper[patch.DatasetPatch]):
     """Dataset configuration"""
 
-    path: pgml.StrSweep | None = None
+    path: typing.Optional[pgml.StrSweep] = None
     """Path to the dataset"""
 
 
@@ -48,10 +48,10 @@ DatasetSweepField = typing.Union[
 class DataSweep(pgml.Sweeper[patch.DataPatch]):
     """Data config"""
 
-    dataset: DatasetSweepField | None = None
+    dataset: typing.Optional[DatasetSweepField] = None
     """Path to the dataset"""
 
-    num_workers: pgml.IntSweep | None = None
+    num_workers: typing.Optional[pgml.IntSweep] = None
     """Number of workers for loading the dataset"""
 
 
@@ -64,13 +64,13 @@ DataSweepField = typing.Union[
 class CLIDemoSweep(pgml.Sweeper[patch.CLIDemoPatch]):
     """Global configuration"""
 
-    data: DataSweepField | None = None
+    data: typing.Optional[DataSweepField] = None
     """Dataset configuration"""
 
-    model: ModelSweepField | None = None
+    model: typing.Optional[ModelSweepField] = None
     """Model configuration"""
 
-    training: TrainingSweepField | None = None
+    training: typing.Optional[TrainingSweepField] = None
     """Training configuration"""
 
 

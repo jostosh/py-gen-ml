@@ -1,7 +1,7 @@
 # 🏭 Factories
 
 ## 🪄 Generated Factory Methods
-Occasionally, you have enough information to instantiate a class from a configuration object immediately. `py-gen-ml` offers an extension that allows you to generate a factory method in such cases. The factory method unpacks the message fields into keyword arguments and then instantiates the class.
+Occasionally, you have enough information to instantiate a class from a configuration object immediately. `py-gen-ml` allows you to generate factory methods in such cases. The factory methods unpack the message fields into keyword arguments and then instantiate an object.
 
 To specify a factory method for a message, you can use the `(pgml.factory)` option. For example:
 
@@ -11,7 +11,7 @@ To specify a factory method for a message, you can use the `(pgml.factory)` opti
 
 The generated code will look like this:
 
-```python { linenums="1" hl_lines="4-7 22-29" .generated-code }
+```python { linenums="1" hl_lines="23-30" .generated-code }
 --8<-- "docs/snippets/src/pgml_out/builder_demo_base.py"
 ```
 
@@ -61,7 +61,7 @@ And then define the following proto:
 
 The generated code will look like this:
 
-```python { linenums="1" hl_lines="4-7 28-37" .generated-code }
+```python { linenums="1" hl_lines="29-38" .generated-code }
 --8<-- "docs/snippets/src/pgml_out/builder_custom_class_demo_base.py"
 ```
 
@@ -76,7 +76,7 @@ You can also expand fields as varargs. This is useful if you have a list of argu
 
 The generated code will look like this:
 
-```python { linenums="1" hl_lines="41-43" .generated-code }
+```python { linenums="1" hl_lines="42-44" .generated-code }
 --8<-- "docs/snippets/src/pgml_out/builder_varargs_demo_base.py"
 ```
 

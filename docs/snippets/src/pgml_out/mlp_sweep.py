@@ -15,13 +15,13 @@ ActivationSweepField = typing.Union[
 class MLPParsingDemoSweep(pgml.Sweeper[patch.MLPParsingDemoPatch]):
     """MLP is a simple multi-layer perceptron."""
 
-    num_layers: pgml.IntSweep | None = None
+    num_layers: typing.Optional[pgml.IntSweep] = None
     """Number of layers in the MLP."""
 
-    num_units: pgml.IntSweep | None = None
+    num_units: typing.Optional[pgml.IntSweep] = None
     """Number of units in each layer."""
 
-    activation: ActivationSweepField | None = None
+    activation: typing.Optional[ActivationSweepField] = None
     """Activation function to use."""
 
 

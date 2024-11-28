@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+from typing import List
 import typer 
 
 
@@ -9,8 +10,8 @@ import mkdocs_gen_files
 nav = mkdocs_gen_files.Nav()
 
 def main(
-    include: list[str] = ["**/*.py"],
-    exclude: list[str] = [
+    include: List[str] = ["**/*.py"],
+    exclude: List[str] = [
         "py_gen_ml/cmd/*.py",
         "py_gen_ml/plugin/*.py",
         "py_gen_ml/typing/*.py",

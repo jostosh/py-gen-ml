@@ -16,7 +16,8 @@ def run_trial(
     trial: typing.Optional[optuna.Trial] = None,
 ) -> typing.Union[float, typing.Sequence[float]]:
     """
-    Run a trial with the given values for implicit_cli_arg_test. The sampled hyperparameters have already been added to the trial.
+    Run a trial with the given values for implicit_cli_arg_test. The sampled
+    hyperparameters have already been added to the trial.
     """
     # TODO: Implement this function
     return 0.0
@@ -24,8 +25,11 @@ def run_trial(
 
 @pgml.pgml_cmd(app=app)
 def main(
-    config_paths: list[str] = typer.Option(..., help='Paths to config files'),
-    sweep_paths: list[str] = typer.Option(default_factory=list, help='Paths to sweep files'),
+    config_paths: typing.List[str] = typer.Option(..., help='Paths to config files'),
+    sweep_paths: typing.List[str] = typer.Option(
+        default_factory=list,
+        help='Paths to sweep files',
+    ),
     cli_args: cli_args.ImplicitCLIArgTestArgs = typer.Option(...),
 ) -> None:
     implicit_cli_arg_test = base.ImplicitCLIArgTest.from_yaml_files(config_paths)
@@ -35,7 +39,10 @@ def main(
         return
     implicit_cli_arg_test_sweep = sweep.ImplicitCLIArgTestSweep.from_yaml_files(sweep_paths)
 
-    def objective(trial: optuna.Trial) -> typing.Union[float, typing.Sequence[float]]:
+    def objective(trial: optuna.Trial) -> typing.Union[
+        float,
+        typing.Sequence[float],
+    ]:
         optuna_sampler = pgml.OptunaSampler(trial)
         implicit_cli_arg_test_patch = optuna_sampler.sample(implicit_cli_arg_test_sweep)
         implicit_cli_arg_test_patched = implicit_cli_arg_test.merge(implicit_cli_arg_test_patch)
