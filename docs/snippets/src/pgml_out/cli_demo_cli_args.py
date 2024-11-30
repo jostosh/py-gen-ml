@@ -11,35 +11,36 @@ from . import cli_demo_base as base
 class CLIDemoArgs(pgml.YamlBaseModel):
     """Global configuration"""
 
-    num_epochs: typing.Annotated[
-        typing.Optional[int],
-        typer.Option(help="Number of epochs. Maps to 'num_epochs'"),
-        pydantic.Field(None),
-        pgml.ArgRef("num_epochs"),
-    ]
-    """Number of epochs"""
-
     path: typing.Annotated[
         typing.Optional[str],
-        typer.Option(help="Path to the dataset. Maps to 'path'"),
+        typer.Option(help="Path to the dataset. Maps to 'data.dataset.path'"),
         pydantic.Field(None),
-        pgml.ArgRef("path"),
+        pgml.ArgRef("data.dataset.path"),
     ]
     """Path to the dataset"""
 
+    num_epochs: typing.Annotated[
+        typing.Optional[int],
+        typer.Option(help="Number of epochs. Maps to 'training.num_epochs'"),
+        pydantic.Field(None),
+        pgml.ArgRef("training.num_epochs"),
+    ]
+    """Number of epochs"""
+
     num_layers: typing.Annotated[
         typing.Optional[int],
-        typer.Option(help="Number of layers. Maps to 'num_layers'"),
+        typer.Option(help="Number of layers. Maps to 'model.num_layers'"),
         pydantic.Field(None),
-        pgml.ArgRef("num_layers"),
+        pgml.ArgRef("model.num_layers"),
     ]
     """Number of layers"""
 
     num_workers: typing.Annotated[
         typing.Optional[int],
-        typer.
-        Option(help="Number of workers for loading the dataset. Maps to 'num_workers'"),
+        typer.Option(
+            help="Number of workers for loading the dataset. Maps to 'data.num_workers'"
+        ),
         pydantic.Field(None),
-        pgml.ArgRef("num_workers"),
+        pgml.ArgRef("data.num_workers"),
     ]
     """Number of workers for loading the dataset"""

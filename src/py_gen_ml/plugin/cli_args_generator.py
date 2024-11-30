@@ -289,7 +289,6 @@ class CliArgsGenerator(Generator):
                     else:
                         raise ValueError(f'Could not find a unique path for message {message.proto.name}')
             else:
-                paths: list[tuple[str, ...]] = [()]
                 shortcut_paths: list[tuple[str, ...]] = [()]
 
             for field in descendant.fields:
