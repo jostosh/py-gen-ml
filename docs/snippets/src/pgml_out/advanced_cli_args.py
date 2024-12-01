@@ -13,32 +13,32 @@ class TrainingArgs(pgml.YamlBaseModel):
 
     num_units: typing.Annotated[
         typing.Optional[int],
-        typer.Option(help="Number of units. Maps to 'num_units'"),
+        typer.Option(help="Number of units. Maps to 'mlp.layers.num_units'"),
         pydantic.Field(None),
-        pgml.ArgRef("num_units"),
+        pgml.ArgRef("mlp.layers.num_units"),
     ]
     """Number of units"""
 
     activation: typing.Annotated[
         typing.Optional[str],
-        typer.Option(help="Activation function. Maps to 'activation'"),
+        typer.Option(help="Activation function. Maps to 'mlp.layers.activation'"),
         pydantic.Field(None),
-        pgml.ArgRef("activation"),
+        pgml.ArgRef("mlp.layers.activation"),
     ]
     """Activation function"""
 
     type: typing.Annotated[
         typing.Optional[str],
-        typer.Option(help="Type of optimizer. Maps to 'type'"),
+        typer.Option(help="Type of optimizer. Maps to 'optimizer.type'"),
         pydantic.Field(None),
-        pgml.ArgRef("type"),
+        pgml.ArgRef("optimizer.type"),
     ]
     """Type of optimizer"""
 
     learning_rate: typing.Annotated[
         typing.Optional[float],
-        typer.Option(help="Learning rate. Maps to 'learning_rate'"),
+        typer.Option(help="Learning rate. Maps to 'optimizer.learning_rate'"),
         pydantic.Field(None),
-        pgml.ArgRef("learning_rate"),
+        pgml.ArgRef("optimizer.learning_rate"),
     ]
     """Learning rate"""
