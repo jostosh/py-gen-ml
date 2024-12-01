@@ -3,7 +3,7 @@ import typing
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, TypeVar
+from typing import Any, Dict, List, Set, Tuple, TypeVar
 
 import networkx
 import protogen
@@ -271,25 +271,39 @@ class CliArgsGenerator(Generator):
         for descendant in [message, *networkx.ancestors(graph, message)]:
             if isinstance(descendant, protogen.Enum):
                 continue
-            raw_paths = list(
-                networkx.all_simple_edge_paths(graph, source=descendant, target=message),
-            )  # type: ignore
+            raw_paths = typing.cast(
+                List[Tuple[Any, Any, str]],
+                list(
+                    networkx.all_simple_edge_paths(graph, source=descendant, target=message),
+                ),
+            )
             # Filter out paths that are already in explicit_paths
-            paths = [tuple(edge[2] for edge in reversed(edges)) for edges in raw_paths]  # type: ignore
-            if len(paths) > 1:
-                max_len = max(len(path) for path in paths)
-                if max_len == 0:
-                    paths: list[tuple[str, ...]] = [()]
-                    shortcut_paths: list[tuple[str, ...]] = [()]
-                else:
-                    for shortcut_len in range(1, max_len + 1):
-                        shortcut_paths: list[tuple[str, ...]] = [edges[-shortcut_len:] for edges in paths]
-                        if len(set(shortcut_paths)) == len(paths):
-                            break
+            paths = [tuple(edge[2] for edge in reversed(edges)) for edges in raw_paths]
+            if len(paths) == 0:
+
+                for field in descendant.fields:
+                    if field.kind == protogen.Kind.MESSAGE:
+                        continue
+
+                    name = typing.cast(str, field.py_name)  # type: ignore
+                    if (name,) in explicit_paths:
+                        continue
+
+                    if name in fields:
+                        fields[name].append(FieldPath(path=[name], field=field))
                     else:
-                        raise ValueError(f'Could not find a unique path for message {message.proto.name}')
+                        fields[name] = [FieldPath(path=[name], field=field)]
+                continue
+            elif len(paths) == 1:
+                shortcut_paths = [()]
             else:
-                shortcut_paths: list[tuple[str, ...]] = [()]
+                max_len = max(len(path) for path in paths)
+                for shortcut_len in range(1, max_len + 1):
+                    shortcut_paths: list[tuple[str, ...]] = [edges[-shortcut_len:] for edges in paths]
+                    if len(set(shortcut_paths)) == len(paths):
+                        break
+                else:
+                    raise ValueError(f'Could not find a unique path for message {message.proto.name}')
 
             for field in descendant.fields:
                 if field.kind == protogen.Kind.MESSAGE:

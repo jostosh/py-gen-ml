@@ -19,14 +19,6 @@ class CLIDemoArgs(pgml.YamlBaseModel):
     ]
     """Path to the dataset"""
 
-    num_epochs: typing.Annotated[
-        typing.Optional[int],
-        typer.Option(help="Number of epochs. Maps to 'training.num_epochs'"),
-        pydantic.Field(None),
-        pgml.ArgRef("training.num_epochs"),
-    ]
-    """Number of epochs"""
-
     num_layers: typing.Annotated[
         typing.Optional[int],
         typer.Option(help="Number of layers. Maps to 'model.num_layers'"),
@@ -44,3 +36,11 @@ class CLIDemoArgs(pgml.YamlBaseModel):
         pgml.ArgRef("data.num_workers"),
     ]
     """Number of workers for loading the dataset"""
+
+    num_epochs: typing.Annotated[
+        typing.Optional[int],
+        typer.Option(help="Number of epochs. Maps to 'training.num_epochs'"),
+        pydantic.Field(None),
+        pgml.ArgRef("training.num_epochs"),
+    ]
+    """Number of epochs"""
