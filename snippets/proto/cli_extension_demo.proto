@@ -1,0 +1,50 @@
+// cli_extension_demo.proto
+syntax = "proto3";
+
+package cli_extension_demo;
+
+import "py_gen_ml/extensions.proto";
+
+
+// Global configuration
+message CliExtensionDemo {
+    option (pgml.cli) = {
+        enable: true
+        arg: { name: "train_path", path: "data.train_dataset.path" }
+        arg: { name: "test_path", path: "data.test_dataset.path" }
+    };
+    // Dataset configuration
+    Data data = 1;
+    // Model configuration
+    Model model = 2;
+    // Training configuration
+    Training training = 3;
+}
+
+// Dataset configuration
+message Dataset {
+    // Path to the dataset
+    string path = 1;
+}
+
+// Data config
+message Data {
+    // Path to the dataset
+    Dataset train_dataset = 1;
+    // Path to the dataset
+    Dataset test_dataset = 2;
+    // Number of workers for loading the dataset
+    uint32 num_workers = 3;
+}
+
+// Model configuration
+message Model {
+    // Number of layers
+    uint32 num_layers = 1;
+}
+
+// Training configuration
+message Training {
+    // Number of epochs
+    uint32 num_epochs = 1;
+}

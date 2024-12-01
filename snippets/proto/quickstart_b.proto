@@ -1,0 +1,17 @@
+// quickstart_b.proto
+syntax = "proto3";
+
+package example;
+
+import "py_gen_ml/extensions.proto";
+
+// Multi-layer perceptron configuration
+message MLPQuickstart {
+    option (pgml.cli).enable = true;
+    // Number of layers
+    int64 num_layers = 1;
+    // Number of units
+    int64 num_units = 2;
+    // Activation function
+    string activation = 3;
+}

@@ -1,0 +1,21 @@
+// dataloader.proto
+syntax = "proto3";
+
+package dataloader;
+
+import "py_gen_ml/extensions.proto";
+
+// DataLoader configuration
+message DataLoaderConfig {
+    option (pgml.cli).enable = true;
+    // Batch size
+    int32 batch_size = 1;
+    // Number of workers
+    int32 num_workers = 2;
+    // Pin memory
+    bool pin_memory = 3;
+    // Persistent workers
+    bool persistent_workers = 4;
+    // Prefetch factor
+    int32 prefetch_factor = 5;
+}

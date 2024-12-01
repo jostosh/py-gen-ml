@@ -1,0 +1,14 @@
+// quickstart_a.proto
+syntax = "proto3";
+
+package example;
+
+// Multi-layer perceptron configuration
+message MLPQuickstart {
+    // Number of layers
+    int64 num_layers = 1;
+    // Number of units
+    int64 num_units = 2;
+    // Activation function
+    string activation = 3;
+}

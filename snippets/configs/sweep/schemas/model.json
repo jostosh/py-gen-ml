@@ -1,0 +1,47 @@
+{
+  "$defs": {
+    "Sweeper_Union_ConvNetSweep__NestedChoice_ConvNetSweep__ConvNetPatch___": {
+      "properties": {},
+      "title": "Sweeper[Union[ConvNetSweep, NestedChoice[ConvNetSweep, ConvNetPatch]]]",
+      "type": "object"
+    },
+    "Sweeper_Union_TransformerSweep__NestedChoice_TransformerSweep__TransformerPatch___": {
+      "properties": {},
+      "title": "Sweeper[Union[TransformerSweep, NestedChoice[TransformerSweep, TransformerPatch]]]",
+      "type": "object"
+    }
+  },
+  "description": "Model configuration",
+  "properties": {
+    "backbone": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Sweeper_Union_TransformerSweep__NestedChoice_TransformerSweep__TransformerPatch___"
+        },
+        {
+          "$ref": "#/$defs/Sweeper_Union_ConvNetSweep__NestedChoice_ConvNetSweep__ConvNetPatch___"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Backbone"
+    },
+    "_defs_": {}
+  },
+  "title": "ModelSweep",
+  "type": "object"
+}

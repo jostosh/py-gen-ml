@@ -1,0 +1,25 @@
+// default_enum.proto
+syntax = "proto3";
+
+package defaults_enum;
+
+import "py_gen_ml/extensions.proto";
+
+// Activation function
+enum Activation {
+    // Rectified Linear Unit
+    RELU = 0;
+    // Gaussian Error Linear Unit
+    GELU = 1;
+}
+
+// Linear layer
+message Linear {
+    // Number of input features
+    int32 in_features = 1;
+    // Number of output features
+    int32 out_features = 2;
+    // Activation function
+    Activation activation = 3 [(pgml.default).enum = "GELU"];
+}
+

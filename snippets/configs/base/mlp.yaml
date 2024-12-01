@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=schemas/mlp_parsing_demo.json
+activation: tanh
+num_layers: 2
+num_units: 32
