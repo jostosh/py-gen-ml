@@ -49,6 +49,16 @@ def generate(
         help='Path to the file to export the code generator request to.',
         hidden=True,
     ),
+    generators: Optional[List[str]] = typer.Option(
+        None,
+        '--generators',
+        help=(
+            'Comma-separated subset of generators to run, e.g. '
+            '"--generators=base,patch". Defaults to every registered '
+            'generator (built-in plus any third-party generators discovered '
+            'via the `py_gen_ml.generators` entry-point group).'
+        ),
+    ),
 ) -> None:
     """
     Generate Pydantic models from a protobuf definition.
@@ -107,6 +117,16 @@ def generate(
         f'--py-ml_opt=export_code_generator_request={export_code_generator_request}',
         f'--py-ml_opt=export_code_generator_request_file={export_code_generator_request_file}',
     ]
+    # Flatten any comma-separated values typer collected (typer exposes the
+    # option as repeatable + comma-separated). We forward to the plugin using
+    # ';' as the separator so the value survives protoc's ',' parameter parser.
+    flat_generators: List[str] = []
+    for raw in generators or []:
+        flat_generators.extend(name.strip() for name in raw.split(',') if name.strip())
+    generators_cmd_args = (
+        [f'--py-ml_opt=enabled_generators={";".join(flat_generators)}']
+        if flat_generators else []
+    )
     cmd = [
         f"-I{pathlib.Path(grpc_tools.__file__).parent / '_proto'}",
         f"-I{grpc_tools.protoc._get_resource_file_name('grpc_tools', '_proto')}",
@@ -119,6 +139,7 @@ def generate(
         f'--py-ml_opt=configs_dir={configs_dir}',
         '--experimental_allow_proto3_optional',
         *export_cmd_args,
+        *generators_cmd_args,
         *map(str, proto_files),
     ]
     pathlib.Path(code_dir).mkdir(parents=True, exist_ok=True)

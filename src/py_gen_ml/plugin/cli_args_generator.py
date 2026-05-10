@@ -3,7 +3,7 @@ import typing
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple, TypeVar
+from typing import Any, ClassVar, Dict, List, Optional, Set, Tuple, TypeVar
 
 import networkx
 import protogen
@@ -21,10 +21,13 @@ from py_gen_ml.plugin.common import (
 from py_gen_ml.plugin.constants import (
     BASE_MODEL_ALIAS,
     CLI_ARGS_ALIAS,
+    CLI_ARGS_SUFFIX,
     PGML_ALIAS,
     SWEEP_MODEL_ALIAS,
 )
 from py_gen_ml.plugin.generator import Generator
+from py_gen_ml.plugin.registry import GeneratorSpec
+from py_gen_ml.plugin.type_mapping import PythonTypeMapper, TypeMapper
 from py_gen_ml.typing.some import some
 
 logger = setup_logger(__name__)
@@ -46,20 +49,38 @@ class CliArgsGenerator(Generator):
     The generated file will be imported by the py-gen-ml CLI to generate CLI argument models for the given protobuf files.
     """
 
-    def __init__(self, gen: protogen.Plugin, suffix: str) -> None:
+    name: ClassVar[str] = 'cli_args'
+    output_suffix: ClassVar[Optional[str]] = CLI_ARGS_SUFFIX
+
+    def __init__(
+        self,
+        gen: protogen.Plugin,
+        suffix: Optional[str] = None,
+        *,
+        type_mapper: Optional[TypeMapper] = None,
+    ) -> None:
         """
         Initialize the CliArgsGenerator.
 
         Args:
             gen (protogen.Plugin): The protogen plugin instance.
             suffix (str): The suffix to be added to the generated file names.
+            type_mapper: Optional override for the field type mapping. The
+                default uses :class:`PythonTypeMapper` configured to render
+                messages as ``XArgs`` and enums as ``base.X``.
 
         This class is responsible for generating CLI argument models based on
         the input protobuf files. It creates pydantic models that can be used
         with typer for command-line interfaces.
         """
-        super().__init__(gen)
-        self._suffix = suffix
+        super().__init__(
+            gen,
+            type_mapper=type_mapper or PythonTypeMapper(
+                enum_alias_prefix=BASE_MODEL_ALIAS,
+                message_suffix='Args',
+            ),
+        )
+        self._suffix = suffix or CLI_ARGS_SUFFIX
 
     def _generate_code_for_file(self, file: protogen.File) -> None:
         """
@@ -377,51 +398,16 @@ class CliArgsGenerator(Generator):
             raise ValueError(f'Field {path[0]} not found in message {message.proto.name}')
 
     def field_to_type(self, field: protogen.Field) -> str:
+        """Convert a protogen field to its Python type expression.
+
+        Delegates to the configured :class:`TypeMapper`.
         """
-        Converts a protogen field to a type.
+        assert self._type_mapper is not None  # set by __init__
+        return self._type_mapper.field_to_type(field)
 
-        Args:
-            field (protogen.Field): Field in the proto message.
 
-        Raises:
-            ValueError: The field kind is not supported.
-
-        Returns:
-            str: A string representation of the type.
-        """
-        if field.kind == protogen.Kind.MESSAGE:
-            return f'{some(field.message).py_ident.py_name}Args'
-        elif field.kind == protogen.Kind.DOUBLE:
-            return 'float'
-        elif field.kind == protogen.Kind.FLOAT:
-            return 'float'
-        elif field.kind == protogen.Kind.INT64:
-            return 'int'
-        elif field.kind == protogen.Kind.UINT64:
-            return 'int'
-        elif field.kind == protogen.Kind.INT32:
-            return 'int'
-        elif field.kind == protogen.Kind.FIXED64:
-            return 'int'
-        elif field.kind == protogen.Kind.FIXED32:
-            return 'int'
-        elif field.kind == protogen.Kind.BOOL:
-            return 'bool'
-        elif field.kind == protogen.Kind.STRING:
-            return 'str'
-        elif field.kind == protogen.Kind.BYTES:
-            return 'bytes'
-        elif field.kind == protogen.Kind.UINT32:
-            return 'int'
-        elif field.kind == protogen.Kind.ENUM:
-            return f'{BASE_MODEL_ALIAS}.{some(field.enum).py_ident.py_name}'
-        elif field.kind == protogen.Kind.SFIXED32:
-            return 'int'
-        elif field.kind == protogen.Kind.SFIXED64:
-            return 'int'
-        elif field.kind == protogen.Kind.SINT32:
-            return 'int'
-        elif field.kind == protogen.Kind.SINT64:
-            return 'int'
-        else:
-            raise ValueError(f'Unknown field kind: {field.kind}')
+cli_args_spec = GeneratorSpec(
+    name='cli_args',
+    factory=lambda plugin: CliArgsGenerator(plugin, suffix=CLI_ARGS_SUFFIX),
+    description='Typer CLI argument models for messages with the `(pgml.cli)` extension.',
+)
