@@ -7,8 +7,9 @@ from py_gen_ml.plugin.constants import (
     SWEEP_SUFFIX,
 )
 from py_gen_ml.plugin.generator import Generator
+from py_gen_ml.plugin.registry import \
+    ENTRY_POINT_GROUP as GENERATORS_ENTRY_POINT_GROUP
 from py_gen_ml.plugin.registry import (
-    ENTRY_POINT_GROUP as GENERATORS_ENTRY_POINT_GROUP,
     GeneratorRegistry,
     GeneratorSpec,
     default_registry,

@@ -123,10 +123,7 @@ def generate(
     flat_generators: List[str] = []
     for raw in generators or []:
         flat_generators.extend(name.strip() for name in raw.split(',') if name.strip())
-    generators_cmd_args = (
-        [f'--py-ml_opt=enabled_generators={";".join(flat_generators)}']
-        if flat_generators else []
-    )
+    generators_cmd_args = ([f'--py-ml_opt=enabled_generators={";".join(flat_generators)}'] if flat_generators else [])
     cmd = [
         f"-I{pathlib.Path(grpc_tools.__file__).parent / '_proto'}",
         f"-I{grpc_tools.protoc._get_resource_file_name('grpc_tools', '_proto')}",

@@ -10,7 +10,10 @@ import protogen
 from yapf.yapflib.yapf_api import FormatCode
 
 from py_gen_ml.logging.setup_logger import setup_logger
-from py_gen_ml.plugin.common import field_requires_typing_import, get_element_subgraphs
+from py_gen_ml.plugin.common import (
+    field_requires_typing_import,
+    get_element_subgraphs,
+)
 from py_gen_ml.plugin.constants import PGML_ALIAS
 from py_gen_ml.plugin.type_mapping import TypeMapper
 from py_gen_ml.yaml.object_path import InsertAnyOfWithObjectPath

@@ -8,7 +8,11 @@ import pytest
 
 import py_gen_ml as pgml
 from py_gen_ml.plugin import main as plugin_main
-from py_gen_ml.plugin.base_model_generator import BaseModelGenerator, base_spec, patch_spec
+from py_gen_ml.plugin.base_model_generator import (
+    BaseModelGenerator,
+    base_spec,
+    patch_spec,
+)
 from py_gen_ml.plugin.cli_args_generator import CliArgsGenerator, cli_args_spec
 from py_gen_ml.plugin.registry import (
     ENTRY_POINT_GROUP,
@@ -16,7 +20,10 @@ from py_gen_ml.plugin.registry import (
     GeneratorSpec,
     default_registry,
 )
-from py_gen_ml.plugin.sweep_model_generator import SweepModelGenerator, sweep_spec
+from py_gen_ml.plugin.sweep_model_generator import (
+    SweepModelGenerator,
+    sweep_spec,
+)
 
 
 class _FakePlugin:
