@@ -1,12 +1,12 @@
 [project]
 name = "py-gen-ml"
 dynamic = ["version"]
-description = "A Python library for generating machine learning tooling."
+description = "Typed ML configuration tooling generated from Protocol Buffer schemas."
 license = {file = "LICENSE"}
 authors = [
     {name = "Jos van de Wolfshaar", email = "jos.vandewolfshaar@gmail.com"},
 ]
-keywords = ["machine learning", "code generation", "hyperparameter optimization", "optuna", "mlops", "protobufs"]
+keywords = ["machine learning", "configuration", "protobuf", "pydantic", "code generation", "hyperparameter optimization", "optuna", "mlops", "yaml"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",

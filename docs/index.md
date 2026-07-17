@@ -8,13 +8,51 @@ hide:
   <img src="assets/images/logo.svg" alt="py-gen-ml logo" width="200" />
   
   <h1>py-gen-ml</h1>
-  <p>A library for generating machine learning code from protobuf schemas.</p>
+  <p>Typed ML configuration tooling, generated from Protocol Buffer schemas.</p>
 </div>
 
 
 ## 🌟 Project Introduction
 
-`py-gen-ml` simplifies the configuration and management of machine learning projects. It leverages [Protocol Buffers](https://protobuf.dev/) (protobufs) to provide a robust, strongly typed, and extensible way to define and manipulate configuration schemas for machine learning projects. The protobuf schemas provide a single source of truth from which many things ✨ **are generated automatically** ✨.
+`py-gen-ml` simplifies the configuration and management of machine learning projects. You define your config schema in [Protocol Buffers](https://protobuf.dev/) (protobufs). A deterministic `protoc` plugin then generates strongly typed Pydantic models, JSON Schemas, patch and sweep types, and optional Typer CLIs. The schema you write is the single source of truth from which the rest of the config tooling is derived.
+
+## 🧭 What this is (and isn't)
+
+**What this is:**
+
+- You author `.proto` files that describe your ML configuration.
+- You run `py-gen-ml`, which invokes the `protoc-gen-py-ml` plugin. That is ordinary schema-driven code generation.
+- From that schema you get base configs, patches, sweeps, JSON Schemas for YAML validation, CLI parsers, and optional factories.
+
+**What this isn't:**
+
+- Not an LLM. Nothing here invents schemas, protobufs, or training code from a prompt.
+- Not “AI generates your protobufs.” The direction is the opposite: **protobuf → ML config tooling**.
+
+## 🔄 How it fits together
+
+```mermaid
+flowchart LR
+  proto["You write .proto"] --> cli["py-gen-ml / protoc plugin"]
+  cli --> base["Base Pydantic models"]
+  cli --> patch["Patch models"]
+  cli --> sweep["Sweep models"]
+  cli --> jsonSchema["JSON Schemas"]
+  cli --> typerCli["CLI args / entrypoint"]
+  base --> train["Your training code"]
+  patch --> train
+  sweep --> train
+  typerCli --> train
+```
+
+| Artifact | What it's for |
+|----------|----------------|
+| Base models | Load and validate full YAML configs |
+| Patch models | Overlay small experiment deltas on a base |
+| Sweep models | Define Optuna search spaces in YAML |
+| JSON Schemas | Validate YAML as you type in the IDE |
+| CLI / entrypoint | Override nested fields from the command line |
+| Factories | Optional `build()` helpers from `(pgml.factory)` |
 
 ## ✨ Brief Overview
 
@@ -146,6 +184,7 @@ A real quick overview of what you can do with `py-gen-ml`:
 - **Flexible YAML**: Use human-readable YAML with support for advanced references within and across files.
 - **Hyperparameter Sweeps**: Effortlessly define and manage hyperparameter tuning.
 - **CLI Argument Parsing**: Automatically generate command-line interfaces from your configuration schemas.
+- **Factories**: Optionally generate `build()` helpers that instantiate Python classes from config fields.
 
 **✅ Validation and Type Safety**:
 
@@ -168,8 +207,8 @@ Machine learning projects often involve complex configurations with many interde
 
 `py-gen-ml` addresses these challenges by:
 
-1. 📊 Providing a single, strongly-typed schema definition for configurations.
-2. 🔄 Generating code to manage configuration changes automatically.
+1. 📊 Providing a single, strongly-typed schema definition for configurations. You write that schema in protobuf.
+2. 🔄 Generating deterministic code to manage configuration changes automatically (base, patch, sweep, CLI).
 3. 📝 Offering flexible YAML configurations with advanced referencing and variable support.
 4. 🛠️ Generating JSON schemas for real-time YAML validation.
 5. 🔌 Seamlessly integrating into your workflow with multiple experiment running options:
@@ -192,8 +231,12 @@ Consider using `py-gen-ml` when you need to:
 
 ## 📚 Where to go from here
 
-- [Quickstart](quickstart.md): A quick intro to the most important concepts.
-- [Command Line Interface](guides/cli_argument_parsing.md): How to use the generated CLI parser.
-- [Parameter Sweeps](guides/sweep.md): How to run parameter sweeps.
-- [Generated factories](guides/builders.md): How to generate factories to instantiate your classes.
-- [Cifar 10 example project](example_projects/cifar10.md): A more elaborate example of a machine learning project using `py-gen-ml`.
+- [Quickstart](quickstart.md): Write a proto, generate models, load YAML, patch, sweep, and run a CLI.
+- [py-gen-ml command](py-gen-ml-command.md): Flags, outputs, and project layout.
+- [Protobuf crash course](guides/protobuf.md): How schemas map to generated tooling.
+- [YAML configuration](guides/defining_yaml_files.md): Human-readable configs with JSON Schema validation.
+- [Patching](guides/patching.md): Express experiments as deltas on a base config.
+- [Parameter Sweeps](guides/sweep.md): Optuna search spaces from generated sweep models.
+- [CLI argument parsing](guides/cli_argument_parsing.md): Override nested fields from the command line.
+- [Factories](guides/builders.md): Generate `build()` helpers from `(pgml.factory)`.
+- [CIFAR-10 example](example_projects/cifar10.md): An end-to-end training project using `py-gen-ml`.

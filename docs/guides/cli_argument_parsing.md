@@ -1,5 +1,7 @@
 # 🖥️ CLI Argument Parsing 
 
+Enable CLI generation on a message with `(pgml.cli).enable = true` in your protobuf schema. From that option, `py-gen-ml` emits Pydantic CLI models and an entrypoint stub.
+
 ## ✨ Implicit Argument References
 
 `py-gen-ml` generates a smart CLI argument parser using Pydantic base models. It shortens CLI argument names for deeply nested fields in your config when there's exactly one path to a field and the field name is unique.

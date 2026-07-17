@@ -1,5 +1,7 @@
 # 🏭 Factories
 
+Factories are optional codegen from the `(pgml.factory)` protobuf option. You still write the target Python class yourself. `py-gen-ml` only emits a typed `build()` helper that unpacks config fields into constructor arguments. Nothing here invents model architectures. It wires your schema to your classes.
+
 ## 🪄 Generated Factory Methods
 Occasionally, you have enough information to instantiate a class from a configuration object immediately. `py-gen-ml` allows you to generate factory methods in such cases. The factory methods unpack the message fields into keyword arguments and then instantiate an object.
 

@@ -1,6 +1,6 @@
 # 🔍 Parameter Sweeping
 
-For parameter sweeps, `py-gen-ml` generates a Pydantic base model that replaces the types in the original config with structures that allow for defining the sampling space for each parameter.
+From the same protobuf schema you use for base configs, `py-gen-ml` generates a sweep model that replaces each field's type with structures for defining a sampling space. You write the search space in YAML. The generated types keep it validated and typed.
 
 The sweep config is then passed to a `py_gen_ml.OptunaSampler` which will sample the parameter space and return a patch that can be applied to a base config.
 

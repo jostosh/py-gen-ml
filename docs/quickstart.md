@@ -2,7 +2,7 @@
 
 ## 🌟 Introduction
 
-`py-gen-ml` leverages [protobufs](https://developers.google.com/protocol-buffers) to define the schema for your configuration. `py-gen-ml` uses the language agnostic schema to generate code and JSON schemas from the protobuf definitions, creating a robust and versatile configuration system for machine learning projects.
+`py-gen-ml` turns **your** protobuf config schema into typed ML configuration tooling. You write the `.proto`. The `py-gen-ml` CLI runs a deterministic `protoc` plugin that emits Pydantic models, JSON Schemas, patches, sweeps, and optional CLIs. You can load YAML, overlay experiments, and sweep hyperparameters without hand-maintaining parallel config types.
 
 !!! note
     While `py-gen-ml` currently doesn't fully utilize the language-neutral or platform-neutral features of protobuf, these capabilities are available for future expansion. If you're new to protobufs, you can learn more about them [here](https://developers.google.com/protocol-buffers).
@@ -19,7 +19,7 @@ Here's a simple example of a protobuf definition:
 
 ## 🛠️ Generating Configuration Utilities
 
-With your protobuf defined, you can now **✨ generate ✨** configuration objects using this command:
+With your protobuf defined, you can now generate configuration objects using this command:
 
 ```console
 py-gen-ml quickstart_a.proto
@@ -108,15 +108,15 @@ To run a hyperparameter sweep, you can use the OptunaSampler:
 
 ```python
 # example.py
-from pgml_out.quickstart_base import MLP
-from pgml_out.quickstart_sweep import MLPSweep
+from pgml_out.quickstart_a_base import MLPQuickstart
+from pgml_out.quickstart_a_sweep import MLPQuickstartSweep
 
-def train_model(config: MLP) -> float:
+def train_model(config: MLPQuickstart) -> float:
     """Train a model and return the accuracy"""
 
 if __name__ == "__main__":
-    config = MLP.from_yaml_file("example.yaml")
-    sweep = MLPSweep.from_yaml_file("example_sweep.yaml")
+    config = MLPQuickstart.from_yaml_file("example.yaml")
+    sweep = MLPQuickstartSweep.from_yaml_file("example_sweep.yaml")
 
     def objective(trial: optuna.Trial) -> float:
         sampler = pgml.OptunaSampler(trial=trial)
