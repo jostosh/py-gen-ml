@@ -5,3 +5,8 @@ SWEEP_MODEL_ALIAS: Final[str] = 'sweep'
 PATCH_MODEL_ALIAS: Final[str] = 'patch'
 CLI_ARGS_ALIAS: Final[str] = 'cli_args'
 PGML_ALIAS: Final[str] = 'pgml'
+
+BASE_SUFFIX: Final[str] = '_base.py'
+PATCH_SUFFIX: Final[str] = '_patch.py'
+SWEEP_SUFFIX: Final[str] = '_sweep.py'
+CLI_ARGS_SUFFIX: Final[str] = '_cli_args.py'

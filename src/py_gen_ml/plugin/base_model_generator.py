@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Set, TypeVar
+from typing import ClassVar, List, Optional, Set, TypeVar
 
 import networkx
 import protogen
@@ -13,9 +13,15 @@ from py_gen_ml.plugin.common import (
     py_import_for_source_file_derived_file,
     snake_case,
 )
-from py_gen_ml.plugin.constants import BASE_MODEL_ALIAS, PGML_ALIAS
+from py_gen_ml.plugin.constants import (
+    BASE_MODEL_ALIAS,
+    BASE_SUFFIX,
+    PATCH_SUFFIX,
+    PGML_ALIAS,
+)
 from py_gen_ml.plugin.generator import Generator
-from py_gen_ml.typing.some import some
+from py_gen_ml.plugin.registry import GeneratorSpec
+from py_gen_ml.plugin.type_mapping import PythonTypeMapper, TypeMapper
 
 logger = setup_logger(__name__)
 
@@ -29,17 +35,33 @@ class BaseModelGenerator(Generator):
     The generated file will be imported by the py-gen-ml CLI to generate base models for the given protobuf files.
     """
 
-    def __init__(self, gen: protogen.Plugin, is_patch: bool, suffix: str) -> None:
+    name: ClassVar[str] = 'base'
+    output_suffix: ClassVar[Optional[str]] = BASE_SUFFIX
+
+    def __init__(
+        self,
+        gen: protogen.Plugin,
+        is_patch: bool = False,
+        suffix: Optional[str] = None,
+        *,
+        type_mapper: Optional[TypeMapper] = None,
+    ) -> None:
         """
         Initialize the BaseModelGenerator.
 
         Args:
             gen (protogen.Plugin): The plugin instance.
             is_patch (bool): Whether this is a patch model.
-            suffix (str): The suffix for the generated file.
+            suffix (str): The suffix for the generated file. Defaults to
+                ``PATCH_SUFFIX`` when ``is_patch`` is ``True`` and
+                ``BASE_SUFFIX`` otherwise.
+            type_mapper: Optional override for the field type mapping.
         """
-        super().__init__(gen)
-        self._suffix = suffix
+        super().__init__(
+            gen,
+            type_mapper=type_mapper or PythonTypeMapper(is_patch=is_patch),
+        )
+        self._suffix = suffix or (PATCH_SUFFIX if is_patch else BASE_SUFFIX)
         self._is_patch = is_patch
 
     def _generate_code_for_file(self, file: protogen.File) -> None:
@@ -286,57 +308,23 @@ class BaseModelGenerator(Generator):
         return annotation
 
     def field_to_type(self, field: protogen.Field) -> str:
+        """Convert the field to its corresponding Python type expression.
+
+        Delegates to the configured :class:`TypeMapper`; subclasses or external
+        callers can override the mapper to customise rendering.
         """
-        Convert the field to its corresponding type.
+        assert self._type_mapper is not None  # set by __init__
+        return self._type_mapper.field_to_type(field)
 
-        This method determines the appropriate type for the given field based on its kind.
-        It returns the type as a string.
 
-        Args:
-            field (protogen.Field): The field to convert to a type.
+base_spec = GeneratorSpec(
+    name='base',
+    factory=lambda plugin: BaseModelGenerator(plugin, is_patch=False, suffix=BASE_SUFFIX),
+    description='Pydantic base models matching the proto messages.',
+)
 
-        Returns:
-            str: The type for the field.
-        """
-        if field.kind == protogen.Kind.MESSAGE:
-            message = some(field.message)
-            if self._is_patch:
-                return message.py_ident.py_name + 'Patch'
-            return message.py_ident.py_name
-        elif field.kind == protogen.Kind.DOUBLE:
-            return 'float'
-        elif field.kind == protogen.Kind.FLOAT:
-            return 'float'
-        elif field.kind == protogen.Kind.INT64:
-            return 'int'
-        elif field.kind == protogen.Kind.UINT64:
-            return 'int'
-        elif field.kind == protogen.Kind.INT32:
-            return 'int'
-        elif field.kind == protogen.Kind.FIXED64:
-            return 'int'
-        elif field.kind == protogen.Kind.FIXED32:
-            return 'int'
-        elif field.kind == protogen.Kind.BOOL:
-            return 'bool'
-        elif field.kind == protogen.Kind.STRING:
-            return 'str'
-        elif field.kind == protogen.Kind.BYTES:
-            return 'bytes'
-        elif field.kind == protogen.Kind.UINT32:
-            return 'int'
-        elif field.kind == protogen.Kind.ENUM:
-            enum = some(field.enum)
-            if self._is_patch:
-                return f'{BASE_MODEL_ALIAS}.{enum.py_ident.py_name}'
-            return enum.py_ident.py_name
-        elif field.kind == protogen.Kind.SFIXED32:
-            return 'int'
-        elif field.kind == protogen.Kind.SFIXED64:
-            return 'int'
-        elif field.kind == protogen.Kind.SINT32:
-            return 'int'
-        elif field.kind == protogen.Kind.SINT64:
-            return 'int'
-        else:
-            raise ValueError(f'Unknown field kind: {field.kind}')
+patch_spec = GeneratorSpec(
+    name='patch',
+    factory=lambda plugin: BaseModelGenerator(plugin, is_patch=True, suffix=PATCH_SUFFIX),
+    description='Optional-typed patch models for partial updates.',
+)

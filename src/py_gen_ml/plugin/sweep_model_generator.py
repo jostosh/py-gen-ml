@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import TypeVar
+from typing import ClassVar, Optional, TypeVar
 
 import networkx
 import protogen
@@ -14,8 +14,10 @@ from py_gen_ml.plugin.constants import (
     BASE_MODEL_ALIAS,
     PATCH_MODEL_ALIAS,
     PGML_ALIAS,
+    SWEEP_SUFFIX,
 )
 from py_gen_ml.plugin.generator import Generator
+from py_gen_ml.plugin.registry import GeneratorSpec
 from py_gen_ml.typing.some import some
 
 T = TypeVar('T')
@@ -33,7 +35,10 @@ class SweepModelGenerator(Generator):
     Sweep models are used to parameterize the values of fields in a message.
     """
 
-    def __init__(self, gen: protogen.Plugin, suffix: str) -> None:
+    name: ClassVar[str] = 'sweep'
+    output_suffix: ClassVar[Optional[str]] = SWEEP_SUFFIX
+
+    def __init__(self, gen: protogen.Plugin, suffix: Optional[str] = None) -> None:
         """
         Initialize the SweepModelGenerator.
 
@@ -45,7 +50,7 @@ class SweepModelGenerator(Generator):
         Sweep models are used to parameterize the values of fields in a message.
         """
         super().__init__(gen)
-        self._suffix = suffix
+        self._suffix = suffix or SWEEP_SUFFIX
 
     def _generate_code_for_file(self, file: protogen.File) -> None:
         """
@@ -246,3 +251,10 @@ class SweepModelGenerator(Generator):
         types = [f'{PGML_ALIAS}.Sweeper[{self.field_to_sweep_type(field)}]' for field in oneof.fields]
         union_type = ', '.join(types)
         return f'typing.Optional[typing.Union[{union_type}]] = None'
+
+
+sweep_spec = GeneratorSpec(
+    name='sweep',
+    factory=lambda plugin: SweepModelGenerator(plugin, suffix=SWEEP_SUFFIX),
+    description='Sweep models for hyperparameter parameterization.',
+)

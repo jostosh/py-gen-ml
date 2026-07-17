@@ -52,6 +52,16 @@ Documentation = "https://jostosh.github.io/py-gen-ml"
 protoc-gen-py-ml = "py_gen_ml.plugin.main:run"
 py-gen-ml = "py_gen_ml.cmd.generate:app"
 
+# Built-in generators are registered via the same `py_gen_ml.generators`
+# entry-point group that third-party packages use. To ship a custom generator,
+# expose a `GeneratorSpec` (or a zero-arg callable returning one) under this
+# group from your own pyproject.toml.
+[project.entry-points."py_gen_ml.generators"]
+base = "py_gen_ml.plugin.base_model_generator:base_spec"
+patch = "py_gen_ml.plugin.base_model_generator:patch_spec"
+sweep = "py_gen_ml.plugin.sweep_model_generator:sweep_spec"
+cli_args = "py_gen_ml.plugin.cli_args_generator:cli_args_spec"
+
 [project.optional-dependencies]
 docs = [
     "mkdocs-material>=9.5.39",
