@@ -2,7 +2,9 @@
 
 ## 🌟 Introduction
 
-In this guide, we'll explore the basics of protobuf and how it integrates with the `py-gen-ml` library.
+In `py-gen-ml`, **you author the protobuf schema**. That `.proto` file is the source of truth for your ML configuration. Running `py-gen-ml` feeds it through a deterministic `protoc` plugin (`protoc-gen-py-ml`) that emits the Pydantic models, JSON Schemas, and related tooling you use at train time.
+
+This guide covers the protobuf basics you'll need and how they map into generated code.
 
 ## 🔍 What is Protobuf?
 
@@ -18,12 +20,14 @@ When you install `py-gen-ml` via `pip`, you get a protobuf compiler plugin calle
 3. A 'sweep' model for defining parameter sweeps over the base model
 4. A CLI model that enables automatic argument parsing with nested field support
 
+Plus JSON Schemas under `configs/` so your YAML stays validated as you edit.
+
 ### 🤔 Why use Protobuf instead of Pydantic directly?
 You might wonder why we chose protobuf over direct Pydantic models to act as the source of truth for data structures. Here's why:
 
-- **🧩 Separation of Concerns**: Protobuf separates data structure definition from logic implementation.
-- **🔒 Atomic Code Changes**: Generating from a schema instead of code ensures 100% of the code is generated, reducing the impact of divergence between the source of truth and the generated code.
-- **🌐 Rich Ecosystem**: Protobuf's extensive toolset opens up possibilities for future enhancements.
+- **🧩 Separation of Concerns**: Protobuf separates data structure definition from logic implementation. You maintain one schema. Base, patch, sweep, and CLI shapes stay in sync because they are all generated.
+- **🔒 Atomic Code Changes**: Generating from a schema instead of hand-writing parallel models ensures the derived code doesn't drift. That cuts change amplification when nested configs evolve.
+- **🌐 Rich Ecosystem**: Protobuf's extensive toolset opens up possibilities for future enhancements (other languages, serialization formats, and so on).
 
 ## 🧱 Key Concepts
 
@@ -105,6 +109,8 @@ message Owner {
 }
 ```
 
+See [Unions](oneofs.md) for how `oneof` lands in generated Pydantic models and YAML.
+
 ### 🔁 Repeated
 A repeated field contains a list of values:
 
@@ -140,7 +146,9 @@ message Car {
 }
 ```
 
-### 💬 Adding Commentsbuf
+See [Enums](enums.md) for YAML usage and how enums show up in patches and sweeps.
+
+### 💬 Adding Comments
 Use `//` for comments in your proto files:
 
 ```proto hl_lines="1 3"
@@ -155,7 +163,7 @@ For `py-gen-ml`, leading comments are preserved in the generated code, while tra
 
 ## 📚 Wrapping up
 
-Now you're equipped with the basics of Protobuf in `py-gen-ml`! Happy coding! 🚀
+You're now equipped with the protobuf basics for `py-gen-ml`. Next, try the [Quickstart](../quickstart.md) or dig into [YAML configuration](defining_yaml_files.md).
 
 !!! note
     To learn more about the internals of protobuf, here are some optional references to dive into:

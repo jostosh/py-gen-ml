@@ -1,6 +1,6 @@
 ## Introduction
 
-Here we will walk through an example project for training a model to classify images from the CIFAR10 dataset. This combines most of the concepts we have seen in the guides so far. It offers a simple model, data and optimizer, and shows how to:
+Here we will walk through an example project for training a model to classify images from the CIFAR10 dataset. The full source lives in the repo under [`examples/cifar10/`](https://github.com/jostosh/py-gen-ml/tree/main/examples/cifar10). The flow is end-to-end `py-gen-ml`. You author a protobuf schema, generate typed config tooling, then load YAML, apply CLI overrides, and optionally sweep. The training loop stays ordinary Python. This combines most of the concepts from the guides so far. It offers a simple model, data and optimizer, and shows how to:
 
 - Use a variety of special attributes to define the config schema
 - Load a config from a yaml file
@@ -82,25 +82,78 @@ The configuration is defined in a yaml file. This is the file that we will use t
 --8<-- "examples/cifar10/configs/base/default.yaml"
 ```
 
-## Launching the training
+## Sweep configuration
 
-To launch the training, we can use the following command:
+We define the following sweep configuration:
 
-```console
-python examples/cifar10/src/cifar10/train.py \
-    --config-paths \
-    configs/base/default.yaml
+```yaml title="Sweep"
+--8<-- "examples/cifar10/configs/sweep/lr_beta1.yaml"
 ```
 
-## Showing CLI arguments
+This is a sweep over the learning rate and beta1 parameters. We'll use it below when launching Optuna trials.
 
-To show the CLI arguments, we can use the following command:
+## Example code overview
 
-```console
-python examples/cifar10/src/cifar10/train.py --help
+Hand-written training code lives under [`examples/cifar10/src/cifar10/`](https://github.com/jostosh/py-gen-ml/tree/main/examples/cifar10/src/cifar10). Generated config tooling lives under [`examples/cifar10/src/pgml_out/`](https://github.com/jostosh/py-gen-ml/tree/main/examples/cifar10/src/pgml_out). Rough map:
+
+| Piece | Path | Role |
+|-------|------|------|
+| Schema | `config.proto` | Source of truth for the project config |
+| Generated models | `pgml_out/config_{base,patch,sweep,cli_args}.py` | Load YAML, merge patches, sample sweeps, parse CLI |
+| Modules | `modules.py` | Conv / MLP building blocks and `Model.from_config` |
+| Data | `data.py` | CIFAR-10 transforms and DataLoaders |
+| Trainer | `train.py` (`Trainer`) | Train / eval loop, optional Optuna trial reporting |
+| Train function | `train.py` (`train_model`) | Wire config → model, data, optimizer, trainer |
+| Entrypoint | `train.py` (`main`) | `@pgml.pgml_cmd` CLI: configs, sweeps, CLI overrides |
+
+### Modules
+
+```python title="Modules"
+--8<-- "examples/cifar10/src/cifar10/modules.py"
 ```
 
-This will show the following:
+### Data
+
+```python title="Data"
+--8<-- "examples/cifar10/src/cifar10/data.py"
+```
+
+### Trainer
+
+```python title="Trainer"
+--8<-- "examples/cifar10/src/cifar10/train.py:26:98"
+```
+
+### Train function
+
+The train function that instantiates all the components and calls the trainer:
+
+```python title="Train function"
+--8<-- "examples/cifar10/src/cifar10/train.py:106:139"
+```
+
+## How to run
+
+All commands below assume you are in the example project directory:
+
+```console
+cd examples/cifar10
+```
+
+Install the example (pulls in `py-gen-ml` from the workspace plus Torch):
+
+```console
+uv sync
+```
+
+### Inspect the CLI
+
+```console
+uv run python src/cifar10/train.py --help
+```
+
+This prints the generated options, including nested field overrides:
+
 ```
  Usage: train.py [OPTIONS]
 
@@ -125,53 +178,52 @@ This will show the following:
 ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-## Starting a sweep
+### Simple run (base config only)
 
-We define the following sweep configuration:
-
-```yaml title="Sweep"
---8<-- "examples/cifar10/configs/sweep/lr_beta1.yaml"
-```
-
-This is a sweep over the learning rate and beta1 parameters.
-
-To run the sweep, we can use the following command:
+Train once with the default YAML:
 
 ```console
-python examples/cifar10/src/cifar10/train.py \
-    --config-paths \
-    configs/base/default.yaml \
-    --sweep-paths \
-    configs/sweep/lr_beta1.yaml
+uv run python src/cifar10/train.py \
+    --config-paths configs/base/default.yaml
 ```
 
-## Remaining code
+### CLI overrides
 
-### Modules
-We have define the modules here
-```python title="Modules"
---8<-- "examples/cifar10/src/cifar10/modules.py"
+Same base config, but override a few fields from the command line (no second YAML needed):
+
+```console
+uv run python src/cifar10/train.py \
+    --config-paths configs/base/default.yaml \
+    --learning-rate 1e-3 \
+    --batch-size 64 \
+    --num-epochs 2
 ```
 
-### Data
+### Hyperparameter sweep
 
-We have defined the data module here:
+Run an Optuna study over the learning rate and beta1 search space. Each trial merges a sampled patch onto the base config and calls the same `train_model`:
 
-```python title="Data"
---8<-- "examples/cifar10/src/cifar10/data.py"
+```console
+uv run python src/cifar10/train.py \
+    --config-paths configs/base/default.yaml \
+    --sweep-paths configs/sweep/lr_beta1.yaml
 ```
 
-### Trainer
+### Sweep plus CLI overrides
 
-We have defined the trainer here:
+CLI args still apply on top of the base config before sampling. Useful for fixing something like epoch count while sweeping the optimizer:
 
-```python title="Trainer"
---8<-- "examples/cifar10/src/cifar10/train.py:26:98"
+```console
+uv run python src/cifar10/train.py \
+    --config-paths configs/base/default.yaml \
+    --sweep-paths configs/sweep/lr_beta1.yaml \
+    --num-epochs 1 \
+    --batch-size 128
 ```
 
-### Train function
-The train function that instantiates all the components and calls the trainer is defined here:
+!!! tip
+    Pass multiple `--config-paths` to merge base + patch YAML files before training or sweeping. Later files overlay earlier ones the same way as elsewhere in `py-gen-ml`.
 
-```python title="Train function"
---8<-- "examples/cifar10/src/cifar10/train.py:106:139"
-```
+## Conclusion
+
+This example is a small but complete training project built around a protobuf schema. You write `config.proto` and the YAML. `py-gen-ml` generates the typed base / patch / sweep / CLI layer. `train.py` stays ordinary PyTorch. The same entrypoint covers a single run, CLI experiments, and Optuna sweeps without forking the train loop.

@@ -1,6 +1,6 @@
 # 🧩 Patching
 
-YAML files can be patched together to manage smaller changes without having to copy or re-write the entire configuration. This approach is particularly useful for temporary changes targeted at a single run or a small set of runs. Patches allow you to conceptualize experiments in terms of changes relative to a baseline configuration, rather than considering the full configuration each time.
+From your protobuf schema, `py-gen-ml` generates a patch model where every field is optional. YAML patches overlay those deltas onto a base config so you can manage smaller changes without copying or rewriting the entire configuration. This is particularly useful for temporary changes targeted at a single run or a small set of runs. You express experiments as changes relative to a baseline, rather than a full config each time.
 
 ## 📊 JSON Schemas
 

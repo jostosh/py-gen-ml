@@ -1,6 +1,6 @@
 # 📝 Defining YAML Files
 
-YAML files are the backbone of your project's configuration in `py-gen-ml`. To make working with these files a breeze, `py-gen-ml` automatically generates JSON schemas for each protobuf model. These schemas are your secret weapon for validating YAML files with ease!
+YAML files are the backbone of your project's configuration in `py-gen-ml`. After you author a protobuf schema and run `py-gen-ml`, the plugin emits JSON Schemas for each message. Those schemas are your secret weapon for validating YAML files with ease. The shape still comes from the proto you wrote.
 
 ## 🏗️ Default Project Structure
 
