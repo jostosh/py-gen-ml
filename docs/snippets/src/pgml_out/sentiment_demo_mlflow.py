@@ -49,6 +49,14 @@ class SentimentMetrics(BaseModel):
     n_labeled: int
 
 
+class SentimentOnlineMetrics(BaseModel):
+    """Online-loop metrics (predictions vs human feedback)."""
+
+    n_predictions: int
+    n_feedback: int
+    agreement_rate: float
+
+
 _sentiment_metrics_METRIC_PATHS: typing.List[typing.Tuple[str, str]] = [
     ('accuracy', 'accuracy'), ('n_train', 'n_train'), ('n_test', 'n_test'),
     ('n_labeled', 'n_labeled')
@@ -66,6 +74,27 @@ def log_sentiment_metrics(
 ) -> None:
     """Log ``SentimentMetrics`` metrics via ``mlflow.log_metrics``."""
     mlflow.log_metrics(sentiment_metrics_metrics(metrics), step=step)
+
+
+_sentiment_online_metrics_METRIC_PATHS: typing.List[typing.Tuple[str, str]] = [
+    ('n_predictions', 'n_predictions'), ('n_feedback', 'n_feedback'),
+    ('agreement_rate', 'agreement_rate')
+]
+
+
+def sentiment_online_metrics_metrics(
+    metrics: SentimentOnlineMetrics
+) -> typing.Dict[str, float]:
+    """Flatten METRIC fields of ``SentimentOnlineMetrics`` to floats for MLflow."""
+    raw = _mlflow_flatten(metrics, _sentiment_online_metrics_METRIC_PATHS)
+    return {k: float(v) for k, v in raw.items()}
+
+
+def log_sentiment_online_metrics(
+    metrics: SentimentOnlineMetrics, *, step: typing.Optional[int] = None
+) -> None:
+    """Log ``SentimentOnlineMetrics`` metrics via ``mlflow.log_metrics``."""
+    mlflow.log_metrics(sentiment_online_metrics_metrics(metrics), step=step)
 
 
 _sentiment_train_config_PARAM_PATHS: typing.List[typing.Tuple[str, str]] = [

@@ -25,6 +25,11 @@ options, not on new parallel taxonomies.
 | `RUN_CONFIG` | Experiment / training run configuration (params for MLflow / W&B). |
 | `METRIC_SET` | Named metrics logged for a run or evaluation. |
 
+The [Sentiment flywheel](../example_projects/sentiment_flywheel.md) example uses
+`FEATURE_ROW` for labeled training rows and serve requests, `PREDICTION` for
+immutable model outputs, and `FEEDBACK` for human re-labels—each as a **separate
+message** with its own tool opt-ins.
+
 ## Annotate a message
 
 ```protobuf

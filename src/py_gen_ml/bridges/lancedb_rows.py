@@ -1,4 +1,4 @@
-"""LanceDB table helpers for feature-row seeds and annotated rows."""
+"""LanceDB table helpers for feature / prediction / feedback rows."""
 from __future__ import annotations
 
 from typing import Any, List, Optional, Sequence, Type, TypeVar
@@ -9,8 +9,16 @@ T = TypeVar('T', bound=BaseModel)
 
 
 def append_feature_rows(table: Any, rows: Sequence[T]) -> None:
-    """Append Pydantic/LanceModel rows to an open LanceDB table."""
+    """Append Pydantic/LanceModel rows to an open LanceDB table.
+
+    Row-agnostic: works for ``FEATURE_ROW``, ``PREDICTION``, and ``FEEDBACK``
+    LanceModels alike.
+    """
     table.add([row.model_dump() for row in rows])
+
+
+# Clearer alias for non-feature contracts (predictions, feedback, …).
+append_rows = append_feature_rows
 
 
 def load_seeds_from_table(

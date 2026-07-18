@@ -26,6 +26,26 @@ class SentimentExample(BaseModel):
     )
 
 
+class SentimentFeedback(BaseModel):
+    """Human correction / re-label for a scored review."""
+
+    sample_id: str = Field(
+        description='Sample id matching SentimentPrediction.sample_id.'
+    )
+    text: str = Field(description='Review text shown to the annotator.')
+    predicted_sentiment: str = Field(
+        description=
+        'Model-predicted sentiment (for comparison; not the Argilla question).'
+    )
+    sentiment: str = Field(
+        description=
+        'Corrected sentiment after review: "negative" or "positive". When logging a draft from a prediction, set this to the predicted label so Argilla records it as a Suggestion.'
+    )
+    source: str = Field(
+        description='Provenance: "model" for suggestion drafts, "human" after correction.'
+    )
+
+
 def sentiment_example_dataset_name() -> str:
     return 'imdb_sentiment'
 
@@ -108,3 +128,63 @@ def sentiment_example_from_row_dict(
     inv = {v: k for k, v in SENTIMENT_EXAMPLE_ALIASES.items()}
     mapped = {inv[k]: v for k, v in data.items() if k in inv}
     return SentimentExample.model_validate(mapped)
+
+
+def sentiment_feedback_dataset_name() -> str:
+    return 'imdb_sentiment_feedback'
+
+
+def build_sentiment_feedback_settings(
+    *, client: typing.Optional[rg.Argilla] = None
+) -> rg.Settings:
+    """Build Argilla ``Settings`` for ``SentimentFeedback`` (FIELD + QUESTION only).
+
+    Pass ``client=`` to avoid requiring a default Argilla API key at construction time.
+    """
+    settings_fields: typing.List[typing.Any] = []
+    settings_fields.append(rg.TextField(name='text', required=True, client=client))
+    settings_questions: typing.List[typing.Any] = []
+    settings_questions.append(
+        rg.LabelQuestion(
+            name='sentiment',
+            labels=['negative', 'positive'],
+            required=True,
+            client=client
+        )
+    )
+    return rg.Settings(fields=settings_fields, questions=settings_questions)
+
+
+def to_sentiment_feedback_record(row: SentimentFeedback) -> rg.Record:
+    """Map ``SentimentFeedback`` to an Argilla ``Record`` by slot."""
+    record_fields: typing.Dict[str, typing.Any] = {}
+    record_fields['text'] = getattr(row, 'text')
+    record_metadata: typing.Dict[str, typing.Any] = {}
+    record_metadata['sample_id'] = getattr(row, 'sample_id')
+    record_metadata['predicted_sentiment'] = getattr(row, 'predicted_sentiment')
+    record_metadata['source'] = getattr(row, 'source')
+    suggestions: typing.List[typing.Any] = []
+    _qval = getattr(row, 'sentiment', None)
+    if _qval is not None:
+        suggestions.append(rg.Suggestion(question_name='sentiment', value=_qval))
+    return rg.Record(
+        fields=record_fields,
+        metadata=record_metadata or None,
+        suggestions=suggestions or None
+    )
+
+
+def from_sentiment_feedback_record(record: rg.Record) -> SentimentFeedback:
+    """Map an Argilla ``Record`` back to ``SentimentFeedback``."""
+    data: typing.Dict[str, typing.Any] = {}
+    data['text'] = record.fields.get('text')
+    data['sample_id'] = (record.metadata or {}).get('sample_id')
+    data['predicted_sentiment'] = (record.metadata or {}).get('predicted_sentiment')
+    data['source'] = (record.metadata or {}).get('source')
+    # Question sentiment may live in responses/suggestions; best-effort
+    data['sentiment'] = None
+    for _s in (record.suggestions or []):
+        if getattr(_s, "question_name", None) == 'sentiment':
+            data['sentiment'] = getattr(_s, "value", None)
+            break
+    return SentimentFeedback.model_validate(data)

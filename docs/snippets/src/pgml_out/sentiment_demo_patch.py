@@ -54,3 +54,74 @@ class SentimentMetricsPatch(pgml.YamlBaseModel):
     n_train: typing.Optional[int] = None
     n_test: typing.Optional[int] = None
     n_labeled: typing.Optional[int] = None
+
+
+class SentimentPredictRequestPatch(pgml.YamlBaseModel):
+    """Inference request for the online sentiment classifier."""
+
+    id: typing.Optional[str] = None
+    """Stable sample id (links prediction and feedback rows)."""
+
+    text: typing.Optional[str] = None
+    """Review text to classify."""
+
+
+class SentimentPredictionPatch(pgml.YamlBaseModel):
+    """
+    Model output for one scored review (separate from the labeled training row).
+    """
+
+    sample_id: typing.Optional[str] = None
+    """Sample id matching SentimentPredictRequest.id."""
+
+    text: typing.Optional[str] = None
+    """Review text that was scored."""
+
+    sentiment: typing.Optional[str] = None
+    """Predicted sentiment: "negative" or "positive"."""
+
+    score: typing.Optional[float] = None
+    """Model confidence for the predicted class."""
+
+    model_version: typing.Optional[str] = None
+    """Deployed model / pipeline version tag."""
+
+
+class SentimentFeedbackPatch(pgml.YamlBaseModel):
+    """Human correction / re-label for a scored review."""
+
+    sample_id: typing.Optional[str] = None
+    """Sample id matching SentimentPrediction.sample_id."""
+
+    text: typing.Optional[str] = None
+    """Review text shown to the annotator."""
+
+    predicted_sentiment: typing.Optional[str] = None
+    """Model-predicted sentiment (for comparison; not the Argilla question)."""
+
+    sentiment: typing.Optional[str] = None
+    """
+    Corrected sentiment after review: "negative" or "positive". When logging a draft
+    from a prediction, set this to the predicted label so Argilla records it as a
+    Suggestion.
+    """
+
+    source: typing.Optional[str] = None
+    """Provenance: "model" for suggestion drafts, "human" after correction."""
+
+
+class SentimentServeConfigPatch(pgml.YamlBaseModel):
+    """LitServe / client settings for SentimentClassifier."""
+
+    url: typing.Optional[str] = None
+    timeout_s: typing.Optional[float] = None
+    workers_per_device: typing.Optional[int] = None
+    accelerator: typing.Optional[str] = None
+
+
+class SentimentOnlineMetricsPatch(pgml.YamlBaseModel):
+    """Online-loop metrics (predictions vs human feedback)."""
+
+    n_predictions: typing.Optional[int] = None
+    n_feedback: typing.Optional[int] = None
+    agreement_rate: typing.Optional[float] = None
