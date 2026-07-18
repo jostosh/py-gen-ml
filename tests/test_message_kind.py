@@ -8,7 +8,11 @@ from unittest.mock import MagicMock, patch
 import networkx
 import pytest
 
-from py_gen_ml.extensions_pb2 import FEATURE_ROW, LABEL, MESSAGE_KIND_UNSPECIFIED
+from py_gen_ml.extensions_pb2 import (
+    FEATURE_ROW,
+    LABEL,
+    MESSAGE_KIND_UNSPECIFIED,
+)
 from py_gen_ml.plugin.message_kind import (
     collect_message_closure,
     get_message_kind,
@@ -18,11 +22,13 @@ from py_gen_ml.plugin.message_kind import (
 
 
 class _FakeField:
+
     def __init__(self, message: Optional[object] = None) -> None:
         self.message = message
 
 
 class _FakeMessage:
+
     def __init__(self, name: str, fields: Optional[list[_FakeField]] = None) -> None:
         self.fields = fields or []
         self.proto = MagicMock()
@@ -57,7 +63,8 @@ def test_messages_with_kind_filters_exact_kind() -> None:
 
     with patch(
         'py_gen_ml.plugin.message_kind.get_extension_value',
-        side_effect=lambda message, *_args: kind_for(message),
+        side_effect=lambda message,
+        *_args: kind_for(message),
     ):
         assert messages_with_kind(file, FEATURE_ROW) == [feature]
         assert messages_with_kind(file, LABEL) == [label]
