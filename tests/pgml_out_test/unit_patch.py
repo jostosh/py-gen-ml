@@ -79,7 +79,7 @@ class OneofTestPatch(pgml.YamlBaseModel):
 
 
 class RepeatedTestPatch(pgml.YamlBaseModel):
-    values: typing.Optional[list[int]] = None
+    values: typing.Optional[typing.List[int]] = None
 
 
 class OptionalTestPatch(pgml.YamlBaseModel):
@@ -172,4 +172,14 @@ class NestedBarTestPatch(pgml.YamlBaseModel):
 
 
 class RepeatedNestedBarTestPatch(pgml.YamlBaseModel):
-    bar: typing.Optional[list[NestedBarTestPatch]] = None
+    bar: typing.Optional[typing.List[NestedBarTestPatch]] = None
+
+
+class LanceDBNestedMetaPatch(pgml.YamlBaseModel):
+    label: typing.Optional[str] = None
+
+
+class LanceDBRecordTestPatch(pgml.YamlBaseModel):
+    id: typing.Optional[str] = None
+    embedding: typing.Optional[typing.List[float]] = None
+    meta: typing.Optional[LanceDBNestedMetaPatch] = None

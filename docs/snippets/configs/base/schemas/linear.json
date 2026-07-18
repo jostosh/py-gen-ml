@@ -1,5 +1,16 @@
 {
-  "description": "Linear layer configuration",
+  "$defs": {
+    "Activation": {
+      "description": "Activation function",
+      "enum": [
+        "RELU",
+        "GELU"
+      ],
+      "title": "Activation",
+      "type": "string"
+    }
+  },
+  "description": "Linear layer",
   "properties": {
     "in_features": {
       "anyOf": [
@@ -41,11 +52,11 @@
         }
       ]
     },
-    "bias": {
+    "activation": {
       "anyOf": [
         {
-          "title": "Bias",
-          "type": "boolean"
+          "$ref": "#/$defs/Activation",
+          "default": "GELU"
         },
         {
           "type": "string",
@@ -65,8 +76,7 @@
   },
   "required": [
     "in_features",
-    "out_features",
-    "bias"
+    "out_features"
   ],
   "title": "Linear",
   "type": "object"

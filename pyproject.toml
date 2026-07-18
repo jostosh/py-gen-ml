@@ -61,6 +61,7 @@ base = "py_gen_ml.plugin.base_model_generator:base_spec"
 patch = "py_gen_ml.plugin.base_model_generator:patch_spec"
 sweep = "py_gen_ml.plugin.sweep_model_generator:sweep_spec"
 cli_args = "py_gen_ml.plugin.cli_args_generator:cli_args_spec"
+lancedb = "py_gen_ml.plugin.lancedb_generator:lancedb_spec"
 
 [project.optional-dependencies]
 docs = [
@@ -71,6 +72,9 @@ docs = [
     "mkdocstrings[python]>=0.26.1",
     "pymdown-extensions>=10.11.2",
     "mkdocs-video>=1.5.0",
+]
+lancedb = [
+    "lancedb>=0.17.0",
 ]
 
 [build-system]
@@ -121,6 +125,11 @@ members = ["examples/cifar10", "docs/snippets"]
 # Pytest
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+filterwarnings = [
+    # BytesSweep exercises Optuna categoricals with bytes values; Optuna warns that
+    # only None/bool/int/float/str are recommended for persistent storage.
+    "ignore:Choices for a categorical distribution should be a tuple of None, bool, int, float and str:UserWarning:optuna.distributions",
+]
 
 # Pyright
 

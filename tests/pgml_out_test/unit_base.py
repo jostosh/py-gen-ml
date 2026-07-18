@@ -84,7 +84,7 @@ class OneofTest(pgml.YamlBaseModel):
 
 
 class RepeatedTest(pgml.YamlBaseModel):
-    values: list[int]
+    values: typing.List[int]
 
 
 class OptionalTest(pgml.YamlBaseModel):
@@ -177,4 +177,14 @@ class NestedBarTest(pgml.YamlBaseModel):
 
 
 class RepeatedNestedBarTest(pgml.YamlBaseModel):
-    bar: list[NestedBarTest]
+    bar: typing.List[NestedBarTest]
+
+
+class LanceDBNestedMeta(pgml.YamlBaseModel):
+    label: str
+
+
+class LanceDBRecordTest(pgml.YamlBaseModel):
+    id: str
+    embedding: typing.List[float]
+    meta: LanceDBNestedMeta

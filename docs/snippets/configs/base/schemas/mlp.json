@@ -1,86 +1,61 @@
 {
   "$defs": {
-    "LinearBlock": {
-      "description": "Linear block configuration",
-      "properties": {
-        "num_units": {
-          "anyOf": [
-            {
-              "title": "Num Units",
-              "type": "integer"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an external object",
-              "minLength": 2,
-              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an internal object",
-              "minLength": 2,
-              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-            }
-          ]
-        },
-        "activation": {
-          "anyOf": [
-            {
-              "title": "Activation",
-              "type": "string"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an external object",
-              "minLength": 2,
-              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an internal object",
-              "minLength": 2,
-              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-            }
-          ]
-        }
-      },
-      "required": [
-        "num_units",
-        "activation"
+    "Activation": {
+      "description": "Activation function",
+      "enum": [
+        "RELU",
+        "GELU"
       ],
-      "title": "LinearBlock",
-      "type": "object"
+      "title": "Activation",
+      "type": "string"
     }
   },
-  "description": "Multi-layer perceptron configuration",
+  "description": "MLP configuration",
   "properties": {
-    "layers": {
-      "items": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/LinearBlock"
-          },
-          {
-            "type": "string",
-            "description": "An object path to an external object",
-            "minLength": 2,
-            "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-          },
-          {
-            "type": "string",
-            "description": "An object path to an internal object",
-            "minLength": 2,
-            "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-          }
-        ]
-      },
-      "title": "Layers",
-      "type": "array"
+    "activation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Activation"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ]
+    },
+    "num_layers": {
+      "anyOf": [
+        {
+          "title": "Num Layers",
+          "type": "integer"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ]
     },
     "_defs_": {}
   },
   "required": [
-    "layers"
+    "activation",
+    "num_layers"
   ],
   "title": "MLP",
   "type": "object"

@@ -431,3 +431,25 @@ RepeatedNestedBarTestSweepField = typing.Union[
     RepeatedNestedBarTestSweep,
     pgml.NestedChoice[RepeatedNestedBarTestSweep, patch.RepeatedNestedBarTestPatch],  # type: ignore
 ]
+
+
+class LanceDBNestedMetaSweep(pgml.Sweeper[patch.LanceDBNestedMetaPatch]):
+    label: typing.Optional[pgml.StrSweep] = None
+
+
+LanceDBNestedMetaSweepField = typing.Union[
+    LanceDBNestedMetaSweep,
+    pgml.NestedChoice[LanceDBNestedMetaSweep, patch.LanceDBNestedMetaPatch],  # type: ignore
+]
+
+
+class LanceDBRecordTestSweep(pgml.Sweeper[patch.LanceDBRecordTestPatch]):
+    id: typing.Optional[pgml.StrSweep] = None
+    embedding: typing.Optional[pgml.FloatSweep] = None
+    meta: typing.Optional[LanceDBNestedMetaSweepField] = None
+
+
+LanceDBRecordTestSweepField = typing.Union[
+    LanceDBRecordTestSweep,
+    pgml.NestedChoice[LanceDBRecordTestSweep, patch.LanceDBRecordTestPatch],  # type: ignore
+]

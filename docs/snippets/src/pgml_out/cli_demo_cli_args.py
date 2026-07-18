@@ -11,14 +11,6 @@ from . import cli_demo_base as base
 class CLIDemoArgs(pgml.YamlBaseModel):
     """Global configuration"""
 
-    path: typing.Annotated[
-        typing.Optional[str],
-        typer.Option(help="Path to the dataset. Maps to 'data.dataset.path'"),
-        pydantic.Field(None),
-        pgml.ArgRef("data.dataset.path"),
-    ]
-    """Path to the dataset"""
-
     num_layers: typing.Annotated[
         typing.Optional[int],
         typer.Option(help="Number of layers. Maps to 'model.num_layers'"),
@@ -44,3 +36,11 @@ class CLIDemoArgs(pgml.YamlBaseModel):
         pgml.ArgRef("training.num_epochs"),
     ]
     """Number of epochs"""
+
+    path: typing.Annotated[
+        typing.Optional[str],
+        typer.Option(help="Path to the dataset. Maps to 'data.dataset.path'"),
+        pydantic.Field(None),
+        pgml.ArgRef("data.dataset.path"),
+    ]
+    """Path to the dataset"""

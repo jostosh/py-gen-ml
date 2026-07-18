@@ -4,6 +4,7 @@
     "type": {
       "anyOf": [
         {
+          "default": "sgd",
           "title": "Type",
           "type": "string"
         },
@@ -24,6 +25,7 @@
     "learning_rate": {
       "anyOf": [
         {
+          "default": 0.01,
           "title": "Learning Rate",
           "type": "number"
         },
@@ -43,10 +45,6 @@
     },
     "_defs_": {}
   },
-  "required": [
-    "type",
-    "learning_rate"
-  ],
   "title": "Optimizer",
   "type": "object"
 }
