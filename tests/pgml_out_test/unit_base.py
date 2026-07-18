@@ -188,3 +188,18 @@ class LanceDBRecordTest(pgml.YamlBaseModel):
     id: str
     embedding: typing.List[float]
     meta: LanceDBNestedMeta
+
+
+class PredictRequestTest(pgml.YamlBaseModel):
+    features: typing.List[float]
+
+
+class PredictResponseTest(pgml.YamlBaseModel):
+    label: int
+    score: float
+
+
+class ClassifierServeConfigTest(pgml.YamlBaseModel):
+    url: str = 'http://localhost:3000'
+    workers: int = 1
+    timeout_s: float = 60.0

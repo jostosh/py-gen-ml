@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package demo;
+
+import "py_gen_ml/extensions.proto";
+
+// Inference request features.
+message PredictRequest {
+    option (pgml.kind) = FEATURE_ROW;
+    repeated float features = 1;
+}
+
+// Model prediction for a request.
+message PredictResponse {
+    option (pgml.kind) = PREDICTION;
+    int32 label = 1;
+    float score = 2;
+}
+
+// Serve / client settings for Classifier.
+message ClassifierServeConfig {
+    option (pgml.kind) = RUN_CONFIG;
+    option (pgml.bentoml_config) = {
+        enable: true;
+        service: "Classifier";
+    };
+    string url = 1 [(pgml.default) = {string: "http://localhost:3000"}];
+    int32 workers = 2 [(pgml.default) = {int32: 1}];
+    float timeout_s = 3 [(pgml.default) = {float: 60}];
+}
+
+// Unary inference service. Opt in with (pgml.bentoml).enable.
+service Classifier {
+    option (pgml.bentoml) = {
+        enable: true;
+    };
+    rpc Predict(PredictRequest) returns (PredictResponse) {
+        option (pgml.bentoml_method) = {
+            route: "/predict";
+        };
+    }
+}

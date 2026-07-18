@@ -56,6 +56,31 @@ enum MessageKind {
 	METRIC_SET = 6;
 }
 
+// BentoML opts a protobuf service into service/client/config codegen.
+message BentoML {
+	// If true, emit BentoML I/O models, create_*_service factory, and client helpers.
+	bool enable = 1;
+	// Optional Python class name for the generated service. Defaults to the proto service name.
+	string name = 2;
+}
+
+// Per-RPC BentoML annotations (route, API name, batching).
+message BentoMLMethod {
+	// HTTP route, e.g. "/predict". Defaults to "/{method_snake_name}".
+	string route = 1;
+	// API endpoint name exposed to clients. Defaults to the method snake_case name.
+	string name = 2;
+	// When true, mark the API as batchable.
+	bool batchable = 3;
+}
+
+// Links a RUN_CONFIG (or other) message to a BentoML service for serve kwargs / client URL.
+message BentoMLConfig {
+	bool enable = 1;
+	// Proto service name this config configures (must match the service declaration name).
+	string service = 2;
+}
+
 extend google.protobuf.MessageOptions {
 	// Python import path for a class to instantiate using the values
 	// of this message.
@@ -67,6 +92,16 @@ extend google.protobuf.MessageOptions {
 	LanceDB lancedb = 1093;
 	// Canonical ML-contract kind for this message (see MessageKind).
 	optional MessageKind kind = 1094;
+	// Opt into BentoML serve-config helpers for this message.
+	BentoMLConfig bentoml_config = 1095;
+}
+
+extend google.protobuf.ServiceOptions {
+	BentoML bentoml = 1091;
+}
+
+extend google.protobuf.MethodOptions {
+	BentoMLMethod bentoml_method = 1091;
 }
 
 // Defaults values applied at the field level

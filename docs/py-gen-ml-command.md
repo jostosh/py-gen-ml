@@ -60,7 +60,7 @@ $ py-gen-ml [OPTIONS] PROTO_FILE...
 * `--code-dir TEXT`: Path to the generated code directory.  [default: `src/pgml_out`]
 * `--source-root TEXT`: Path to the root of the source code.  [default: `src`]
 * `--configs-dir TEXT`: Path to the base directory for configs.  [default: `configs`]
-* `--generators TEXT`: Comma-separated subset of generators to run, e.g. `--generators=base,patch`. Defaults to every registered generator with `enabled_by_default=True` (built-in plus any third-party generators discovered via the `py_gen_ml.generators` entry-point group). Built-ins: `base`, `patch`, `sweep`, `cli_args`. Opt-in: `lancedb` (see [LanceDB schemas](guides/lancedb.md)).
+* `--generators TEXT`: Comma-separated subset of generators to run, e.g. `--generators=base,patch`. Defaults to every registered generator with `enabled_by_default=True` (built-in plus any third-party generators discovered via the `py_gen_ml.generators` entry-point group). Built-ins: `base`, `patch`, `sweep`, `cli_args`. Opt-in: `lancedb` (see [LanceDB schemas](guides/lancedb.md)), `bentoml` (see [BentoML services](guides/bentoml.md)).
 * `--install-completion`: Install completion for the current shell.
 * `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
 * `--help`: Show help and exit.

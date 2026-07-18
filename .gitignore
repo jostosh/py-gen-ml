@@ -163,3 +163,4 @@ cython_debug/
 # Configs
 configs/
 tests/pgml_out_test/__json_schema_tasks__.py
+docs/snippets/src/pgml_out/__json_schema_tasks__.py

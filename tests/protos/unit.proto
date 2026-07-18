@@ -207,3 +207,36 @@ message LanceDBRecordTest {
     repeated float embedding = 2 [(pgml.lancedb_field).vector_dim = 4];
     LanceDBNestedMeta meta = 3;
 }
+
+message PredictRequestTest {
+    option (pgml.kind) = FEATURE_ROW;
+    repeated float features = 1;
+}
+
+message PredictResponseTest {
+    option (pgml.kind) = PREDICTION;
+    int32 label = 1;
+    float score = 2;
+}
+
+message ClassifierServeConfigTest {
+    option (pgml.kind) = RUN_CONFIG;
+    option (pgml.bentoml_config) = {
+        enable: true;
+        service: "ClassifierTest";
+    };
+    string url = 1 [(pgml.default) = {string: "http://localhost:3000"}];
+    int32 workers = 2 [(pgml.default) = {int32: 1}];
+    float timeout_s = 3 [(pgml.default) = {float: 60}];
+}
+
+service ClassifierTest {
+    option (pgml.bentoml) = {
+        enable: true;
+    };
+    rpc Predict(PredictRequestTest) returns (PredictResponseTest) {
+        option (pgml.bentoml_method) = {
+            route: "/predict";
+        };
+    }
+}

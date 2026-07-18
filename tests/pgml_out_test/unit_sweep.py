@@ -453,3 +453,38 @@ LanceDBRecordTestSweepField = typing.Union[
     LanceDBRecordTestSweep,
     pgml.NestedChoice[LanceDBRecordTestSweep, patch.LanceDBRecordTestPatch],  # type: ignore
 ]
+
+
+class PredictRequestTestSweep(pgml.Sweeper[patch.PredictRequestTestPatch]):
+    features: typing.Optional[pgml.FloatSweep] = None
+
+
+PredictRequestTestSweepField = typing.Union[
+    PredictRequestTestSweep,
+    pgml.NestedChoice[PredictRequestTestSweep, patch.PredictRequestTestPatch],  # type: ignore
+]
+
+
+class PredictResponseTestSweep(pgml.Sweeper[patch.PredictResponseTestPatch]):
+    label: typing.Optional[pgml.IntSweep] = None
+    score: typing.Optional[pgml.FloatSweep] = None
+
+
+PredictResponseTestSweepField = typing.Union[
+    PredictResponseTestSweep,
+    pgml.NestedChoice[PredictResponseTestSweep, patch.PredictResponseTestPatch],  # type: ignore
+]
+
+
+class ClassifierServeConfigTestSweep(
+    pgml.Sweeper[patch.ClassifierServeConfigTestPatch],
+):
+    url: typing.Optional[pgml.StrSweep] = None
+    workers: typing.Optional[pgml.IntSweep] = None
+    timeout_s: typing.Optional[pgml.FloatSweep] = None
+
+
+ClassifierServeConfigTestSweepField = typing.Union[
+    ClassifierServeConfigTestSweep,
+    pgml.NestedChoice[ClassifierServeConfigTestSweep, patch.ClassifierServeConfigTestPatch],  # type: ignore
+]
