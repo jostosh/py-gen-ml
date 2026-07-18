@@ -110,11 +110,12 @@ def _load_builtin_specs() -> List[GeneratorSpec]:
     # Imported lazily to avoid a circular import: the generators import
     # `Generator`, which lives next to this module.
     from py_gen_ml.plugin.base_model_generator import base_spec, patch_spec
+    from py_gen_ml.plugin.bentoml_generator import bentoml_spec
     from py_gen_ml.plugin.cli_args_generator import cli_args_spec
     from py_gen_ml.plugin.lancedb_generator import lancedb_spec
     from py_gen_ml.plugin.sweep_model_generator import sweep_spec
 
-    return [base_spec, patch_spec, sweep_spec, cli_args_spec, lancedb_spec]
+    return [base_spec, patch_spec, sweep_spec, cli_args_spec, lancedb_spec, bentoml_spec]
 
 
 def _load_entry_point_specs() -> List[GeneratorSpec]:

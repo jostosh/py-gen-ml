@@ -183,3 +183,18 @@ class LanceDBRecordTestPatch(pgml.YamlBaseModel):
     id: typing.Optional[str] = None
     embedding: typing.Optional[typing.List[float]] = None
     meta: typing.Optional[LanceDBNestedMetaPatch] = None
+
+
+class PredictRequestTestPatch(pgml.YamlBaseModel):
+    features: typing.Optional[typing.List[float]] = None
+
+
+class PredictResponseTestPatch(pgml.YamlBaseModel):
+    label: typing.Optional[int] = None
+    score: typing.Optional[float] = None
+
+
+class ClassifierServeConfigTestPatch(pgml.YamlBaseModel):
+    url: typing.Optional[str] = None
+    workers: typing.Optional[int] = None
+    timeout_s: typing.Optional[float] = None

@@ -21,7 +21,7 @@ T = TypeVar('T')
 
 
 def get_extension_value(
-    element: Union[protogen.Field, protogen.Message, protogen.File],
+    element: Union[protogen.Field, protogen.Message, protogen.File, protogen.Service, protogen.Method],
     extension_name: str,
     extension_type: type[T],
 ) -> Optional[T]:
@@ -29,11 +29,11 @@ def get_extension_value(
     Get the value of an extension field from the proto options.
 
     This function searches for an extension field with the given name in the
-    options of the provided element (which can be a Field, Message, or File).
+    options of the provided element (Field, Message, File, Service, or Method).
     If found, it returns the value of the extension field. Otherwise, it returns None.
 
     Args:
-        element (typing.Union[protogen.Field, protogen.Message, protogen.File]): The element to search for the extension field.
+        element: The element to search for the extension field.
         extension_name (str): The name of the extension field to search for.
         extension_type (type[T]): The type of the extension field.
 

@@ -55,4 +55,4 @@ Prefer filtering roots with `messages_with_kind` when the generator targets a
 lifecycle role, and keep a tool-specific `(pgml.*).enable` when codegen imports
 an optional third-party package.
 
-See also [LanceDB schemas](lancedb.md) for a `FEATURE_ROW` example.
+See also [LanceDB schemas](lancedb.md) and [BentoML services](bentoml.md).

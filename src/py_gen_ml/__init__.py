@@ -2,6 +2,7 @@ from py_gen_ml.cli_args.arg_refs import ArgRef
 from py_gen_ml.cli_args.cli_func import pgml_cmd
 from py_gen_ml.plugin.constants import (
     BASE_SUFFIX,
+    BENTOML_SUFFIX,
     CLI_ARGS_SUFFIX,
     LANCEDB_SUFFIX,
     PATCH_SUFFIX,
@@ -56,4 +57,5 @@ __all__ = [
     'SWEEP_SUFFIX',
     'CLI_ARGS_SUFFIX',
     'LANCEDB_SUFFIX',
+    'BENTOML_SUFFIX',
 ]

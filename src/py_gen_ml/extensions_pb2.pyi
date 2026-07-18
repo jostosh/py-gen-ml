@@ -33,6 +33,12 @@ LANCEDB_FIELD_NUMBER: _ClassVar[int]
 lancedb: _descriptor.FieldDescriptor
 KIND_FIELD_NUMBER: _ClassVar[int]
 kind: _descriptor.FieldDescriptor
+BENTOML_CONFIG_FIELD_NUMBER: _ClassVar[int]
+bentoml_config: _descriptor.FieldDescriptor
+BENTOML_FIELD_NUMBER: _ClassVar[int]
+bentoml: _descriptor.FieldDescriptor
+BENTOML_METHOD_FIELD_NUMBER: _ClassVar[int]
+bentoml_method: _descriptor.FieldDescriptor
 DEFAULT_FIELD_NUMBER: _ClassVar[int]
 default: _descriptor.FieldDescriptor
 AS_VARARGS_FIELD_NUMBER: _ClassVar[int]
@@ -69,6 +75,32 @@ class LanceDBField(_message.Message):
     VECTOR_DIM_FIELD_NUMBER: _ClassVar[int]
     vector_dim: int
     def __init__(self, vector_dim: _Optional[int] = ...) -> None: ...
+
+class BentoML(_message.Message):
+    __slots__ = ("enable", "name")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    name: str
+    def __init__(self, enable: bool = ..., name: _Optional[str] = ...) -> None: ...
+
+class BentoMLMethod(_message.Message):
+    __slots__ = ("route", "name", "batchable")
+    ROUTE_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    BATCHABLE_FIELD_NUMBER: _ClassVar[int]
+    route: str
+    name: str
+    batchable: bool
+    def __init__(self, route: _Optional[str] = ..., name: _Optional[str] = ..., batchable: bool = ...) -> None: ...
+
+class BentoMLConfig(_message.Message):
+    __slots__ = ("enable", "service")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    SERVICE_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    service: str
+    def __init__(self, enable: bool = ..., service: _Optional[str] = ...) -> None: ...
 
 class FieldDefaults(_message.Message):
     __slots__ = ("float", "double", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool", "string", "bytes", "enum")
