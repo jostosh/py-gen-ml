@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package demo;
+
+import "py_gen_ml/extensions.proto";
+
+message OptimizerCfg {
+    float learning_rate = 1;
+    float weight_decay = 2;
+}
+
+// Training run hyperparameters for experiment tracking demos.
+message TrainingConfig {
+    option (pgml.kind) = RUN_CONFIG;
+    option (pgml.mlflow) = {
+        enable: true;
+        experiment_name: "demo";
+        run_name_field: "run_name";
+    };
+    option (pgml.wandb) = {
+        enable: true;
+        project: "demo";
+        run_name_field: "run_name";
+    };
+
+    // Human-readable run name (tracker tag).
+    string run_name = 1 [(pgml.tracking_field) = {
+        slot: TAG;
+    }];
+    int32 epochs = 2;
+    OptimizerCfg optimizer = 3;
+}
+
+// Metrics logged once per step or epoch.
+message TrainMetrics {
+    option (pgml.kind) = METRIC_SET;
+    option (pgml.mlflow) = {
+        enable: true;
+    };
+    option (pgml.wandb) = {
+        enable: true;
+    };
+
+    float accuracy = 1;
+    float loss = 2;
+}

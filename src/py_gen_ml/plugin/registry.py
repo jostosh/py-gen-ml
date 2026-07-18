@@ -115,8 +115,10 @@ def _load_builtin_specs() -> List[GeneratorSpec]:
     from py_gen_ml.plugin.cli_args_generator import cli_args_spec
     from py_gen_ml.plugin.lancedb_generator import lancedb_spec
     from py_gen_ml.plugin.litserve_generator import litserve_spec
+    from py_gen_ml.plugin.mlflow_generator import mlflow_spec
     from py_gen_ml.plugin.pydantic_ai_generator import pydantic_ai_spec
     from py_gen_ml.plugin.sweep_model_generator import sweep_spec
+    from py_gen_ml.plugin.wandb_generator import wandb_spec
 
     return [
         base_spec,
@@ -128,6 +130,8 @@ def _load_builtin_specs() -> List[GeneratorSpec]:
         litserve_spec,
         pydantic_ai_spec,
         argilla_spec,
+        mlflow_spec,
+        wandb_spec,
     ]
 
 

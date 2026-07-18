@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -40,10 +41,26 @@ def test_openai_model_from_env_requires_vars(demo, monkeypatch: pytest.MonkeyPat
 def test_openai_model_from_env_builds_model(demo, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv('OPENAI_API_KEY', 'test-key')
     monkeypatch.setenv('OPENAI_ENDPOINT', 'https://example.openai.azure.com/')
-    monkeypatch.setenv('OPENAI_MODEL', 'gpt-4o')
     monkeypatch.setenv('OPENAI_API_VERSION', '2024-12-01-preview')
-    model = demo.openai_model_from_env()
+    monkeypatch.delenv('OPENAI_MODEL', raising=False)
+    model = demo.openai_model_from_env(model='gpt-4o')
     assert model.model_name == 'gpt-4o'
+
+
+def test_train_config_from_yaml_and_cli(demo, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.syspath_prepend(str(SNIPPETS_SRC))
+    from pgml_out.sentiment_demo_base import SentimentTrainConfig
+    from pgml_out.sentiment_demo_cli_args import SentimentTrainConfigArgs
+
+    config = SentimentTrainConfig.from_yaml_files([str(demo.DEFAULT_CONFIG_PATH)])
+    assert config.synthesize_count == 4
+    assert config.openai_model == 'gpt-4o'
+    patched = config.apply_cli_args(
+        SentimentTrainConfigArgs(synthesize_count=2, run_name='cli-run'),
+    )
+    assert patched.synthesize_count == 2
+    assert patched.run_name == 'cli-run'
+    assert patched.openai_model == 'gpt-4o'
 
 
 def test_json_schema_descriptions_present(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -56,6 +73,31 @@ def test_json_schema_descriptions_present(monkeypatch: pytest.MonkeyPatch) -> No
         'positive' in props['sentiment']['description'].lower() or
         'negative' in props['sentiment']['description'].lower()
     )
+
+
+def test_log_training_to_mlflow(demo, monkeypatch: pytest.MonkeyPatch) -> None:
+    pytest.importorskip('mlflow')
+    monkeypatch.syspath_prepend(str(SNIPPETS_SRC))
+    from pgml_out.sentiment_demo_base import SentimentTrainConfig
+    from pgml_out.sentiment_demo_mlflow import SentimentMetrics
+
+    config = SentimentTrainConfig(
+        run_name='t',
+        synthesize_count=1,
+        diversify_rounds=0,
+        openai_model='gpt-4o',
+        test_size=0.25,
+    )
+    metrics = SentimentMetrics(accuracy=1.0, n_train=4, n_test=1, n_labeled=5)
+
+    with patch('pgml_out.sentiment_demo_mlflow.start_sentiment_train_config_run') as start, patch(
+        'pgml_out.sentiment_demo_mlflow.log_sentiment_metrics',
+    ) as log_m:
+        start.return_value.__enter__ = MagicMock(return_value=None)
+        start.return_value.__exit__ = MagicMock(return_value=False)
+        demo.log_training_to_mlflow(train_config=config, metrics=metrics)
+    start.assert_called_once()
+    log_m.assert_called_once_with(metrics)
 
 
 @pytest.mark.skipif(
@@ -72,7 +114,18 @@ def test_json_schema_descriptions_present(monkeypatch: pytest.MonkeyPatch) -> No
     reason='Live OpenAI + Argilla credentials not configured',
 )
 def test_run_flywheel_live(demo) -> None:
-    summary = demo.run_flywheel(synthesize_count=1, diversify_rounds=0, use_lancedb=True)
+    from pgml_out.sentiment_demo_base import SentimentTrainConfig
+
+    summary = demo.run_flywheel(
+        SentimentTrainConfig(
+            run_name='live',
+            synthesize_count=1,
+            diversify_rounds=0,
+            openai_model=__import__('os').environ['OPENAI_MODEL'],
+            test_size=0.25,
+        ),
+        use_lancedb=True,
+    )
     assert summary['n_seeds'] == 8
     assert summary['n_synthetic'] >= 1
     assert summary['n_argilla_records'] == summary['n_labeled']

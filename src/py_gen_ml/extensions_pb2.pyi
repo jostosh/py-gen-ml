@@ -23,6 +23,13 @@ class ArgillaSlot(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     FIELD: _ClassVar[ArgillaSlot]
     QUESTION: _ClassVar[ArgillaSlot]
     METADATA: _ClassVar[ArgillaSlot]
+
+class TrackingSlot(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    TRACKING_SLOT_UNSPECIFIED: _ClassVar[TrackingSlot]
+    PARAM: _ClassVar[TrackingSlot]
+    METRIC: _ClassVar[TrackingSlot]
+    TAG: _ClassVar[TrackingSlot]
 MESSAGE_KIND_UNSPECIFIED: MessageKind
 FEATURE_ROW: MessageKind
 LABEL: MessageKind
@@ -34,6 +41,10 @@ ARGILLA_SLOT_UNSPECIFIED: ArgillaSlot
 FIELD: ArgillaSlot
 QUESTION: ArgillaSlot
 METADATA: ArgillaSlot
+TRACKING_SLOT_UNSPECIFIED: TrackingSlot
+PARAM: TrackingSlot
+METRIC: TrackingSlot
+TAG: TrackingSlot
 ENABLE_FIELD_NUMBER: _ClassVar[int]
 enable: _descriptor.FieldDescriptor
 FACTORY_FIELD_NUMBER: _ClassVar[int]
@@ -54,6 +65,10 @@ ARGILLA_FIELD_NUMBER: _ClassVar[int]
 argilla: _descriptor.FieldDescriptor
 MAPPER_CONFIG_FIELD_NUMBER: _ClassVar[int]
 mapper_config: _descriptor.FieldDescriptor
+MLFLOW_FIELD_NUMBER: _ClassVar[int]
+mlflow: _descriptor.FieldDescriptor
+WANDB_FIELD_NUMBER: _ClassVar[int]
+wandb: _descriptor.FieldDescriptor
 BENTOML_FIELD_NUMBER: _ClassVar[int]
 bentoml: _descriptor.FieldDescriptor
 LITSERVE_FIELD_NUMBER: _ClassVar[int]
@@ -72,6 +87,8 @@ ARGILLA_FIELD_FIELD_NUMBER: _ClassVar[int]
 argilla_field: _descriptor.FieldDescriptor
 MAPPER_FIELD_FIELD_NUMBER: _ClassVar[int]
 mapper_field: _descriptor.FieldDescriptor
+TRACKING_FIELD_FIELD_NUMBER: _ClassVar[int]
+tracking_field: _descriptor.FieldDescriptor
 
 class Arg(_message.Message):
     __slots__ = ("name", "path")
@@ -196,6 +213,34 @@ class MapperField(_message.Message):
     ALIAS_FIELD_NUMBER: _ClassVar[int]
     alias: str
     def __init__(self, alias: _Optional[str] = ...) -> None: ...
+
+class TrackingField(_message.Message):
+    __slots__ = ("slot", "name")
+    SLOT_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    slot: TrackingSlot
+    name: str
+    def __init__(self, slot: _Optional[_Union[TrackingSlot, str]] = ..., name: _Optional[str] = ...) -> None: ...
+
+class MLflow(_message.Message):
+    __slots__ = ("enable", "experiment_name", "run_name_field")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    EXPERIMENT_NAME_FIELD_NUMBER: _ClassVar[int]
+    RUN_NAME_FIELD_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    experiment_name: str
+    run_name_field: str
+    def __init__(self, enable: bool = ..., experiment_name: _Optional[str] = ..., run_name_field: _Optional[str] = ...) -> None: ...
+
+class Wandb(_message.Message):
+    __slots__ = ("enable", "project", "run_name_field")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    PROJECT_FIELD_NUMBER: _ClassVar[int]
+    RUN_NAME_FIELD_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    project: str
+    run_name_field: str
+    def __init__(self, enable: bool = ..., project: _Optional[str] = ..., run_name_field: _Optional[str] = ...) -> None: ...
 
 class FieldDefaults(_message.Message):
     __slots__ = ("float", "double", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool", "string", "bytes", "enum")

@@ -22,7 +22,7 @@ options, not on new parallel taxonomies.
 | `LABEL` | Human or ground-truth annotation attached to a sample. |
 | `PREDICTION` | Model output for a sample. |
 | `FEEDBACK` | Downstream feedback (clicks, corrections, ratings). |
-| `RUN_CONFIG` | Experiment / training run configuration. |
+| `RUN_CONFIG` | Experiment / training run configuration (params for MLflow / W&B). |
 | `METRIC_SET` | Named metrics logged for a run or evaluation. |
 
 ## Annotate a message
@@ -63,5 +63,6 @@ bodies should go through `emit_pydantic_model` in `schema_emit`.
 
 See also [LanceDB schemas](lancedb.md), [BentoML services](bentoml.md),
 [LitServe services](litserve.md), [PydanticAI synthesis](pydantic_ai.md),
-[Argilla](argilla.md), [bridges](bridges.md), and the
+[Argilla](argilla.md), [MLflow tracking](mlflow.md),
+[Weights & Biases](wandb.md), [bridges](bridges.md), and the
 [Sentiment flywheel](../example_projects/sentiment_flywheel.md) example.

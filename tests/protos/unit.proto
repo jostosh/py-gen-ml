@@ -290,3 +290,43 @@ message ReviewExampleTest {
         required: true;
     }];
 }
+
+// Nested optimizer knobs for tracking flatten tests.
+message OptimizerConfigTest {
+    float learning_rate = 1;
+    float weight_decay = 2;
+}
+
+// RUN_CONFIG for MLflow / W&B param + tag helpers.
+message RunConfigTest {
+    option (pgml.kind) = RUN_CONFIG;
+    option (pgml.mlflow) = {
+        enable: true;
+        experiment_name: "unit";
+        run_name_field: "run_name";
+    };
+    option (pgml.wandb) = {
+        enable: true;
+        project: "unit";
+        run_name_field: "run_name";
+    };
+    // Human-readable run name (logged as a tag).
+    string run_name = 1 [(pgml.tracking_field) = {
+        slot: TAG;
+    }];
+    int32 epochs = 2;
+    OptimizerConfigTest optimizer = 3;
+}
+
+// METRIC_SET for MLflow / W&B metric helpers.
+message MetricSetTest {
+    option (pgml.kind) = METRIC_SET;
+    option (pgml.mlflow) = {
+        enable: true;
+    };
+    option (pgml.wandb) = {
+        enable: true;
+    };
+    float accuracy = 1;
+    float loss = 2;
+}

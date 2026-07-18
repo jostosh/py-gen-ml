@@ -26,3 +26,31 @@ class SentimentExamplePatch(pgml.YamlBaseModel):
 
     sentiment: typing.Optional[str] = None
     """Binary sentiment of the review: "negative" or "positive"."""
+
+
+class SentimentTrainConfigPatch(pgml.YamlBaseModel):
+    """Hyperparameters for a sentiment flywheel training run."""
+
+    run_name: typing.Optional[str] = None
+    """Human-readable run name (logged as a tracker tag)."""
+
+    synthesize_count: typing.Optional[int] = None
+    """Number of synthetic examples requested per diversify round."""
+
+    diversify_rounds: typing.Optional[int] = None
+    """Extra synthesis rounds that feed prior outputs back as examples."""
+
+    openai_model: typing.Optional[str] = None
+    """OpenAI / Azure deployment name used for synthesis."""
+
+    test_size: typing.Optional[float] = None
+    """TF-IDF + logistic regression holdout fraction."""
+
+
+class SentimentMetricsPatch(pgml.YamlBaseModel):
+    """Holdout metrics from the sentiment classifier."""
+
+    accuracy: typing.Optional[float] = None
+    n_train: typing.Optional[int] = None
+    n_test: typing.Optional[int] = None
+    n_labeled: typing.Optional[int] = None

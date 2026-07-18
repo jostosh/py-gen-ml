@@ -25,3 +25,31 @@ class SentimentExample(pgml.YamlBaseModel):
 
     sentiment: str
     """Binary sentiment of the review: "negative" or "positive"."""
+
+
+class SentimentTrainConfig(pgml.YamlBaseModel):
+    """Hyperparameters for a sentiment flywheel training run."""
+
+    run_name: str = "sentiment"
+    """Human-readable run name (logged as a tracker tag)."""
+
+    synthesize_count: int = 4
+    """Number of synthetic examples requested per diversify round."""
+
+    diversify_rounds: int = 1
+    """Extra synthesis rounds that feed prior outputs back as examples."""
+
+    openai_model: str = "gpt-4o"
+    """OpenAI / Azure deployment name used for synthesis."""
+
+    test_size: float = 0.25
+    """TF-IDF + logistic regression holdout fraction."""
+
+
+class SentimentMetrics(pgml.YamlBaseModel):
+    """Holdout metrics from the sentiment classifier."""
+
+    accuracy: float
+    n_train: int
+    n_test: int
+    n_labeled: int

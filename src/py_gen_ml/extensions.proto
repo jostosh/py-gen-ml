@@ -148,6 +148,39 @@ message MapperField {
 	string alias = 1;
 }
 
+// Role of a field when logging RUN_CONFIG / METRIC_SET messages to experiment trackers.
+enum TrackingSlot {
+	TRACKING_SLOT_UNSPECIFIED = 0;
+	PARAM = 1;
+	METRIC = 2;
+	TAG = 3;
+}
+
+// Per-field experiment-tracking annotations (param / metric / tag).
+message TrackingField {
+	TrackingSlot slot = 1;
+	// Optional log key; default = proto field name or dotted path when nested.
+	string name = 2;
+}
+
+// Opt a message into MLflow run / param / metric helpers.
+message MLflow {
+	bool enable = 1;
+	// Optional default experiment name for start_*_run helpers.
+	string experiment_name = 2;
+	// Optional field name on a RUN_CONFIG used as the MLflow run name.
+	string run_name_field = 3;
+}
+
+// Opt a message into Weights & Biases init / config / metric helpers.
+message Wandb {
+	bool enable = 1;
+	// Optional default W&B project for init_*_run helpers.
+	string project = 2;
+	// Optional field name on a RUN_CONFIG used as the W&B run name.
+	string run_name_field = 3;
+}
+
 extend google.protobuf.MessageOptions {
 	// Python import path for a class to instantiate using the values
 	// of this message.
@@ -169,6 +202,10 @@ extend google.protobuf.MessageOptions {
 	Argilla argilla = 1098;
 	// Opt into cross-tool mapper helpers for this message.
 	MapperConfig mapper_config = 1099;
+	// Opt into MLflow tracking helpers for this message.
+	MLflow mlflow = 1100;
+	// Opt into Weights & Biases tracking helpers for this message.
+	Wandb wandb = 1101;
 }
 
 extend google.protobuf.ServiceOptions {
@@ -194,6 +231,8 @@ extend google.protobuf.FieldOptions {
 	ArgillaField argilla_field = 1175;
 	// Cross-tool column/field rename for generated mappers.
 	MapperField mapper_field = 1176;
+	// Experiment-tracking param / metric / tag slot for this field.
+	TrackingField tracking_field = 1177;
 }
 
 // FieldDefaults encapsulates the default values for each type of field. Depending on the
