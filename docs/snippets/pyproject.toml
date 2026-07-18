@@ -19,6 +19,20 @@ litserve = [
     "litserve>=0.2",
     "httpx>=0.27",
 ]
+pydantic-ai = [
+    "pydantic-ai>=0.1",
+]
+argilla = [
+    "argilla>=2.0",
+    "datasets>=3.0",
+]
+bridges = [
+    "pydantic-ai>=0.1",
+    "argilla>=2.0",
+    "datasets>=3.0",
+    "lancedb>=0.17.0",
+    "scikit-learn>=1.3",
+]
 
 [build-system]
 requires = ["hatchling"]

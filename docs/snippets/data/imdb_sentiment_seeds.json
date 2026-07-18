@@ -1,0 +1,50 @@
+[
+  {
+    "id": "imdb-001",
+    "source": "imdb",
+    "text": "I loved this film from start to finish. The performances feel honest, the pacing never drags, and the final act stuck with me for days. Easily one of the best movies I've seen this year.",
+    "sentiment": "positive"
+  },
+  {
+    "id": "imdb-002",
+    "source": "imdb",
+    "text": "What a waste of two hours. The plot holes are ridiculous, the dialogue is wooden, and none of the characters behave like real people. I wanted to walk out halfway through.",
+    "sentiment": "negative"
+  },
+  {
+    "id": "imdb-003",
+    "source": "imdb",
+    "text": "A warm, funny, and surprisingly sharp comedy. The chemistry between the leads carries every scene, and the script trusts the audience. Highly recommended if you need a feel-good night in.",
+    "sentiment": "positive"
+  },
+  {
+    "id": "imdb-004",
+    "source": "imdb",
+    "text": "Boring, pretentious, and endlessly self-satisfied. The director seems more interested in showing off camera tricks than telling a story. I checked my watch more than I cared about the plot.",
+    "sentiment": "negative"
+  },
+  {
+    "id": "imdb-005",
+    "source": "imdb",
+    "text": "Gorgeous cinematography and a haunting score, but the middle hour is a slog. Still, the emotional payoff in the last twenty minutes made it worthwhile for me.",
+    "sentiment": "positive"
+  },
+  {
+    "id": "imdb-006",
+    "source": "imdb",
+    "text": "I expected a thriller and got a mess. Twists arrive for no reason, the villain is a cartoon, and the ending undercuts everything that came before. Skip it.",
+    "sentiment": "negative"
+  },
+  {
+    "id": "imdb-007",
+    "source": "imdb",
+    "text": "Underrated gem. Quiet character work, beautiful location shooting, and a soundtrack that elevates every quiet moment. I rewatched it the same weekend.",
+    "sentiment": "positive"
+  },
+  {
+    "id": "imdb-008",
+    "source": "imdb",
+    "text": "Painfully predictable. You can see every beat coming from the trailer alone. The jokes fall flat and the romance has zero spark. Not for me.",
+    "sentiment": "negative"
+  }
+]

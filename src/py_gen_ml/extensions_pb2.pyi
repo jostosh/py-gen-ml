@@ -16,6 +16,13 @@ class MessageKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     FEEDBACK: _ClassVar[MessageKind]
     RUN_CONFIG: _ClassVar[MessageKind]
     METRIC_SET: _ClassVar[MessageKind]
+
+class ArgillaSlot(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    ARGILLA_SLOT_UNSPECIFIED: _ClassVar[ArgillaSlot]
+    FIELD: _ClassVar[ArgillaSlot]
+    QUESTION: _ClassVar[ArgillaSlot]
+    METADATA: _ClassVar[ArgillaSlot]
 MESSAGE_KIND_UNSPECIFIED: MessageKind
 FEATURE_ROW: MessageKind
 LABEL: MessageKind
@@ -23,6 +30,10 @@ PREDICTION: MessageKind
 FEEDBACK: MessageKind
 RUN_CONFIG: MessageKind
 METRIC_SET: MessageKind
+ARGILLA_SLOT_UNSPECIFIED: ArgillaSlot
+FIELD: ArgillaSlot
+QUESTION: ArgillaSlot
+METADATA: ArgillaSlot
 ENABLE_FIELD_NUMBER: _ClassVar[int]
 enable: _descriptor.FieldDescriptor
 FACTORY_FIELD_NUMBER: _ClassVar[int]
@@ -37,6 +48,12 @@ BENTOML_CONFIG_FIELD_NUMBER: _ClassVar[int]
 bentoml_config: _descriptor.FieldDescriptor
 LITSERVE_CONFIG_FIELD_NUMBER: _ClassVar[int]
 litserve_config: _descriptor.FieldDescriptor
+PYDANTIC_AI_FIELD_NUMBER: _ClassVar[int]
+pydantic_ai: _descriptor.FieldDescriptor
+ARGILLA_FIELD_NUMBER: _ClassVar[int]
+argilla: _descriptor.FieldDescriptor
+MAPPER_CONFIG_FIELD_NUMBER: _ClassVar[int]
+mapper_config: _descriptor.FieldDescriptor
 BENTOML_FIELD_NUMBER: _ClassVar[int]
 bentoml: _descriptor.FieldDescriptor
 LITSERVE_FIELD_NUMBER: _ClassVar[int]
@@ -51,6 +68,10 @@ AS_VARARGS_FIELD_NUMBER: _ClassVar[int]
 as_varargs: _descriptor.FieldDescriptor
 LANCEDB_FIELD_FIELD_NUMBER: _ClassVar[int]
 lancedb_field: _descriptor.FieldDescriptor
+ARGILLA_FIELD_FIELD_NUMBER: _ClassVar[int]
+argilla_field: _descriptor.FieldDescriptor
+MAPPER_FIELD_FIELD_NUMBER: _ClassVar[int]
+mapper_field: _descriptor.FieldDescriptor
 
 class Arg(_message.Message):
     __slots__ = ("name", "path")
@@ -129,6 +150,52 @@ class LitServeConfig(_message.Message):
     enable: bool
     service: str
     def __init__(self, enable: bool = ..., service: _Optional[str] = ...) -> None: ...
+
+class PydanticAI(_message.Message):
+    __slots__ = ("enable", "agent_name", "response_message")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    AGENT_NAME_FIELD_NUMBER: _ClassVar[int]
+    RESPONSE_MESSAGE_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    agent_name: str
+    response_message: str
+    def __init__(self, enable: bool = ..., agent_name: _Optional[str] = ..., response_message: _Optional[str] = ...) -> None: ...
+
+class Argilla(_message.Message):
+    __slots__ = ("enable", "dataset_name")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    DATASET_NAME_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    dataset_name: str
+    def __init__(self, enable: bool = ..., dataset_name: _Optional[str] = ...) -> None: ...
+
+class ArgillaField(_message.Message):
+    __slots__ = ("slot", "name", "field_type", "question_type", "labels", "required")
+    SLOT_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    FIELD_TYPE_FIELD_NUMBER: _ClassVar[int]
+    QUESTION_TYPE_FIELD_NUMBER: _ClassVar[int]
+    LABELS_FIELD_NUMBER: _ClassVar[int]
+    REQUIRED_FIELD_NUMBER: _ClassVar[int]
+    slot: ArgillaSlot
+    name: str
+    field_type: str
+    question_type: str
+    labels: _containers.RepeatedScalarFieldContainer[str]
+    required: bool
+    def __init__(self, slot: _Optional[_Union[ArgillaSlot, str]] = ..., name: _Optional[str] = ..., field_type: _Optional[str] = ..., question_type: _Optional[str] = ..., labels: _Optional[_Iterable[str]] = ..., required: bool = ...) -> None: ...
+
+class MapperConfig(_message.Message):
+    __slots__ = ("enable",)
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    def __init__(self, enable: bool = ...) -> None: ...
+
+class MapperField(_message.Message):
+    __slots__ = ("alias",)
+    ALIAS_FIELD_NUMBER: _ClassVar[int]
+    alias: str
+    def __init__(self, alias: _Optional[str] = ...) -> None: ...
 
 class FieldDefaults(_message.Message):
     __slots__ = ("float", "double", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool", "string", "bytes", "enum")

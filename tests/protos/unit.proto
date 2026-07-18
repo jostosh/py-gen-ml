@@ -252,3 +252,41 @@ service ClassifierTest {
         };
     }
 }
+
+// Synthesis example for PydanticAI + Argilla flywheel tests.
+message ReviewExampleTest {
+    option (pgml.kind) = FEATURE_ROW;
+    option (pgml.pydantic_ai) = {
+        enable: true;
+    };
+    option (pgml.argilla) = {
+        enable: true;
+        dataset_name: "review_examples";
+    };
+    option (pgml.mapper_config) = {
+        enable: true;
+    };
+    // Stable identifier for the example (not shown as a primary Argilla field).
+    string id = 1 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+    // User-facing instruction or prompt to answer.
+    string instruction = 2 [(pgml.argilla_field) = {
+        slot: FIELD;
+        field_type: "text";
+        required: true;
+    }];
+    // Model or human-written response to the instruction.
+    string generation = 3 [(pgml.argilla_field) = {
+        slot: FIELD;
+        field_type: "text";
+        required: true;
+    }];
+    // Annotator quality label for the generation.
+    string quality = 4 [(pgml.argilla_field) = {
+        slot: QUESTION;
+        question_type: "label";
+        labels: ["bad", "good"];
+        required: true;
+    }];
+}

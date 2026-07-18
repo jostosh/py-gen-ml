@@ -178,7 +178,7 @@ class OptunaVisitor(SweepVisitor[optuna.Trial]):
             BaseModel: The resolved base model.
         """
         kwargs: Dict[str, Any] = {}
-        for field_name, field in sweep_model.model_fields.items():
+        for field_name, field in type(sweep_model).model_fields.items():
             field_value = getattr(sweep_model, field_name)
             if isinstance(field_value, SweepModel):
                 kwargs[field_name] = field_value.accept(self, context=context.step(field_name))

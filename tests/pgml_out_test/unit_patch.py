@@ -200,3 +200,19 @@ class ClassifierServeConfigTestPatch(pgml.YamlBaseModel):
     timeout_s: typing.Optional[float] = None
     workers_per_device: typing.Optional[int] = None
     accelerator: typing.Optional[str] = None
+
+
+class ReviewExampleTestPatch(pgml.YamlBaseModel):
+    """Synthesis example for PydanticAI + Argilla flywheel tests."""
+
+    id: typing.Optional[str] = None
+    """Stable identifier for the example (not shown as a primary Argilla field)."""
+
+    instruction: typing.Optional[str] = None
+    """User-facing instruction or prompt to answer."""
+
+    generation: typing.Optional[str] = None
+    """Model or human-written response to the instruction."""
+
+    quality: typing.Optional[str] = None
+    """Annotator quality label for the generation."""

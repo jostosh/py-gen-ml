@@ -1,12 +1,14 @@
 from py_gen_ml.cli_args.arg_refs import ArgRef
 from py_gen_ml.cli_args.cli_func import pgml_cmd
 from py_gen_ml.plugin.constants import (
+    ARGILLA_SUFFIX,
     BASE_SUFFIX,
     BENTOML_SUFFIX,
     CLI_ARGS_SUFFIX,
     LANCEDB_SUFFIX,
     LITSERVE_SUFFIX,
     PATCH_SUFFIX,
+    PYDANTIC_AI_SUFFIX,
     SWEEP_SUFFIX,
 )
 from py_gen_ml.plugin.generator import Generator
@@ -60,4 +62,6 @@ __all__ = [
     'LANCEDB_SUFFIX',
     'BENTOML_SUFFIX',
     'LITSERVE_SUFFIX',
+    'PYDANTIC_AI_SUFFIX',
+    'ARGILLA_SUFFIX',
 ]

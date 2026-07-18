@@ -490,3 +490,25 @@ ClassifierServeConfigTestSweepField = typing.Union[
     ClassifierServeConfigTestSweep,
     pgml.NestedChoice[ClassifierServeConfigTestSweep, patch.ClassifierServeConfigTestPatch],  # type: ignore
 ]
+
+
+class ReviewExampleTestSweep(pgml.Sweeper[patch.ReviewExampleTestPatch]):
+    """Synthesis example for PydanticAI + Argilla flywheel tests."""
+
+    id: typing.Optional[pgml.StrSweep] = None
+    """Stable identifier for the example (not shown as a primary Argilla field)."""
+
+    instruction: typing.Optional[pgml.StrSweep] = None
+    """User-facing instruction or prompt to answer."""
+
+    generation: typing.Optional[pgml.StrSweep] = None
+    """Model or human-written response to the instruction."""
+
+    quality: typing.Optional[pgml.StrSweep] = None
+    """Annotator quality label for the generation."""
+
+
+ReviewExampleTestSweepField = typing.Union[
+    ReviewExampleTestSweep,
+    pgml.NestedChoice[ReviewExampleTestSweep, patch.ReviewExampleTestPatch],  # type: ignore
+]

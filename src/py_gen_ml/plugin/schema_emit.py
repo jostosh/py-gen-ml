@@ -1,11 +1,27 @@
 """Shared emission of Pydantic-style model classes from protobuf messages."""
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Optional
 
 import protogen
 
 from py_gen_ml.plugin.common import generate_docstring
+
+
+def field_leading_comment(field: protogen.Field) -> Optional[str]:
+    """Return stripped leading comment for ``field``, or ``None`` if absent."""
+    comment = field.location.leading_comments
+    if not comment:
+        return None
+    return ' '.join(comment.strip().split())
+
+
+def message_leading_comment(message: protogen.Message) -> Optional[str]:
+    """Return stripped leading comment for ``message``, or ``None`` if absent."""
+    comment = message.location.leading_comments
+    if not comment:
+        return None
+    return ' '.join(comment.strip().split())
 
 
 def emit_pydantic_model(
@@ -15,17 +31,22 @@ def emit_pydantic_model(
     base_class: str,
     field_annotation: Callable[[protogen.Field], str],
     field_type: Callable[[protogen.Field], str],
+    class_name: Optional[str] = None,
+    use_field_descriptions: bool = False,
+    all_optional: bool = False,
 ) -> None:
     """Emit a ``class {message}({base_class}):`` body for ``message``.
 
-    Shared by opt-in generators (LanceDB, BentoML, …) that need a Pydantic-like
-    class for a message closure. Callers supply ``field_annotation`` /
-    ``field_type`` for tool-specific types (e.g. ``Vector(dim)``, enum-as-str).
+    Shared by opt-in generators (LanceDB, BentoML, LitServe, PydanticAI, …)
+    that need a Pydantic-like class for a message closure.
 
-    Multi-field oneof members are skipped as individual fields and emitted as a
-    single ``typing.Union[...]`` on the oneof name. Empty messages get ``pass``.
+    When ``use_field_descriptions`` is true, proto field comments are emitted as
+    ``pydantic.Field(description=...)`` so they appear in ``model_json_schema()``.
+    When ``all_optional`` is true, every field is ``Optional[...] = None`` (Partial
+    models for synthesis examples / incomplete rows).
     """
-    g.P(f'class {message.proto.name}({base_class}):')
+    name = class_name or message.proto.name
+    g.P(f'class {name}({base_class}):')
     g.set_indent(4)
     generate_docstring(g, message)
 
@@ -33,16 +54,24 @@ def emit_pydantic_model(
     for field in message.fields:
         if field.oneof and len(field.oneof.fields) > 1:
             continue
-        g.P(f'{field.py_name}: {field_annotation(field)}')
-        generate_docstring(g, field)
+        annotation = field_annotation(field)
+        if all_optional and not annotation.startswith('typing.Optional['):
+            annotation = f'typing.Optional[{annotation}]'
+        _emit_field_line(g, field.py_name, annotation, field, use_field_descriptions, all_optional)
+        if not use_field_descriptions:
+            generate_docstring(g, field)
         wrote_field = True
 
     for oneof in message.oneofs:
         if len(oneof.fields) == 1:
             continue
         types = [field_type(field) for field in oneof.fields]
-        g.P(f'{oneof.proto.name}: typing.Union[{", ".join(types)}]')
-        generate_docstring(g, oneof)
+        annotation = f'typing.Union[{", ".join(types)}]'
+        if all_optional:
+            annotation = f'typing.Optional[{annotation}]'
+        _emit_field_line(g, oneof.proto.name, annotation, oneof, use_field_descriptions, all_optional)
+        if not use_field_descriptions:
+            generate_docstring(g, oneof)
         wrote_field = True
 
     if not wrote_field:
@@ -51,3 +80,30 @@ def emit_pydantic_model(
     g.set_indent(0)
     g.P()
     g.P()
+
+
+def _emit_field_line(
+    g: protogen.GeneratedFile,
+    py_name: str,
+    annotation: str,
+    element: protogen.Field | protogen.OneOf,
+    use_field_descriptions: bool,
+    all_optional: bool,
+) -> None:
+    description = None
+    if use_field_descriptions and hasattr(element, 'location'):
+        raw = element.location.leading_comments
+        if raw:
+            description = ' '.join(raw.strip().split())
+
+    if use_field_descriptions or all_optional:
+        field_args: list[str] = []
+        if all_optional:
+            field_args.append('default=None')
+        if description is not None:
+            field_args.append(f'description={description!r}')
+        if field_args:
+            g.P(f'{py_name}: {annotation} = Field({", ".join(field_args)})')
+            return
+
+    g.P(f'{py_name}: {annotation}')

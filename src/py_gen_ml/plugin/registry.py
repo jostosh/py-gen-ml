@@ -109,11 +109,13 @@ class GeneratorRegistry:
 def _load_builtin_specs() -> List[GeneratorSpec]:
     # Imported lazily to avoid a circular import: the generators import
     # `Generator`, which lives next to this module.
+    from py_gen_ml.plugin.argilla_generator import argilla_spec
     from py_gen_ml.plugin.base_model_generator import base_spec, patch_spec
     from py_gen_ml.plugin.bentoml_generator import bentoml_spec
     from py_gen_ml.plugin.cli_args_generator import cli_args_spec
     from py_gen_ml.plugin.lancedb_generator import lancedb_spec
     from py_gen_ml.plugin.litserve_generator import litserve_spec
+    from py_gen_ml.plugin.pydantic_ai_generator import pydantic_ai_spec
     from py_gen_ml.plugin.sweep_model_generator import sweep_spec
 
     return [
@@ -124,6 +126,8 @@ def _load_builtin_specs() -> List[GeneratorSpec]:
         lancedb_spec,
         bentoml_spec,
         litserve_spec,
+        pydantic_ai_spec,
+        argilla_spec,
     ]
 
 
