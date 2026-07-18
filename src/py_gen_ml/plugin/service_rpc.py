@@ -65,3 +65,25 @@ def method_api_name(method: protogen.Method, name: Optional[str] = None) -> str:
     if name:
         return name
     return method.py_name
+
+
+def configs_by_service(
+    file: protogen.File,
+    extension_name: str,
+    extension_type: type[T],
+) -> dict[str, protogen.Message]:
+    """Map proto service name → config message for enabled ``*_config`` extensions.
+
+    Expects the extension message to expose ``.enable`` and ``.service`` (service
+    declaration name). Used by BentoML / LitServe serve-config linkage.
+    """
+    mapping: dict[str, protogen.Message] = {}
+    for message in file.messages:
+        opts = get_extension_value(message, extension_name, extension_type)
+        if opts is None or not getattr(opts, 'enable', False):
+            continue
+        service = getattr(opts, 'service', '') or ''
+        if not service:
+            continue
+        mapping[service] = message
+    return mapping

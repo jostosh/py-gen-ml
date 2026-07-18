@@ -198,3 +198,5 @@ class ClassifierServeConfigTestPatch(pgml.YamlBaseModel):
     url: typing.Optional[str] = None
     workers: typing.Optional[int] = None
     timeout_s: typing.Optional[float] = None
+    workers_per_device: typing.Optional[int] = None
+    accelerator: typing.Optional[str] = None

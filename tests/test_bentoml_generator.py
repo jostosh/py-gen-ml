@@ -9,8 +9,11 @@ def test_unit_bentoml_fixture_emits_models_factory_and_clients() -> None:
     assert 'class PredictRequestTest(BaseModel):' in source
     assert 'class PredictResponseTest(BaseModel):' in source
     assert 'def classifier_test_service_kwargs(' in source
-    assert "kwargs['workers'] = config.workers" in source
-    assert "kwargs['traffic'] = {'timeout': config.timeout_s}" in source
+    assert 'kwargs["workers"] = config.workers' in source or "kwargs['workers'] = config.workers" in source
+    assert (
+        'kwargs["traffic"] = {"timeout": config.timeout_s}' in source or
+        "kwargs['traffic'] = {'timeout': config.timeout_s}" in source
+    )
     assert 'def create_classifier_test_service(' in source
     assert '@bentoml.service(**service_kwargs)' in source
     assert "route='/predict'" in source

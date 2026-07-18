@@ -5,6 +5,7 @@ from py_gen_ml.plugin.constants import (
     BENTOML_SUFFIX,
     CLI_ARGS_SUFFIX,
     LANCEDB_SUFFIX,
+    LITSERVE_SUFFIX,
     PATCH_SUFFIX,
     SWEEP_SUFFIX,
 )
@@ -58,4 +59,5 @@ __all__ = [
     'CLI_ARGS_SUFFIX',
     'LANCEDB_SUFFIX',
     'BENTOML_SUFFIX',
+    'LITSERVE_SUFFIX',
 ]

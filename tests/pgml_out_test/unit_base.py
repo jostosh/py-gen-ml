@@ -203,3 +203,5 @@ class ClassifierServeConfigTest(pgml.YamlBaseModel):
     url: str = 'http://localhost:3000'
     workers: int = 1
     timeout_s: float = 60.0
+    workers_per_device: int = 1
+    accelerator: str = 'auto'

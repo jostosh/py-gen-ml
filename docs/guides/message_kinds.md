@@ -61,4 +61,5 @@ an optional third-party package. Serving generators should use
 `py_gen_ml.plugin.service_rpc` for service/rpc roots; Pydantic-style class
 bodies should go through `emit_pydantic_model` in `schema_emit`.
 
-See also [LanceDB schemas](lancedb.md) and [BentoML services](bentoml.md).
+See also [LanceDB schemas](lancedb.md), [BentoML services](bentoml.md), and
+[LitServe services](litserve.md).

@@ -106,6 +106,7 @@ nav:
   - Message kinds: guides/message_kinds.md
   - LanceDB schemas: guides/lancedb.md
   - BentoML services: guides/bentoml.md
+  - LitServe services: guides/litserve.md
 - Example projects:
   - CIFAR-10: example_projects/cifar10.md
 - Reference:

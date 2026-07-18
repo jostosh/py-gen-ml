@@ -22,6 +22,7 @@ from py_gen_ml.plugin.registry import GeneratorSpec
 from py_gen_ml.plugin.schema_emit import emit_pydantic_model
 from py_gen_ml.plugin.service_rpc import (
     assert_unary_methods,
+    configs_by_service,
     method_api_name,
     method_http_route,
     rpc_root_messages,
@@ -63,7 +64,7 @@ class BentoMLGenerator(Generator):
 
         roots = rpc_root_messages(services)
         messages = collect_message_closure(roots, file)
-        configs = self._configs_by_service(file)
+        configs = configs_by_service(file, 'bentoml_config', BentoMLConfig)
 
         g = self._new_python_file(
             file,
@@ -96,16 +97,6 @@ class BentoMLGenerator(Generator):
             self._generate_client_helpers(g, service, config_msg)
 
         self._run_yapf(g)
-
-    @staticmethod
-    def _configs_by_service(file: protogen.File) -> dict[str, protogen.Message]:
-        mapping: dict[str, protogen.Message] = {}
-        for message in file.messages:
-            opts = get_extension_value(message, 'bentoml_config', BentoMLConfig)
-            if opts is None or not opts.enable or not opts.service:
-                continue
-            mapping[opts.service] = message
-        return mapping
 
     def _generate_service_kwargs(
         self,

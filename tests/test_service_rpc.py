@@ -8,6 +8,7 @@ import pytest
 
 from py_gen_ml.plugin.service_rpc import (
     assert_unary_methods,
+    configs_by_service,
     method_api_name,
     method_http_route,
     rpc_root_messages,
@@ -76,3 +77,25 @@ def test_method_http_route_and_api_name_defaults() -> None:
     assert method_http_route(method, '/v1/predict') == '/v1/predict'
     assert method_api_name(method) == 'predict'
     assert method_api_name(method, 'classify') == 'classify'
+
+
+def test_configs_by_service_maps_enabled_configs() -> None:
+    linked = MagicMock()
+    skipped = MagicMock()
+    empty_service = MagicMock()
+    file = MagicMock()
+    file.messages = [linked, skipped, empty_service]
+
+    def fake_get(element: object, name: str, ext_type: type) -> object | None:
+        if element is linked:
+            return SimpleNamespace(enable=True, service='Classifier')
+        if element is skipped:
+            return SimpleNamespace(enable=False, service='Classifier')
+        if element is empty_service:
+            return SimpleNamespace(enable=True, service='')
+        return None
+
+    with patch('py_gen_ml.plugin.service_rpc.get_extension_value', side_effect=fake_get):
+        assert configs_by_service(file, 'litserve_config', object) == {
+            'Classifier': linked,
+        }

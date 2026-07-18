@@ -482,6 +482,8 @@ class ClassifierServeConfigTestSweep(
     url: typing.Optional[pgml.StrSweep] = None
     workers: typing.Optional[pgml.IntSweep] = None
     timeout_s: typing.Optional[pgml.FloatSweep] = None
+    workers_per_device: typing.Optional[pgml.IntSweep] = None
+    accelerator: typing.Optional[pgml.StrSweep] = None
 
 
 ClassifierServeConfigTestSweepField = typing.Union[
