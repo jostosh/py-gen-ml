@@ -173,7 +173,7 @@ class LanceDBGenerator(Generator):
         g.P(
             f'def create_{helper}_table('
             f'db: DBConnection, *, name: typing.Optional[str] = None, **kwargs: typing.Any'
-            f') -> LanceTable:'
+            f') -> LanceTable:',
         )
         g.set_indent(4)
         g.P(f'"""Create a LanceDB table whose schema is :class:`{class_name}`.')
