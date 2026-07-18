@@ -9,6 +9,10 @@ Tool-specific options stay separate. For example, LanceDB still requires
 `(pgml.lancedb).enable = true` to emit code; setting `kind = FEATURE_ROW`
 documents the contract and lets future generators find the same message.
 
+**Rule of thumb:** `(pgml.kind)` = ML-contract role; `(pgml.<tool>).enable` =
+emit that tool’s adapter. Keep kinds small; put library-specific knobs on tool
+options, not on new parallel taxonomies.
+
 ## Values
 
 | Kind | Meaning |
@@ -53,6 +57,8 @@ Plugin helpers live in `py_gen_ml.plugin.message_kind`:
 
 Prefer filtering roots with `messages_with_kind` when the generator targets a
 lifecycle role, and keep a tool-specific `(pgml.*).enable` when codegen imports
-an optional third-party package.
+an optional third-party package. Serving generators should use
+`py_gen_ml.plugin.service_rpc` for service/rpc roots; Pydantic-style class
+bodies should go through `emit_pydantic_model` in `schema_emit`.
 
 See also [LanceDB schemas](lancedb.md) and [BentoML services](bentoml.md).
