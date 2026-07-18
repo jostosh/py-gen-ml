@@ -1,5 +1,46 @@
 {
   "$defs": {
+    "Activation": {
+      "description": "Activation function",
+      "enum": [
+        "RELU",
+        "GELU"
+      ],
+      "title": "Activation",
+      "type": "string"
+    },
+    "Choice_Activation_": {
+      "properties": {
+        "options": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Activation"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an external object",
+                "minLength": 2,
+                "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an internal object",
+                "minLength": 2,
+                "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+              }
+            ]
+          },
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "title": "Choice[Activation]",
+      "type": "object"
+    },
     "Choice_int_": {
       "properties": {
         "options": {
@@ -30,38 +71,6 @@
         "options"
       ],
       "title": "Choice[int]",
-      "type": "object"
-    },
-    "Choice_str_": {
-      "properties": {
-        "options": {
-          "items": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "string",
-                "description": "An object path to an external object",
-                "minLength": 2,
-                "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-              },
-              {
-                "type": "string",
-                "description": "An object path to an internal object",
-                "minLength": 2,
-                "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-              }
-            ]
-          },
-          "title": "Options",
-          "type": "array"
-        }
-      },
-      "required": [
-        "options"
-      ],
-      "title": "Choice[str]",
       "type": "object"
     },
     "IntUniform": {
@@ -135,113 +144,24 @@
       ],
       "title": "IntUniform",
       "type": "object"
-    },
-    "LinearBlockSweep": {
-      "description": "Linear block configuration",
-      "properties": {
-        "num_units": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "$ref": "#/$defs/Choice_int_"
-            },
-            {
-              "$ref": "#/$defs/IntUniform"
-            },
-            {
-              "type": "null"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an external object",
-              "minLength": 2,
-              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an internal object",
-              "minLength": 2,
-              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-            }
-          ],
-          "default": null,
-          "title": "Num Units"
-        },
-        "activation": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/Choice_str_"
-            },
-            {
-              "type": "null"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an external object",
-              "minLength": 2,
-              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an internal object",
-              "minLength": 2,
-              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-            }
-          ],
-          "default": null,
-          "title": "Activation"
-        }
-      },
-      "title": "LinearBlockSweep",
-      "type": "object"
-    },
-    "NestedChoice_LinearBlockSweep_LinearBlockPatch_": {
-      "properties": {
-        "nested_options": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "$ref": "#/$defs/LinearBlockSweep"
-              },
-              "title": "Nested Options",
-              "type": "object"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an external object",
-              "minLength": 2,
-              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an internal object",
-              "minLength": 2,
-              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-            }
-          ]
-        }
-      },
-      "required": [
-        "nested_options"
-      ],
-      "title": "NestedChoice[LinearBlockSweep, LinearBlockPatch]",
-      "type": "object"
     }
   },
-  "description": "Multi-layer perceptron configuration",
+  "description": "MLP configuration",
   "properties": {
-    "layers": {
+    "activation": {
       "anyOf": [
         {
-          "$ref": "#/$defs/LinearBlockSweep"
+          "$ref": "#/$defs/Choice_Activation_"
         },
         {
-          "$ref": "#/$defs/NestedChoice_LinearBlockSweep_LinearBlockPatch_"
+          "const": "any",
+          "enum": [
+            "any"
+          ],
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/Activation"
         },
         {
           "type": "null"
@@ -260,7 +180,37 @@
         }
       ],
       "default": null,
-      "title": "Layers"
+      "title": "Activation"
+    },
+    "num_layers": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "$ref": "#/$defs/Choice_int_"
+        },
+        {
+          "$ref": "#/$defs/IntUniform"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Num Layers"
     },
     "_defs_": {}
   },

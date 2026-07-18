@@ -192,3 +192,17 @@ message NestedBarTest {
 message RepeatedNestedBarTest {
     repeated NestedBarTest bar = 1;
 }
+
+message LanceDBNestedMeta {
+    string label = 1;
+}
+
+message LanceDBRecordTest {
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "lance_records";
+    };
+    string id = 1;
+    repeated float embedding = 2 [(pgml.lancedb_field).vector_dim = 4];
+    LanceDBNestedMeta meta = 3;
+}

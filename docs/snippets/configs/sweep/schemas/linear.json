@@ -1,5 +1,46 @@
 {
   "$defs": {
+    "Activation": {
+      "description": "Activation function",
+      "enum": [
+        "RELU",
+        "GELU"
+      ],
+      "title": "Activation",
+      "type": "string"
+    },
+    "Choice_Activation_": {
+      "properties": {
+        "options": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Activation"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an external object",
+                "minLength": 2,
+                "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an internal object",
+                "minLength": 2,
+                "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+              }
+            ]
+          },
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "title": "Choice[Activation]",
+      "type": "object"
+    },
     "Choice_int_": {
       "properties": {
         "options": {
@@ -105,7 +146,7 @@
       "type": "object"
     }
   },
-  "description": "Linear layer configuration",
+  "description": "Linear layer",
   "properties": {
     "in_features": {
       "anyOf": [
@@ -167,10 +208,10 @@
       "default": null,
       "title": "Out Features"
     },
-    "bias": {
+    "activation": {
       "anyOf": [
         {
-          "type": "boolean"
+          "$ref": "#/$defs/Choice_Activation_"
         },
         {
           "const": "any",
@@ -178,6 +219,9 @@
             "any"
           ],
           "type": "string"
+        },
+        {
+          "$ref": "#/$defs/Activation"
         },
         {
           "type": "null"
@@ -196,7 +240,7 @@
         }
       ],
       "default": null,
-      "title": "Bias"
+      "title": "Activation"
     },
     "_defs_": {}
   },

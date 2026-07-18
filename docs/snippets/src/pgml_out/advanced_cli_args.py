@@ -11,22 +11,6 @@ from . import advanced_base as base
 class TrainingArgs(pgml.YamlBaseModel):
     """Training configuration"""
 
-    num_units: typing.Annotated[
-        typing.Optional[int],
-        typer.Option(help="Number of units. Maps to 'mlp.layers.num_units'"),
-        pydantic.Field(None),
-        pgml.ArgRef("mlp.layers.num_units"),
-    ]
-    """Number of units"""
-
-    activation: typing.Annotated[
-        typing.Optional[str],
-        typer.Option(help="Activation function. Maps to 'mlp.layers.activation'"),
-        pydantic.Field(None),
-        pgml.ArgRef("mlp.layers.activation"),
-    ]
-    """Activation function"""
-
     type: typing.Annotated[
         typing.Optional[str],
         typer.Option(help="Type of optimizer. Maps to 'optimizer.type'"),
@@ -42,3 +26,19 @@ class TrainingArgs(pgml.YamlBaseModel):
         pgml.ArgRef("optimizer.learning_rate"),
     ]
     """Learning rate"""
+
+    num_units: typing.Annotated[
+        typing.Optional[int],
+        typer.Option(help="Number of units. Maps to 'mlp.layers.num_units'"),
+        pydantic.Field(None),
+        pgml.ArgRef("mlp.layers.num_units"),
+    ]
+    """Number of units"""
+
+    activation: typing.Annotated[
+        typing.Optional[str],
+        typer.Option(help="Activation function. Maps to 'mlp.layers.activation'"),
+        pydantic.Field(None),
+        pgml.ArgRef("mlp.layers.activation"),
+    ]
+    """Activation function"""

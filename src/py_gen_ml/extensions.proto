@@ -27,6 +27,23 @@ message CLI {
 	bool enable = 2;
 }
 
+// LanceDB opts a message (and its nested message types) into LanceModel codegen.
+message LanceDB {
+	// If true, emit a ``lancedb.pydantic.LanceModel`` for this message and for
+	// every nested message type reachable from it.
+	bool enable = 1;
+	// Optional table name hint for docs / helpers. Defaults to the message name
+	// in snake_case when empty.
+	string table_name = 2;
+}
+
+// Per-field LanceDB annotations (e.g. fixed-size vector columns).
+message LanceDBField {
+	// When set to a positive value, the field is emitted as ``Vector(dim)``
+	// instead of a scalar or list type. Typically applied to ``repeated float``.
+	uint32 vector_dim = 1;
+}
+
 extend google.protobuf.MessageOptions {
 	// Python import path for a class to instantiate using the values
 	// of this message.
@@ -34,6 +51,8 @@ extend google.protobuf.MessageOptions {
     // Map of argument names to paths. The path is the dotted path to the argument
     // from the root of the CLI args class.
     CLI cli = 1092;
+	// Opt into LanceDB LanceModel generation for this message + nested types.
+	LanceDB lancedb = 1093;
 }
 
 // Defaults values applied at the field level
@@ -43,6 +62,8 @@ extend google.protobuf.FieldOptions {
 	optional FieldDefaults default = 1171;
 	// If true, and builder is set, the field will be treated as a varargs field.
 	bool as_varargs = 1172;
+	// LanceDB-specific field annotations (vector dimensions, etc.).
+	LanceDBField lancedb_field = 1173;
 }
 
 // FieldDefaults encapsulates the default values for each type of field. Depending on the

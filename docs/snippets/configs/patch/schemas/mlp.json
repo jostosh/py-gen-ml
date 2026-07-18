@@ -1,70 +1,44 @@
 {
   "$defs": {
-    "LinearBlockPatch": {
-      "description": "Linear block configuration",
-      "properties": {
-        "num_units": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an external object",
-              "minLength": 2,
-              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an internal object",
-              "minLength": 2,
-              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-            }
-          ],
-          "default": null,
-          "title": "Num Units"
-        },
-        "activation": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an external object",
-              "minLength": 2,
-              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
-            },
-            {
-              "type": "string",
-              "description": "An object path to an internal object",
-              "minLength": 2,
-              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
-            }
-          ],
-          "default": null,
-          "title": "Activation"
-        }
-      },
-      "title": "LinearBlockPatch",
-      "type": "object"
+    "Activation": {
+      "description": "Activation function",
+      "enum": [
+        "RELU",
+        "GELU"
+      ],
+      "title": "Activation",
+      "type": "string"
     }
   },
-  "description": "Multi-layer perceptron configuration",
+  "description": "MLP configuration",
   "properties": {
-    "layers": {
+    "activation": {
       "anyOf": [
         {
-          "items": {
-            "$ref": "#/$defs/LinearBlockPatch"
-          },
-          "type": "array"
+          "$ref": "#/$defs/Activation"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null
+    },
+    "num_layers": {
+      "anyOf": [
+        {
+          "type": "integer"
         },
         {
           "type": "null"
@@ -83,7 +57,7 @@
         }
       ],
       "default": null,
-      "title": "Layers"
+      "title": "Num Layers"
     },
     "_defs_": {}
   },

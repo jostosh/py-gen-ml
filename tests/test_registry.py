@@ -14,6 +14,7 @@ from py_gen_ml.plugin.base_model_generator import (
     patch_spec,
 )
 from py_gen_ml.plugin.cli_args_generator import CliArgsGenerator, cli_args_spec
+from py_gen_ml.plugin.lancedb_generator import LanceDBGenerator, lancedb_spec
 from py_gen_ml.plugin.registry import (
     ENTRY_POINT_GROUP,
     GeneratorRegistry,
@@ -40,7 +41,7 @@ class _FakePlugin:
 
 def test_default_registry_lists_builtins() -> None:
     registry = default_registry(include_entry_points=False)
-    assert registry.names() == ['base', 'patch', 'sweep', 'cli_args']
+    assert registry.names() == ['base', 'patch', 'sweep', 'cli_args', 'lancedb']
 
 
 def test_class_attributes_match_specs() -> None:
@@ -50,12 +51,16 @@ def test_class_attributes_match_specs() -> None:
     assert SweepModelGenerator.output_suffix == pgml.SWEEP_SUFFIX
     assert CliArgsGenerator.name == 'cli_args'
     assert CliArgsGenerator.output_suffix == pgml.CLI_ARGS_SUFFIX
+    assert LanceDBGenerator.name == 'lancedb'
+    assert LanceDBGenerator.output_suffix == pgml.LANCEDB_SUFFIX
 
     # Specs match the class attributes.
     assert base_spec.name == BaseModelGenerator.name
     assert sweep_spec.name == SweepModelGenerator.name
     assert cli_args_spec.name == CliArgsGenerator.name
+    assert lancedb_spec.name == LanceDBGenerator.name
     assert patch_spec.name == 'patch'
+    assert lancedb_spec.enabled_by_default is False
 
 
 def test_build_active_default_runs_all_builtins() -> None:
@@ -70,6 +75,14 @@ def test_build_active_default_runs_all_builtins() -> None:
     # The first BaseModelGenerator emits the base model, the second the patch.
     assert generators[0]._is_patch is False
     assert generators[1]._is_patch is True
+    # Opt-in generators (lancedb) are excluded unless explicitly enabled.
+    assert 'LanceDBGenerator' not in [type(g).__name__ for g in generators]
+
+
+def test_build_active_can_enable_lancedb() -> None:
+    registry = default_registry(include_entry_points=False)
+    generators = registry.build_active(_FakePlugin(), enabled=['lancedb'])
+    assert [type(g).__name__ for g in generators] == ['LanceDBGenerator']
 
 
 def test_build_active_filters_to_enabled_set() -> None:

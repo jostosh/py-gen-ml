@@ -2,8 +2,8 @@ import typing
 
 import py_gen_ml as pgml
 
-from . import unit_base as base
 from . import unit_patch as patch
+from . import unit_base as base
 
 EnumSweepField = typing.Union[
     pgml.Choice[base.Enum],
@@ -183,7 +183,8 @@ EnumDefaultTestSweepField = typing.Union[
 
 
 class OneofTestSweep(pgml.Sweeper[patch.OneofTestPatch]):
-    value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep], pgml.Sweeper[pgml.StrSweep]]] = None
+    value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep],
+                                        pgml.Sweeper[pgml.StrSweep]]] = None
 
 
 OneofTestSweepField = typing.Union[
@@ -218,7 +219,8 @@ class Int32DefaultTestSweep(pgml.Sweeper[patch.Int32DefaultTestPatch]):
 
 Int32DefaultTestSweepField = typing.Union[
     Int32DefaultTestSweep,
-    pgml.NestedChoice[Int32DefaultTestSweep, patch.Int32DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Int32DefaultTestSweep,
+                      patch.Int32DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -228,7 +230,8 @@ class Int64DefaultTestSweep(pgml.Sweeper[patch.Int64DefaultTestPatch]):
 
 Int64DefaultTestSweepField = typing.Union[
     Int64DefaultTestSweep,
-    pgml.NestedChoice[Int64DefaultTestSweep, patch.Int64DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Int64DefaultTestSweep,
+                      patch.Int64DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -238,7 +241,8 @@ class Uint32DefaultTestSweep(pgml.Sweeper[patch.Uint32DefaultTestPatch]):
 
 Uint32DefaultTestSweepField = typing.Union[
     Uint32DefaultTestSweep,
-    pgml.NestedChoice[Uint32DefaultTestSweep, patch.Uint32DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Uint32DefaultTestSweep,
+                      patch.Uint32DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -248,7 +252,8 @@ class Uint64DefaultTestSweep(pgml.Sweeper[patch.Uint64DefaultTestPatch]):
 
 Uint64DefaultTestSweepField = typing.Union[
     Uint64DefaultTestSweep,
-    pgml.NestedChoice[Uint64DefaultTestSweep, patch.Uint64DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Uint64DefaultTestSweep,
+                      patch.Uint64DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -258,7 +263,8 @@ class Sint32DefaultTestSweep(pgml.Sweeper[patch.Sint32DefaultTestPatch]):
 
 Sint32DefaultTestSweepField = typing.Union[
     Sint32DefaultTestSweep,
-    pgml.NestedChoice[Sint32DefaultTestSweep, patch.Sint32DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Sint32DefaultTestSweep,
+                      patch.Sint32DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -268,7 +274,8 @@ class Sint64DefaultTestSweep(pgml.Sweeper[patch.Sint64DefaultTestPatch]):
 
 Sint64DefaultTestSweepField = typing.Union[
     Sint64DefaultTestSweep,
-    pgml.NestedChoice[Sint64DefaultTestSweep, patch.Sint64DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Sint64DefaultTestSweep,
+                      patch.Sint64DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -278,7 +285,8 @@ class Fixed32DefaultTestSweep(pgml.Sweeper[patch.Fixed32DefaultTestPatch]):
 
 Fixed32DefaultTestSweepField = typing.Union[
     Fixed32DefaultTestSweep,
-    pgml.NestedChoice[Fixed32DefaultTestSweep, patch.Fixed32DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Fixed32DefaultTestSweep,
+                      patch.Fixed32DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -288,7 +296,8 @@ class Fixed64DefaultTestSweep(pgml.Sweeper[patch.Fixed64DefaultTestPatch]):
 
 Fixed64DefaultTestSweepField = typing.Union[
     Fixed64DefaultTestSweep,
-    pgml.NestedChoice[Fixed64DefaultTestSweep, patch.Fixed64DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Fixed64DefaultTestSweep,
+                      patch.Fixed64DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -298,7 +307,8 @@ class Sfixed32DefaultTestSweep(pgml.Sweeper[patch.Sfixed32DefaultTestPatch]):
 
 Sfixed32DefaultTestSweepField = typing.Union[
     Sfixed32DefaultTestSweep,
-    pgml.NestedChoice[Sfixed32DefaultTestSweep, patch.Sfixed32DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Sfixed32DefaultTestSweep,
+                      patch.Sfixed32DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -308,7 +318,8 @@ class Sfixed64DefaultTestSweep(pgml.Sweeper[patch.Sfixed64DefaultTestPatch]):
 
 Sfixed64DefaultTestSweepField = typing.Union[
     Sfixed64DefaultTestSweep,
-    pgml.NestedChoice[Sfixed64DefaultTestSweep, patch.Sfixed64DefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[Sfixed64DefaultTestSweep,
+                      patch.Sfixed64DefaultTestPatch],  # type: ignore
 ]
 
 
@@ -328,7 +339,8 @@ class FloatDefaultTestSweep(pgml.Sweeper[patch.FloatDefaultTestPatch]):
 
 FloatDefaultTestSweepField = typing.Union[
     FloatDefaultTestSweep,
-    pgml.NestedChoice[FloatDefaultTestSweep, patch.FloatDefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[FloatDefaultTestSweep,
+                      patch.FloatDefaultTestPatch],  # type: ignore
 ]
 
 
@@ -338,7 +350,8 @@ class DoubleDefaultTestSweep(pgml.Sweeper[patch.DoubleDefaultTestPatch]):
 
 DoubleDefaultTestSweepField = typing.Union[
     DoubleDefaultTestSweep,
-    pgml.NestedChoice[DoubleDefaultTestSweep, patch.DoubleDefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[DoubleDefaultTestSweep,
+                      patch.DoubleDefaultTestPatch],  # type: ignore
 ]
 
 
@@ -348,7 +361,8 @@ class StringDefaultTestSweep(pgml.Sweeper[patch.StringDefaultTestPatch]):
 
 StringDefaultTestSweepField = typing.Union[
     StringDefaultTestSweep,
-    pgml.NestedChoice[StringDefaultTestSweep, patch.StringDefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[StringDefaultTestSweep,
+                      patch.StringDefaultTestPatch],  # type: ignore
 ]
 
 
@@ -358,17 +372,20 @@ class BytesDefaultTestSweep(pgml.Sweeper[patch.BytesDefaultTestPatch]):
 
 BytesDefaultTestSweepField = typing.Union[
     BytesDefaultTestSweep,
-    pgml.NestedChoice[BytesDefaultTestSweep, patch.BytesDefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[BytesDefaultTestSweep,
+                      patch.BytesDefaultTestPatch],  # type: ignore
 ]
 
 
 class OneofDefaultTestSweep(pgml.Sweeper[patch.OneofDefaultTestPatch]):
-    value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep], pgml.Sweeper[pgml.StrSweep]]] = None
+    value: typing.Optional[typing.Union[pgml.Sweeper[pgml.IntSweep],
+                                        pgml.Sweeper[pgml.StrSweep]]] = None
 
 
 OneofDefaultTestSweepField = typing.Union[
     OneofDefaultTestSweep,
-    pgml.NestedChoice[OneofDefaultTestSweep, patch.OneofDefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[OneofDefaultTestSweep,
+                      patch.OneofDefaultTestPatch],  # type: ignore
 ]
 
 
@@ -378,7 +395,8 @@ class OptionalDefaultTestSweep(pgml.Sweeper[patch.OptionalDefaultTestPatch]):
 
 OptionalDefaultTestSweepField = typing.Union[
     OptionalDefaultTestSweep,
-    pgml.NestedChoice[OptionalDefaultTestSweep, patch.OptionalDefaultTestPatch],  # type: ignore
+    pgml.NestedChoice[OptionalDefaultTestSweep,
+                      patch.OptionalDefaultTestPatch],  # type: ignore
 ]
 
 
@@ -388,7 +406,8 @@ class ExplicitCLIArgTestSweep(pgml.Sweeper[patch.ExplicitCLIArgTestPatch]):
 
 ExplicitCLIArgTestSweepField = typing.Union[
     ExplicitCLIArgTestSweep,
-    pgml.NestedChoice[ExplicitCLIArgTestSweep, patch.ExplicitCLIArgTestPatch],  # type: ignore
+    pgml.NestedChoice[ExplicitCLIArgTestSweep,
+                      patch.ExplicitCLIArgTestPatch],  # type: ignore
 ]
 
 
@@ -398,7 +417,8 @@ class ImplicitCLIArgTestSweep(pgml.Sweeper[patch.ImplicitCLIArgTestPatch]):
 
 ImplicitCLIArgTestSweepField = typing.Union[
     ImplicitCLIArgTestSweep,
-    pgml.NestedChoice[ImplicitCLIArgTestSweep, patch.ImplicitCLIArgTestPatch],  # type: ignore
+    pgml.NestedChoice[ImplicitCLIArgTestSweep,
+                      patch.ImplicitCLIArgTestPatch],  # type: ignore
 ]
 
 
@@ -429,5 +449,31 @@ class RepeatedNestedBarTestSweep(pgml.Sweeper[patch.RepeatedNestedBarTestPatch])
 
 RepeatedNestedBarTestSweepField = typing.Union[
     RepeatedNestedBarTestSweep,
-    pgml.NestedChoice[RepeatedNestedBarTestSweep, patch.RepeatedNestedBarTestPatch],  # type: ignore
+    pgml.NestedChoice[RepeatedNestedBarTestSweep,
+                      patch.RepeatedNestedBarTestPatch],  # type: ignore
 ]
+
+
+class LanceDBNestedMetaSweep(pgml.Sweeper[patch.LanceDBNestedMetaPatch]):
+    label: typing.Optional[pgml.StrSweep] = None
+
+
+LanceDBNestedMetaSweepField = typing.Union[
+    LanceDBNestedMetaSweep,
+    pgml.NestedChoice[LanceDBNestedMetaSweep,
+                      patch.LanceDBNestedMetaPatch],  # type: ignore
+]
+
+
+class LanceDBRecordTestSweep(pgml.Sweeper[patch.LanceDBRecordTestPatch]):
+    id: typing.Optional[pgml.StrSweep] = None
+    embedding: typing.Optional[pgml.FloatSweep] = None
+    meta: typing.Optional[LanceDBNestedMetaSweepField] = None
+
+
+
+LanceDBRecordTestSweepField = typing.Union[
+    LanceDBRecordTestSweep,
+    pgml.NestedChoice[LanceDBRecordTestSweep, patch.LanceDBRecordTestPatch],  # type: ignore
+]
+

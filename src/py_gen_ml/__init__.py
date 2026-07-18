@@ -3,6 +3,7 @@ from py_gen_ml.cli_args.cli_func import pgml_cmd
 from py_gen_ml.plugin.constants import (
     BASE_SUFFIX,
     CLI_ARGS_SUFFIX,
+    LANCEDB_SUFFIX,
     PATCH_SUFFIX,
     SWEEP_SUFFIX,
 )
@@ -54,4 +55,5 @@ __all__ = [
     'PATCH_SUFFIX',
     'SWEEP_SUFFIX',
     'CLI_ARGS_SUFFIX',
+    'LANCEDB_SUFFIX',
 ]

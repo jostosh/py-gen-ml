@@ -1,19 +1,16 @@
-import typing
-
-import optuna
 import pgml_out_test.unit_base as base
-import pgml_out_test.unit_cli_args as cli_args
 import pgml_out_test.unit_sweep as sweep
+import pgml_out_test.unit_cli_args as cli_args
 import typer
-
 import py_gen_ml as pgml
+import optuna
+import typing
 
 app = typer.Typer(pretty_exceptions_enable=False)
 
-
 def run_trial(
     implicit_cli_arg_test: base.ImplicitCLIArgTest,
-    trial: typing.Optional[optuna.Trial] = None,
+    trial: typing.Optional[optuna.Trial] = None
 ) -> typing.Union[float, typing.Sequence[float]]:
     """
     Run a trial with the given values for implicit_cli_arg_test. The sampled
@@ -22,13 +19,12 @@ def run_trial(
     # TODO: Implement this function
     return 0.0
 
-
 @pgml.pgml_cmd(app=app)
 def main(
-    config_paths: typing.List[str] = typer.Option(..., help='Paths to config files'),
+    config_paths: typing.List[str] = typer.Option(..., help="Paths to config files"),
     sweep_paths: typing.List[str] = typer.Option(
         default_factory=list,
-        help='Paths to sweep files',
+        help="Paths to sweep files"
     ),
     cli_args: cli_args.ImplicitCLIArgTestArgs = typer.Option(...),
 ) -> None:
@@ -41,7 +37,7 @@ def main(
 
     def objective(trial: optuna.Trial) -> typing.Union[
         float,
-        typing.Sequence[float],
+        typing.Sequence[float]
     ]:
         optuna_sampler = pgml.OptunaSampler(trial)
         implicit_cli_arg_test_patch = optuna_sampler.sample(implicit_cli_arg_test_sweep)
@@ -53,5 +49,5 @@ def main(
     study.optimize(objective, n_trials=100)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app()

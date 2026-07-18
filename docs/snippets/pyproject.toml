@@ -1,16 +1,16 @@
 [project]
 name = "snippets"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Documentation snippets for py-gen-ml"
 requires-python = ">=3.9"
 dependencies = [
     "py-gen-ml",
     "torch==2.0.1",
 ]
-packages = [
-    { include = "pgml_out", from = "src" },
-    { include = "snippets", from = "src" },
+
+[project.optional-dependencies]
+lancedb = [
+    "lancedb>=0.17.0",
 ]
 
 [build-system]

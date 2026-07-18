@@ -11,10 +11,14 @@ FACTORY_FIELD_NUMBER: _ClassVar[int]
 factory: _descriptor.FieldDescriptor
 CLI_FIELD_NUMBER: _ClassVar[int]
 cli: _descriptor.FieldDescriptor
+LANCEDB_FIELD_NUMBER: _ClassVar[int]
+lancedb: _descriptor.FieldDescriptor
 DEFAULT_FIELD_NUMBER: _ClassVar[int]
 default: _descriptor.FieldDescriptor
 AS_VARARGS_FIELD_NUMBER: _ClassVar[int]
 as_varargs: _descriptor.FieldDescriptor
+LANCEDB_FIELD_FIELD_NUMBER: _ClassVar[int]
+lancedb_field: _descriptor.FieldDescriptor
 
 class Arg(_message.Message):
     __slots__ = ("name", "path")
@@ -31,6 +35,20 @@ class CLI(_message.Message):
     arg: _containers.RepeatedCompositeFieldContainer[Arg]
     enable: bool
     def __init__(self, arg: _Optional[_Iterable[_Union[Arg, _Mapping]]] = ..., enable: bool = ...) -> None: ...
+
+class LanceDB(_message.Message):
+    __slots__ = ("enable", "table_name")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    TABLE_NAME_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    table_name: str
+    def __init__(self, enable: bool = ..., table_name: _Optional[str] = ...) -> None: ...
+
+class LanceDBField(_message.Message):
+    __slots__ = ("vector_dim",)
+    VECTOR_DIM_FIELD_NUMBER: _ClassVar[int]
+    vector_dim: int
+    def __init__(self, vector_dim: _Optional[int] = ...) -> None: ...
 
 class FieldDefaults(_message.Message):
     __slots__ = ("float", "double", "int32", "int64", "uint32", "uint64", "sint32", "sint64", "fixed32", "fixed64", "sfixed32", "sfixed64", "bool", "string", "bytes", "enum")
