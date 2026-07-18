@@ -44,6 +44,18 @@ message LanceDBField {
 	uint32 vector_dim = 1;
 }
 
+// Canonical role of a message in the ML lifecycle. Tool-specific options
+// (e.g. lancedb, cli) remain separate; kind is shared vocabulary for generators.
+enum MessageKind {
+	MESSAGE_KIND_UNSPECIFIED = 0;
+	FEATURE_ROW = 1;
+	LABEL = 2;
+	PREDICTION = 3;
+	FEEDBACK = 4;
+	RUN_CONFIG = 5;
+	METRIC_SET = 6;
+}
+
 extend google.protobuf.MessageOptions {
 	// Python import path for a class to instantiate using the values
 	// of this message.
@@ -53,6 +65,8 @@ extend google.protobuf.MessageOptions {
     CLI cli = 1092;
 	// Opt into LanceDB LanceModel generation for this message + nested types.
 	LanceDB lancedb = 1093;
+	// Canonical ML-contract kind for this message (see MessageKind).
+	optional MessageKind kind = 1094;
 }
 
 // Defaults values applied at the field level
