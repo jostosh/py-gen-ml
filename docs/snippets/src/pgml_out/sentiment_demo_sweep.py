@@ -73,9 +73,115 @@ class SentimentMetricsSweep(pgml.Sweeper[patch.SentimentMetricsPatch]):
     n_labeled: typing.Optional[pgml.IntSweep] = None
 
 
-
 SentimentMetricsSweepField = typing.Union[
     SentimentMetricsSweep,
-    pgml.NestedChoice[SentimentMetricsSweep, patch.SentimentMetricsPatch],  # type: ignore
+    pgml.NestedChoice[SentimentMetricsSweep,
+                      patch.SentimentMetricsPatch],  # type: ignore
+]
+
+
+class SentimentPredictRequestSweep(pgml.Sweeper[patch.SentimentPredictRequestPatch]):
+    """Inference request for the online sentiment classifier."""
+
+    id: typing.Optional[pgml.StrSweep] = None
+    """Stable sample id (links prediction and feedback rows)."""
+
+    text: typing.Optional[pgml.StrSweep] = None
+    """Review text to classify."""
+
+
+SentimentPredictRequestSweepField = typing.Union[
+    SentimentPredictRequestSweep,
+    pgml.NestedChoice[SentimentPredictRequestSweep,
+                      patch.SentimentPredictRequestPatch],  # type: ignore
+]
+
+
+class SentimentPredictionSweep(pgml.Sweeper[patch.SentimentPredictionPatch]):
+    """
+    Model output for one scored review (separate from the labeled training row).
+    """
+
+    sample_id: typing.Optional[pgml.StrSweep] = None
+    """Sample id matching SentimentPredictRequest.id."""
+
+    text: typing.Optional[pgml.StrSweep] = None
+    """Review text that was scored."""
+
+    sentiment: typing.Optional[pgml.StrSweep] = None
+    """Predicted sentiment: "negative" or "positive"."""
+
+    score: typing.Optional[pgml.FloatSweep] = None
+    """Model confidence for the predicted class."""
+
+    model_version: typing.Optional[pgml.StrSweep] = None
+    """Deployed model / pipeline version tag."""
+
+
+SentimentPredictionSweepField = typing.Union[
+    SentimentPredictionSweep,
+    pgml.NestedChoice[SentimentPredictionSweep,
+                      patch.SentimentPredictionPatch],  # type: ignore
+]
+
+
+class SentimentFeedbackSweep(pgml.Sweeper[patch.SentimentFeedbackPatch]):
+    """Human correction / re-label for a scored review."""
+
+    sample_id: typing.Optional[pgml.StrSweep] = None
+    """Sample id matching SentimentPrediction.sample_id."""
+
+    text: typing.Optional[pgml.StrSweep] = None
+    """Review text shown to the annotator."""
+
+    predicted_sentiment: typing.Optional[pgml.StrSweep] = None
+    """Model-predicted sentiment (for comparison; not the Argilla question)."""
+
+    sentiment: typing.Optional[pgml.StrSweep] = None
+    """
+    Corrected sentiment after review: "negative" or "positive". When logging a draft
+    from a prediction, set this to the predicted label so Argilla records it as a
+    Suggestion.
+    """
+
+    source: typing.Optional[pgml.StrSweep] = None
+    """Provenance: "model" for suggestion drafts, "human" after correction."""
+
+
+SentimentFeedbackSweepField = typing.Union[
+    SentimentFeedbackSweep,
+    pgml.NestedChoice[SentimentFeedbackSweep,
+                      patch.SentimentFeedbackPatch],  # type: ignore
+]
+
+
+class SentimentServeConfigSweep(pgml.Sweeper[patch.SentimentServeConfigPatch]):
+    """LitServe / client settings for SentimentClassifier."""
+
+    url: typing.Optional[pgml.StrSweep] = None
+    timeout_s: typing.Optional[pgml.FloatSweep] = None
+    workers_per_device: typing.Optional[pgml.IntSweep] = None
+    accelerator: typing.Optional[pgml.StrSweep] = None
+
+
+SentimentServeConfigSweepField = typing.Union[
+    SentimentServeConfigSweep,
+    pgml.NestedChoice[SentimentServeConfigSweep,
+                      patch.SentimentServeConfigPatch],  # type: ignore
+]
+
+
+class SentimentOnlineMetricsSweep(pgml.Sweeper[patch.SentimentOnlineMetricsPatch]):
+    """Online-loop metrics (predictions vs human feedback)."""
+
+    n_predictions: typing.Optional[pgml.IntSweep] = None
+    n_feedback: typing.Optional[pgml.IntSweep] = None
+    agreement_rate: typing.Optional[pgml.FloatSweep] = None
+
+
+
+SentimentOnlineMetricsSweepField = typing.Union[
+    SentimentOnlineMetricsSweep,
+    pgml.NestedChoice[SentimentOnlineMetricsSweep, patch.SentimentOnlineMetricsPatch],  # type: ignore
 ]
 

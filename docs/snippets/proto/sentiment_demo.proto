@@ -89,3 +89,116 @@ message SentimentMetrics {
     int32 n_test = 3;
     int32 n_labeled = 4;
 }
+
+// Inference request for the online sentiment classifier.
+message SentimentPredictRequest {
+    option (pgml.kind) = FEATURE_ROW;
+
+    // Stable sample id (links prediction and feedback rows).
+    string id = 1;
+    // Review text to classify.
+    string text = 2;
+}
+
+// Model output for one scored review (separate from the labeled training row).
+message SentimentPrediction {
+    option (pgml.kind) = PREDICTION;
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "sentiment_predictions";
+    };
+
+    // Sample id matching SentimentPredictRequest.id.
+    string sample_id = 1;
+    // Review text that was scored.
+    string text = 2;
+    // Predicted sentiment: "negative" or "positive".
+    string sentiment = 3;
+    // Model confidence for the predicted class.
+    float score = 4;
+    // Deployed model / pipeline version tag.
+    string model_version = 5;
+}
+
+// Human correction / re-label for a scored review.
+message SentimentFeedback {
+    option (pgml.kind) = FEEDBACK;
+    option (pgml.argilla) = {
+        enable: true;
+        dataset_name: "imdb_sentiment_feedback";
+    };
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "sentiment_feedback";
+    };
+
+    // Sample id matching SentimentPrediction.sample_id.
+    string sample_id = 1 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+
+    // Review text shown to the annotator.
+    string text = 2 [(pgml.argilla_field) = {
+        slot: FIELD;
+        field_type: "text";
+        required: true;
+    }];
+
+    // Model-predicted sentiment (for comparison; not the Argilla question).
+    string predicted_sentiment = 3 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+
+    // Corrected sentiment after review: "negative" or "positive".
+    // When logging a draft from a prediction, set this to the predicted label
+    // so Argilla records it as a Suggestion.
+    string sentiment = 4 [(pgml.argilla_field) = {
+        slot: QUESTION;
+        question_type: "label";
+        labels: ["negative", "positive"];
+        required: true;
+    }];
+
+    // Provenance: "model" for suggestion drafts, "human" after correction.
+    string source = 5 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+}
+
+// LitServe / client settings for SentimentClassifier.
+message SentimentServeConfig {
+    option (pgml.kind) = RUN_CONFIG;
+    option (pgml.litserve_config) = {
+        enable: true;
+        service: "SentimentClassifier";
+    };
+
+    string url = 1 [(pgml.default) = {string: "http://localhost:8000"}];
+    float timeout_s = 2 [(pgml.default) = {float: 30}];
+    int32 workers_per_device = 3 [(pgml.default) = {int32: 1}];
+    string accelerator = 4 [(pgml.default) = {string: "cpu"}];
+}
+
+// Online-loop metrics (predictions vs human feedback).
+message SentimentOnlineMetrics {
+    option (pgml.kind) = METRIC_SET;
+    option (pgml.mlflow) = {
+        enable: true;
+    };
+
+    int32 n_predictions = 1;
+    int32 n_feedback = 2;
+    float agreement_rate = 3;
+}
+
+// Unary sentiment inference service (LitServe).
+service SentimentClassifier {
+    option (pgml.litserve) = {
+        enable: true;
+    };
+    rpc Predict(SentimentPredictRequest) returns (SentimentPrediction) {
+        option (pgml.litserve_method) = {
+            api_path: "/predict";
+        };
+    }
+}

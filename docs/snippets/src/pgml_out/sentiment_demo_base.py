@@ -53,3 +53,74 @@ class SentimentMetrics(pgml.YamlBaseModel):
     n_train: int
     n_test: int
     n_labeled: int
+
+
+class SentimentPredictRequest(pgml.YamlBaseModel):
+    """Inference request for the online sentiment classifier."""
+
+    id: str
+    """Stable sample id (links prediction and feedback rows)."""
+
+    text: str
+    """Review text to classify."""
+
+
+class SentimentPrediction(pgml.YamlBaseModel):
+    """
+    Model output for one scored review (separate from the labeled training row).
+    """
+
+    sample_id: str
+    """Sample id matching SentimentPredictRequest.id."""
+
+    text: str
+    """Review text that was scored."""
+
+    sentiment: str
+    """Predicted sentiment: "negative" or "positive"."""
+
+    score: float
+    """Model confidence for the predicted class."""
+
+    model_version: str
+    """Deployed model / pipeline version tag."""
+
+
+class SentimentFeedback(pgml.YamlBaseModel):
+    """Human correction / re-label for a scored review."""
+
+    sample_id: str
+    """Sample id matching SentimentPrediction.sample_id."""
+
+    text: str
+    """Review text shown to the annotator."""
+
+    predicted_sentiment: str
+    """Model-predicted sentiment (for comparison; not the Argilla question)."""
+
+    sentiment: str
+    """
+    Corrected sentiment after review: "negative" or "positive". When logging a draft
+    from a prediction, set this to the predicted label so Argilla records it as a
+    Suggestion.
+    """
+
+    source: str
+    """Provenance: "model" for suggestion drafts, "human" after correction."""
+
+
+class SentimentServeConfig(pgml.YamlBaseModel):
+    """LitServe / client settings for SentimentClassifier."""
+
+    url: str = "http://localhost:8000"
+    timeout_s: float = 30.0
+    workers_per_device: int = 1
+    accelerator: str = "cpu"
+
+
+class SentimentOnlineMetrics(pgml.YamlBaseModel):
+    """Online-loop metrics (predictions vs human feedback)."""
+
+    n_predictions: int
+    n_feedback: int
+    agreement_rate: float

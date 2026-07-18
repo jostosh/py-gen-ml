@@ -30,6 +30,50 @@ class SentimentExample(LanceModel):
     """Binary sentiment of the review: "negative" or "positive"."""
 
 
+class SentimentPrediction(LanceModel):
+    """
+    Model output for one scored review (separate from the labeled training row).
+    """
+
+    sample_id: str
+    """Sample id matching SentimentPredictRequest.id."""
+
+    text: str
+    """Review text that was scored."""
+
+    sentiment: str
+    """Predicted sentiment: "negative" or "positive"."""
+
+    score: float
+    """Model confidence for the predicted class."""
+
+    model_version: str
+    """Deployed model / pipeline version tag."""
+
+
+class SentimentFeedback(LanceModel):
+    """Human correction / re-label for a scored review."""
+
+    sample_id: str
+    """Sample id matching SentimentPrediction.sample_id."""
+
+    text: str
+    """Review text shown to the annotator."""
+
+    predicted_sentiment: str
+    """Model-predicted sentiment (for comparison; not the Argilla question)."""
+
+    sentiment: str
+    """
+    Corrected sentiment after review: "negative" or "positive". When logging a draft
+    from a prediction, set this to the predicted label so Argilla records it as a
+    Suggestion.
+    """
+
+    source: str
+    """Provenance: "model" for suggestion drafts, "human" after correction."""
+
+
 def sentiment_example_table_name() -> str:
     """Default LanceDB table name for :class:`SentimentExample`."""
     return 'sentiment_examples'
@@ -50,4 +94,50 @@ def create_sentiment_example_table(
     """
     return db.create_table(
         name or sentiment_example_table_name(), schema=SentimentExample, **kwargs
+    )
+
+
+def sentiment_feedback_table_name() -> str:
+    """Default LanceDB table name for :class:`SentimentFeedback`."""
+    return 'sentiment_feedback'
+
+
+def create_sentiment_feedback_table(
+    db: DBConnection,
+    *,
+    name: typing.Optional[str] = None,
+    **kwargs: typing.Any
+) -> LanceTable:
+    """Create a LanceDB table whose schema is :class:`SentimentFeedback`.
+
+    ``db`` is a connection from ``lancedb.connect(...)``.
+    Load rows for training via Arrow (``table.to_arrow()``) or LanceDB's
+    ``Permutation`` streaming API, then hand tensors to
+    ``torch.utils.data.DataLoader`` as needed.
+    """
+    return db.create_table(
+        name or sentiment_feedback_table_name(), schema=SentimentFeedback, **kwargs
+    )
+
+
+def sentiment_prediction_table_name() -> str:
+    """Default LanceDB table name for :class:`SentimentPrediction`."""
+    return 'sentiment_predictions'
+
+
+def create_sentiment_prediction_table(
+    db: DBConnection,
+    *,
+    name: typing.Optional[str] = None,
+    **kwargs: typing.Any
+) -> LanceTable:
+    """Create a LanceDB table whose schema is :class:`SentimentPrediction`.
+
+    ``db`` is a connection from ``lancedb.connect(...)``.
+    Load rows for training via Arrow (``table.to_arrow()``) or LanceDB's
+    ``Permutation`` streaming API, then hand tensors to
+    ``torch.utils.data.DataLoader`` as needed.
+    """
+    return db.create_table(
+        name or sentiment_prediction_table_name(), schema=SentimentPrediction, **kwargs
     )

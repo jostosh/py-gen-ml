@@ -1,7 +1,9 @@
-# Sentiment flywheel (IMDB → synthesize → HITL → train → MLflow)
+# Sentiment flywheel (IMDB → synthesize → HITL → train → online)
 
 This example project builds a **binary sentiment** dataset for movie reviews and
 wires it through the full py-gen-ml loop:
+
+**Offline (train-time)**
 
 1. **Seed** with IMDB-style reviews (bundled JSON)
 2. **Synthesize** more labeled rows with PydanticAI (`NativeOutput`) against OpenAI
@@ -10,39 +12,71 @@ wires it through the full py-gen-ml loop:
 5. **Train** a small TF–IDF + logistic regression classifier
 6. **Track** the run with MLflow
 
-**One protobuf file** defines the contracts: `SentimentExample` (feature row),
-`SentimentTrainConfig` (`RUN_CONFIG`), and `SentimentMetrics` (`METRIC_SET`).
-Enable several generators and you get synthesis, HITL, storage, and tracking
-adapters together—no duplicated schemas per tool.
+**Online (serve-time)**
+
+7. **Serve** scored reviews via LitServe (`SentimentPredictRequest` → `SentimentPrediction`)
+8. **Store** predictions in LanceDB (separate table from labeled examples)
+9. **Re-label** via Argilla on `SentimentFeedback` (predicted label as suggestion)
+10. **Store** feedback rows and **track** agreement with MLflow
+
+**One protobuf file** defines the contracts: labeled `SentimentExample`,
+serve I/O, separate `SentimentPrediction` / `SentimentFeedback`, plus train and
+online metrics. Enable several generators and you get adapters together—no
+duplicated schemas per tool.
 
 ```mermaid
-flowchart TB
+flowchart LR
   proto["sentiment_demo.proto"]
   proto --> row["SentimentExample FEATURE_ROW"]
+  proto --> pred["SentimentPrediction PREDICTION"]
+  proto --> fb["SentimentFeedback FEEDBACK"]
   proto --> cfg["SentimentTrainConfig RUN_CONFIG"]
   proto --> met["SentimentMetrics METRIC_SET"]
+  proto --> onlineMet["SentimentOnlineMetrics METRIC_SET"]
+  proto --> serve["SentimentClassifier LitServe"]
   row --> pai["*_pydantic_ai.py"]
   row --> arg["*_argilla.py"]
   row --> lance["*_lancedb.py"]
+  pred --> lance
+  fb --> arg
+  fb --> lance
   cfg --> mlflow["*_mlflow.py"]
   cfg --> cli["*_cli_args.py"]
   met --> mlflow
+  onlineMet --> mlflow
+  serve --> litserve["*_litserve.py"]
   pai --> run["sentiment_flywheel_demo.py"]
   arg --> run
   lance --> run
   mlflow --> run
   cli --> run
-  run --> train["TF-IDF + LogReg + MLflow"]
+  litserve --> online["sentiment_online_demo.py"]
+  lance --> online
+  arg --> online
+  mlflow --> online
 ```
 
 ```mermaid
-flowchart LR
+flowchart TB
   imdb["IMDB seed JSON"] --> synth["synthesize_sentiment_example"]
   synth --> argilla["Argilla FIELD text / QUESTION sentiment"]
   argilla --> labels["Accepted labels"]
-  labels --> lanceStore["LanceDB table"]
+  labels --> lanceStore["LanceDB examples"]
   labels --> train["TF-IDF + LogReg"]
   train --> track["MLflow"]
+```
+
+```mermaid
+flowchart TB
+  req["SentimentPredictRequest"] --> lit["LitServe Predict"]
+  lit --> prediction["SentimentPrediction"]
+  prediction --> lancePred["LanceDB predictions"]
+  prediction --> fbDraft["SentimentFeedback draft"]
+  fbDraft --> argFb["Argilla re-label"]
+  argFb --> feedback["SentimentFeedback human"]
+  feedback --> lanceFb["LanceDB feedback"]
+  prediction --> onlineTrack["MLflow agreement"]
+  feedback --> onlineTrack
 ```
 
 ## One schema file, many generators
@@ -56,11 +90,12 @@ flowchart LR
 | `sentiment_demo_base.py` | Canonical Pydantic / YAML models |
 | `sentiment_demo_cli_args.py` | Generated Typer CLI flags for `SentimentTrainConfig` |
 | `sentiment_demo_pydantic_ai.py` | Full + Partial models, `synthesize_sentiment_example(_sync)` |
-| `sentiment_demo_argilla.py` | Argilla `Settings`, `to_*_record` / `from_*_record` |
-| `sentiment_demo_lancedb.py` | `LanceModel`, `create_sentiment_example_table` |
-| `sentiment_demo_mlflow.py` | `start_sentiment_train_config_run`, `log_sentiment_metrics` |
+| `sentiment_demo_argilla.py` | Argilla `Settings` for examples **and** feedback |
+| `sentiment_demo_lancedb.py` | LanceModels for examples, predictions, feedback |
+| `sentiment_demo_litserve.py` | `create_sentiment_classifier_server`, predict client |
+| `sentiment_demo_mlflow.py` | Train + online metric helpers |
 
-`SentimentExample` field layout:
+`SentimentExample` field layout (offline HITL):
 
 | Field | Use | Argilla slot |
 |-------|-----|--------------|
@@ -68,6 +103,16 @@ flowchart LR
 | `source` | `imdb` or `synthetic` | `METADATA` |
 | `text` | Review body (classifier input) | `FIELD` |
 | `sentiment` | `negative` / `positive` | `QUESTION` |
+
+Online contracts (separate messages — do not overload `SentimentExample`):
+
+| Message | Kind | Notable fields |
+|---------|------|----------------|
+| `SentimentPredictRequest` | `FEATURE_ROW` | `id`, `text` (RPC input) |
+| `SentimentPrediction` | `PREDICTION` | `sample_id`, `text`, `sentiment`, `score`, `model_version` |
+| `SentimentFeedback` | `FEEDBACK` | `sample_id`, `text` (FIELD), `predicted_sentiment` (METADATA), `sentiment` (QUESTION), `source` |
+| `SentimentServeConfig` | `RUN_CONFIG` | LitServe URL / workers / accelerator |
+| `SentimentOnlineMetrics` | `METRIC_SET` | `n_predictions`, `n_feedback`, `agreement_rate` |
 
 Tracking messages use shared `(pgml.tracking_field)` slots (see
 [MLflow](../guides/mlflow.md)):
@@ -86,7 +131,7 @@ Enable the generators when you regenerate:
 
 ```console
 py-gen-ml path/to/sentiment_demo.proto \
-  --generators=base,patch,sweep,cli_args,pydantic_ai,argilla,lancedb,mlflow
+  --generators=base,patch,sweep,cli_args,pydantic_ai,argilla,lancedb,litserve,mlflow
 ```
 
 ## Setup
@@ -95,7 +140,7 @@ From the docs snippets project:
 
 ```console
 cd docs/snippets
-uv sync --extra bridges --extra pydantic-ai --extra argilla --extra lancedb --extra mlflow
+uv sync --extra bridges --extra pydantic-ai --extra argilla --extra lancedb --extra litserve --extra mlflow
 bash regenerate.sh   # regenerates all snippet protos, including sentiment_demo
 ```
 
@@ -287,13 +332,44 @@ metrics = SentimentMetrics(accuracy=0.75, n_train=12, n_test=4, n_labeled=16)
 log_training_to_mlflow(train_config=config, metrics=metrics)
 ```
 
-Typical next steps:
+Typical next steps after offline training:
 
 - Load accepted rows from LanceDB (`load_seeds_from_table`) or Argilla exports
 - Filter `source` / quality metadata
-- Train / evaluate / push a new serving model
-- Log production predictions back into Argilla
-  ([bridges.serving_argilla](../guides/bridges.md))
+- Train / evaluate / push a serving model (see **Online loop** below)
+
+## Online loop
+
+After you have a classifier, the same proto drives serve → prediction → feedback.
+
+```console
+cd docs/snippets
+uv run python -m snippets.sentiment_online_demo score-batch
+# live server (writes predictions to ./sentiment_online.lancedb):
+uv run python -m snippets.sentiment_online_demo serve --port 8000
+```
+
+```python linenums="1"
+--8<-- "docs/snippets/src/snippets/sentiment_online_demo.py"
+```
+
+Flow:
+
+1. Fit TF–IDF + LogReg on IMDB seeds (same helper as the offline demo).
+2. Score each seed as `SentimentPredictRequest` → `SentimentPrediction`.
+3. Persist predictions with `append_rows` to the `sentiment_predictions` table.
+4. Merge request + prediction into a `SentimentFeedback` draft (`source=model`);
+   Argilla gets the predicted label as a **Suggestion** on the QUESTION field.
+5. Simulate (or apply) human corrections → `source=human` feedback rows in
+   `sentiment_feedback`.
+6. Log `SentimentOnlineMetrics` (`n_predictions`, `n_feedback`, `agreement_rate`)
+   to MLflow experiment `imdb_sentiment_online`.
+
+`SentimentPrediction` and `SentimentFeedback` are **separate messages** from
+`SentimentExample`. Do not overload the labeled training row for prod scores.
+
+See also [LitServe](../guides/litserve.md) and
+[bridges.serving_argilla](../guides/bridges.md).
 
 ## Completing partial reviews
 
@@ -329,9 +405,10 @@ Do not combine `incomplete` with `diversify_rounds > 0` in one call (v1).
 - [ ] Field comments on every synthesis-relevant field
 - [ ] Explicit Argilla `slot` on every field (`FIELD` / `QUESTION` / `METADATA`)
 - [ ] Seed set balanced enough for few-shot (both classes)
-- [ ] `OPENAI_API_KEY` / `OPENAI_ENDPOINT` / `OPENAI_MODEL` / `OPENAI_API_VERSION` set
+- [ ] `OPENAI_API_KEY` / `OPENAI_ENDPOINT` / `OPENAI_API_VERSION` set (offline synth)
 - [ ] HITL: train on human responses, not only LLM suggestions
 - [ ] Track `source` / `id` in metadata for auditability
+- [ ] Keep predictions and feedback in separate LanceDB tables from labeled examples
 - [ ] MLflow tracking URI configured for real runs
 
 ## See also
@@ -339,6 +416,7 @@ Do not combine `incomplete` with `diversify_rounds > 0` in one call (v1).
 - [PydanticAI synthesis](../guides/pydantic_ai.md)
 - [Argilla datasets](../guides/argilla.md)
 - [MLflow tracking](../guides/mlflow.md)
+- [LitServe services](../guides/litserve.md)
 - [Cross-tool bridges](../guides/bridges.md)
 - [LanceDB schemas](../guides/lancedb.md)
 - [Message kinds](../guides/message_kinds.md)

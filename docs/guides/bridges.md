@@ -39,7 +39,7 @@ flowchart LR
 | Module | Responsibility |
 |--------|----------------|
 | `bridges.synthesis_argilla` | Map synthesized rows → Argilla records via `to_record` |
-| `bridges.lancedb_rows` | `append_feature_rows`, `load_seeds_from_table` |
+| `bridges.lancedb_rows` | `append_rows` / `append_feature_rows`, `load_seeds_from_table` |
 | `bridges.serving_argilla` | Serving request/response → review record |
 | `bridges.flywheel` | Thin `seeds_to_dicts` / `annotated_rows_to_dicts` helpers |
 
@@ -76,7 +76,7 @@ log_records(dataset, records)
 
 ```python
 import lancedb
-from py_gen_ml.bridges import append_feature_rows, load_seeds_from_table
+from py_gen_ml.bridges import append_rows, load_seeds_from_table
 from pgml_out.sentiment_demo_lancedb import (
     SentimentExample,
     create_sentiment_example_table,
@@ -84,7 +84,7 @@ from pgml_out.sentiment_demo_lancedb import (
 
 db = lancedb.connect("./sentiment.lancedb")
 table = create_sentiment_example_table(db)
-append_feature_rows(
+append_rows(
     table,
     [SentimentExample.model_validate(r.model_dump()) for r in rows],
 )
@@ -93,27 +93,43 @@ append_feature_rows(
 seeds = load_seeds_from_table(table, model_cls=SentimentExample, limit=100)
 ```
 
-`append_feature_rows` calls `table.add(...)` with `model_dump()` when available.
-`load_seeds_from_table` uses `table.to_pandas()` then `model_cls.model_validate`.
+`append_rows` (alias of `append_feature_rows`) calls `table.add(...)` with
+`model_dump()`. It is row-agnostic: use it for `FEATURE_ROW`, `PREDICTION`, and
+`FEEDBACK` LanceModels. `load_seeds_from_table` uses `table.to_pandas()` then
+`model_cls.model_validate`.
 
 ## Serving → HITL
 
-When a live model predicts, log the pair for review:
+When a live model predicts, merge request + prediction into a feedback draft and
+log it for review (Argilla suggestions come from the QUESTION field):
 
 ```python
 from py_gen_ml.bridges import log_prediction_for_review
+from pgml_out.sentiment_demo_argilla import (
+    SentimentFeedback,
+    to_sentiment_feedback_record,
+)
+
+def merge_to_feedback(req, pred) -> SentimentFeedback:
+    return SentimentFeedback(
+        sample_id=pred.sample_id,
+        text=pred.text,
+        predicted_sentiment=pred.sentiment,
+        sentiment=pred.sentiment,  # suggestion until a human corrects it
+        source="model",
+    )
 
 record = log_prediction_for_review(
     request,
-    response,
-    merge=lambda req, resp: merge_into_sentiment_example(req, resp),
-    to_record=to_sentiment_example_record,
+    prediction,
+    merge=merge_to_feedback,
+    to_record=to_sentiment_feedback_record,
     log=dataset.records.log,  # optional
 )
 ```
 
-`merge` is application-specific (e.g. request text + predicted label →
-`SentimentExample`). The bridge does not know your request/response shapes.
+`merge` is application-specific. Persist the immutable `SentimentPrediction` to
+LanceDB separately with `append_rows`.
 
 ## Flywheel dict helpers
 
@@ -130,10 +146,9 @@ Pass `dump=` to customize serialization.
 
 ## End-to-end walkthrough
 
-For a concrete IMDB-seeded sentiment pipeline (synthesize → Argilla Settings →
-LanceDB → train), see the [Sentiment flywheel](../example_projects/sentiment_flywheel.md)
-example project. It includes a CI-validated demo module under `docs/snippets`.
-
+For a concrete IMDB-seeded sentiment pipeline (offline synthesize → HITL → train,
+and online serve → prediction → feedback → track), see the
+[Sentiment flywheel](../example_projects/sentiment_flywheel.md) example project.
 ## Design rules
 
 - Prefer **kinds** for shared roles; prefer **tool opts** for emission.
