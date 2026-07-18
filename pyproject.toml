@@ -114,8 +114,8 @@ exclude = [
     "node_modules/**",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "pre-commit>=4.0.0",
     "pyright>=1.1.383",
     "pytest>=8.3.3",
