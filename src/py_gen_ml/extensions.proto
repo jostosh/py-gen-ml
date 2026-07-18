@@ -102,6 +102,52 @@ message LitServeConfig {
 	string service = 2;
 }
 
+// PydanticAI opts a message into structured synthesis helpers (NativeOutput).
+message PydanticAI {
+	bool enable = 1;
+	// Optional Agent name hint. Defaults to the message name.
+	string agent_name = 2;
+	// Optional proto message name for the response/output model when different from this message.
+	string response_message = 3;
+}
+
+// Role of a field on an Argilla-enabled record message.
+enum ArgillaSlot {
+	ARGILLA_SLOT_UNSPECIFIED = 0;
+	FIELD = 1;
+	QUESTION = 2;
+	METADATA = 3;
+}
+
+// Opt a message into Argilla Settings / record codegen.
+message Argilla {
+	bool enable = 1;
+	string dataset_name = 2;
+}
+
+// Per-field Argilla annotations (Field vs Question vs Metadata).
+message ArgillaField {
+	ArgillaSlot slot = 1;
+	// Optional UI / API name; default = proto field name.
+	string name = 2;
+	// When slot = FIELD: text | chat | image | ...
+	string field_type = 3;
+	// When slot = QUESTION: label | multi_label | rating | text | ranking | ...
+	string question_type = 4;
+	repeated string labels = 5;
+	bool required = 6;
+}
+
+// Opt into cross-tool mapper helpers for this message.
+message MapperConfig {
+	bool enable = 1;
+}
+
+// Shared rename for generated mappers when tool column names diverge.
+message MapperField {
+	string alias = 1;
+}
+
 extend google.protobuf.MessageOptions {
 	// Python import path for a class to instantiate using the values
 	// of this message.
@@ -117,6 +163,12 @@ extend google.protobuf.MessageOptions {
 	BentoMLConfig bentoml_config = 1095;
 	// Opt into LitServe serve-config helpers for this message.
 	LitServeConfig litserve_config = 1096;
+	// Opt into PydanticAI synthesis helpers for this message.
+	PydanticAI pydantic_ai = 1097;
+	// Opt into Argilla Settings / record helpers for this message.
+	Argilla argilla = 1098;
+	// Opt into cross-tool mapper helpers for this message.
+	MapperConfig mapper_config = 1099;
 }
 
 extend google.protobuf.ServiceOptions {
@@ -138,6 +190,10 @@ extend google.protobuf.FieldOptions {
 	bool as_varargs = 1172;
 	// LanceDB-specific field annotations (vector dimensions, etc.).
 	LanceDBField lancedb_field = 1173;
+	// Argilla Field / Question / Metadata slot for this field.
+	ArgillaField argilla_field = 1175;
+	// Cross-tool column/field rename for generated mappers.
+	MapperField mapper_field = 1176;
 }
 
 // FieldDefaults encapsulates the default values for each type of field. Depending on the

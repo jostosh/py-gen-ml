@@ -8,6 +8,7 @@ import pytest
 
 import py_gen_ml as pgml
 from py_gen_ml.plugin import main as plugin_main
+from py_gen_ml.plugin.argilla_generator import ArgillaGenerator, argilla_spec
 from py_gen_ml.plugin.base_model_generator import (
     BaseModelGenerator,
     base_spec,
@@ -19,6 +20,10 @@ from py_gen_ml.plugin.lancedb_generator import LanceDBGenerator, lancedb_spec
 from py_gen_ml.plugin.litserve_generator import (
     LitServeGenerator,
     litserve_spec,
+)
+from py_gen_ml.plugin.pydantic_ai_generator import (
+    PydanticAIGenerator,
+    pydantic_ai_spec,
 )
 from py_gen_ml.plugin.registry import (
     ENTRY_POINT_GROUP,
@@ -54,6 +59,8 @@ def test_default_registry_lists_builtins() -> None:
         'lancedb',
         'bentoml',
         'litserve',
+        'pydantic_ai',
+        'argilla',
     ]
 
 
@@ -70,6 +77,10 @@ def test_class_attributes_match_specs() -> None:
     assert BentoMLGenerator.output_suffix == pgml.BENTOML_SUFFIX
     assert LitServeGenerator.name == 'litserve'
     assert LitServeGenerator.output_suffix == pgml.LITSERVE_SUFFIX
+    assert PydanticAIGenerator.name == 'pydantic_ai'
+    assert PydanticAIGenerator.output_suffix == pgml.PYDANTIC_AI_SUFFIX
+    assert ArgillaGenerator.name == 'argilla'
+    assert ArgillaGenerator.output_suffix == pgml.ARGILLA_SUFFIX
 
     # Specs match the class attributes.
     assert base_spec.name == BaseModelGenerator.name
@@ -78,10 +89,14 @@ def test_class_attributes_match_specs() -> None:
     assert lancedb_spec.name == LanceDBGenerator.name
     assert bentoml_spec.name == BentoMLGenerator.name
     assert litserve_spec.name == LitServeGenerator.name
+    assert pydantic_ai_spec.name == PydanticAIGenerator.name
+    assert argilla_spec.name == ArgillaGenerator.name
     assert patch_spec.name == 'patch'
     assert lancedb_spec.enabled_by_default is False
     assert bentoml_spec.enabled_by_default is False
     assert litserve_spec.enabled_by_default is False
+    assert pydantic_ai_spec.enabled_by_default is False
+    assert argilla_spec.enabled_by_default is False
 
 
 def test_build_active_default_runs_all_builtins() -> None:
@@ -96,11 +111,13 @@ def test_build_active_default_runs_all_builtins() -> None:
     # The first BaseModelGenerator emits the base model, the second the patch.
     assert generators[0]._is_patch is False
     assert generators[1]._is_patch is True
-    # Opt-in generators (lancedb, bentoml, litserve) are excluded unless explicitly enabled.
+    # Opt-in generators are excluded unless explicitly enabled.
     names = [type(g).__name__ for g in generators]
     assert 'LanceDBGenerator' not in names
     assert 'BentoMLGenerator' not in names
     assert 'LitServeGenerator' not in names
+    assert 'PydanticAIGenerator' not in names
+    assert 'ArgillaGenerator' not in names
 
 
 def test_build_active_can_enable_lancedb() -> None:
@@ -119,6 +136,18 @@ def test_build_active_can_enable_litserve() -> None:
     registry = default_registry(include_entry_points=False)
     generators = registry.build_active(_FakePlugin(), enabled=['litserve'])
     assert [type(g).__name__ for g in generators] == ['LitServeGenerator']
+
+
+def test_build_active_can_enable_pydantic_ai() -> None:
+    registry = default_registry(include_entry_points=False)
+    generators = registry.build_active(_FakePlugin(), enabled=['pydantic_ai'])
+    assert [type(g).__name__ for g in generators] == ['PydanticAIGenerator']
+
+
+def test_build_active_can_enable_argilla() -> None:
+    registry = default_registry(include_entry_points=False)
+    generators = registry.build_active(_FakePlugin(), enabled=['argilla'])
+    assert [type(g).__name__ for g in generators] == ['ArgillaGenerator']
 
 
 def test_build_active_filters_to_enabled_set() -> None:

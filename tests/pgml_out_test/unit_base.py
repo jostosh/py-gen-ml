@@ -205,3 +205,19 @@ class ClassifierServeConfigTest(pgml.YamlBaseModel):
     timeout_s: float = 60.0
     workers_per_device: int = 1
     accelerator: str = 'auto'
+
+
+class ReviewExampleTest(pgml.YamlBaseModel):
+    """Synthesis example for PydanticAI + Argilla flywheel tests."""
+
+    id: str
+    """Stable identifier for the example (not shown as a primary Argilla field)."""
+
+    instruction: str
+    """User-facing instruction or prompt to answer."""
+
+    generation: str
+    """Model or human-written response to the instruction."""
+
+    quality: str
+    """Annotator quality label for the generation."""

@@ -64,6 +64,8 @@ cli_args = "py_gen_ml.plugin.cli_args_generator:cli_args_spec"
 lancedb = "py_gen_ml.plugin.lancedb_generator:lancedb_spec"
 bentoml = "py_gen_ml.plugin.bentoml_generator:bentoml_spec"
 litserve = "py_gen_ml.plugin.litserve_generator:litserve_spec"
+pydantic_ai = "py_gen_ml.plugin.pydantic_ai_generator:pydantic_ai_spec"
+argilla = "py_gen_ml.plugin.argilla_generator:argilla_spec"
 
 [project.optional-dependencies]
 docs = [
@@ -84,6 +86,22 @@ bentoml = [
 litserve = [
     "litserve>=0.2",
     "httpx>=0.27",
+]
+pydantic-ai = [
+    "pydantic-ai>=0.1",
+]
+argilla = [
+    "argilla>=2.0",
+    # Argilla pulls HuggingFace `datasets`, which needs PyExtensionType-compatible
+    # pyarrow. datasets>=3 works with pyarrow 21+ (common with lancedb).
+    "datasets>=3.0",
+]
+bridges = [
+    "pydantic-ai>=0.1",
+    "argilla>=2.0",
+    "datasets>=3.0",
+    "lancedb>=0.17.0",
+    "scikit-learn>=1.3",
 ]
 
 [build-system]

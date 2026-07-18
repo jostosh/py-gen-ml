@@ -107,8 +107,12 @@ nav:
   - LanceDB schemas: guides/lancedb.md
   - BentoML services: guides/bentoml.md
   - LitServe services: guides/litserve.md
+  - PydanticAI synthesis: guides/pydantic_ai.md
+  - Argilla datasets: guides/argilla.md
+  - Cross-tool bridges: guides/bridges.md
 - Example projects:
   - CIFAR-10: example_projects/cifar10.md
+  - Sentiment flywheel: example_projects/sentiment_flywheel.md
 - Reference:
   - YamlBaseModel: reference/yaml.md
   - pgml_cmd: reference/command_from_func.md

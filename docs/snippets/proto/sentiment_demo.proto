@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package demo;
+
+import "py_gen_ml/extensions.proto";
+
+// Labeled movie-review example for sentiment classification.
+// Field comments become JSON Schema descriptions for PydanticAI NativeOutput.
+message SentimentExample {
+    option (pgml.kind) = FEATURE_ROW;
+    option (pgml.pydantic_ai) = {
+        enable: true;
+    };
+    option (pgml.argilla) = {
+        enable: true;
+        dataset_name: "imdb_sentiment";
+    };
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "sentiment_examples";
+    };
+    option (pgml.mapper_config) = {
+        enable: true;
+    };
+
+    // Stable row id (Argilla metadata; not a primary UI field).
+    string id = 1 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+
+    // Provenance of the row: "imdb" for seed reviews, "synthetic" for LLM-generated ones.
+    string source = 2 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+
+    // Full movie-review text in the style of IMDB user reviews (may include spoilers,
+    // informal tone, and mixed praise/criticism). Used as the classifier input.
+    string text = 3 [(pgml.argilla_field) = {
+        slot: FIELD;
+        field_type: "text";
+        required: true;
+    }];
+
+    // Binary sentiment of the review: "negative" or "positive".
+    string sentiment = 4 [(pgml.argilla_field) = {
+        slot: QUESTION;
+        question_type: "label";
+        labels: ["negative", "positive"];
+        required: true;
+    }];
+}

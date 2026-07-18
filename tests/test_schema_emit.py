@@ -79,6 +79,46 @@ def test_emit_pydantic_model_empty_message_uses_pass() -> None:
     assert 'pass' in text
 
 
+def test_emit_pydantic_model_field_descriptions() -> None:
+    g = _Buf()
+    field = _field('instruction', 'str')
+    field.location.leading_comments = 'User-facing task prompt.'
+    message = _message('Ex', fields=[field])
+
+    emit_pydantic_model(
+        g,  # type: ignore[arg-type]
+        message,
+        base_class='BaseModel',
+        field_annotation=lambda f: f._annotation,
+        field_type=lambda f: f._annotation,
+        use_field_descriptions=True,
+    )
+
+    text = '\n'.join(g.lines)
+    assert "Field(description='User-facing task prompt.')" in text
+
+
+def test_emit_pydantic_model_all_optional_partial() -> None:
+    g = _Buf()
+    message = _message('Ex', fields=[_field('instruction', 'str')])
+
+    emit_pydantic_model(
+        g,  # type: ignore[arg-type]
+        message,
+        base_class='BaseModel',
+        field_annotation=lambda f: f._annotation,
+        field_type=lambda f: f._annotation,
+        class_name='ExPartial',
+        use_field_descriptions=True,
+        all_optional=True,
+    )
+
+    text = '\n'.join(g.lines)
+    assert 'class ExPartial(BaseModel):' in text
+    assert 'typing.Optional[str]' in text
+    assert 'default=None' in text
+
+
 def test_emit_pydantic_model_multi_oneof_as_union() -> None:
     g = _Buf()
     oneof = MagicMock()

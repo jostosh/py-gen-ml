@@ -364,9 +364,6 @@
         },
         {
           "const": "any",
-          "enum": [
-            "any"
-          ],
           "type": "string"
         },
         {

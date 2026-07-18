@@ -61,5 +61,7 @@ an optional third-party package. Serving generators should use
 `py_gen_ml.plugin.service_rpc` for service/rpc roots; Pydantic-style class
 bodies should go through `emit_pydantic_model` in `schema_emit`.
 
-See also [LanceDB schemas](lancedb.md), [BentoML services](bentoml.md), and
-[LitServe services](litserve.md).
+See also [LanceDB schemas](lancedb.md), [BentoML services](bentoml.md),
+[LitServe services](litserve.md), [PydanticAI synthesis](pydantic_ai.md),
+[Argilla](argilla.md), [bridges](bridges.md), and the
+[Sentiment flywheel](../example_projects/sentiment_flywheel.md) example.

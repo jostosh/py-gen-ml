@@ -11,6 +11,6 @@ for proto in docs/snippets/proto/*.proto; do
     --source-root docs/snippets/src \
     --code-dir docs/snippets/src/pgml_out \
     --configs-dir docs/snippets/configs \
-    --generators=base,patch,sweep,cli_args,lancedb,bentoml,litserve \
+    --generators=base,patch,sweep,cli_args,lancedb,bentoml,litserve,pydantic_ai,argilla \
     "$proto"
 done
