@@ -512,3 +512,45 @@ ReviewExampleTestSweepField = typing.Union[
     ReviewExampleTestSweep,
     pgml.NestedChoice[ReviewExampleTestSweep, patch.ReviewExampleTestPatch],  # type: ignore
 ]
+
+
+class OptimizerConfigTestSweep(pgml.Sweeper[patch.OptimizerConfigTestPatch]):
+    """Nested optimizer knobs for tracking flatten tests."""
+
+    learning_rate: typing.Optional[pgml.FloatSweep] = None
+    weight_decay: typing.Optional[pgml.FloatSweep] = None
+
+
+OptimizerConfigTestSweepField = typing.Union[
+    OptimizerConfigTestSweep,
+    pgml.NestedChoice[OptimizerConfigTestSweep, patch.OptimizerConfigTestPatch],  # type: ignore
+]
+
+
+class RunConfigTestSweep(pgml.Sweeper[patch.RunConfigTestPatch]):
+    """RUN_CONFIG for MLflow / W&B param + tag helpers."""
+
+    run_name: typing.Optional[pgml.StrSweep] = None
+    """Human-readable run name (logged as a tag)."""
+
+    epochs: typing.Optional[pgml.IntSweep] = None
+    optimizer: typing.Optional[OptimizerConfigTestSweepField] = None
+
+
+RunConfigTestSweepField = typing.Union[
+    RunConfigTestSweep,
+    pgml.NestedChoice[RunConfigTestSweep, patch.RunConfigTestPatch],  # type: ignore
+]
+
+
+class MetricSetTestSweep(pgml.Sweeper[patch.MetricSetTestPatch]):
+    """METRIC_SET for MLflow / W&B metric helpers."""
+
+    accuracy: typing.Optional[pgml.FloatSweep] = None
+    loss: typing.Optional[pgml.FloatSweep] = None
+
+
+MetricSetTestSweepField = typing.Union[
+    MetricSetTestSweep,
+    pgml.NestedChoice[MetricSetTestSweep, patch.MetricSetTestPatch],  # type: ignore
+]

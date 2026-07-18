@@ -240,4 +240,4 @@ Consider using `py-gen-ml` when you need to:
 - [CLI argument parsing](guides/cli_argument_parsing.md): Override nested fields from the command line.
 - [Factories](guides/builders.md): Generate `build()` helpers from `(pgml.factory)`.
 - [CIFAR-10 example](example_projects/cifar10.md): An end-to-end training project using `py-gen-ml`.
-- [Sentiment flywheel](example_projects/sentiment_flywheel.md): Synthesize IMDB-style reviews, review in Argilla, train a classifier.
+- [Sentiment flywheel](example_projects/sentiment_flywheel.md): Synthesize IMDB-style reviews, review in Argilla, train + track with MLflow.

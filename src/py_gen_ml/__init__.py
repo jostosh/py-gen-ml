@@ -7,9 +7,11 @@ from py_gen_ml.plugin.constants import (
     CLI_ARGS_SUFFIX,
     LANCEDB_SUFFIX,
     LITSERVE_SUFFIX,
+    MLFLOW_SUFFIX,
     PATCH_SUFFIX,
     PYDANTIC_AI_SUFFIX,
     SWEEP_SUFFIX,
+    WANDB_SUFFIX,
 )
 from py_gen_ml.plugin.generator import Generator
 from py_gen_ml.plugin.registry import \
@@ -64,4 +66,6 @@ __all__ = [
     'LITSERVE_SUFFIX',
     'PYDANTIC_AI_SUFFIX',
     'ARGILLA_SUFFIX',
+    'MLFLOW_SUFFIX',
+    'WANDB_SUFFIX',
 ]

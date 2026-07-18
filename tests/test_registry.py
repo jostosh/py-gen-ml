@@ -21,6 +21,7 @@ from py_gen_ml.plugin.litserve_generator import (
     LitServeGenerator,
     litserve_spec,
 )
+from py_gen_ml.plugin.mlflow_generator import MLflowGenerator, mlflow_spec
 from py_gen_ml.plugin.pydantic_ai_generator import (
     PydanticAIGenerator,
     pydantic_ai_spec,
@@ -35,6 +36,7 @@ from py_gen_ml.plugin.sweep_model_generator import (
     SweepModelGenerator,
     sweep_spec,
 )
+from py_gen_ml.plugin.wandb_generator import WandbGenerator, wandb_spec
 
 
 class _FakePlugin:
@@ -61,6 +63,8 @@ def test_default_registry_lists_builtins() -> None:
         'litserve',
         'pydantic_ai',
         'argilla',
+        'mlflow',
+        'wandb',
     ]
 
 
@@ -81,6 +85,10 @@ def test_class_attributes_match_specs() -> None:
     assert PydanticAIGenerator.output_suffix == pgml.PYDANTIC_AI_SUFFIX
     assert ArgillaGenerator.name == 'argilla'
     assert ArgillaGenerator.output_suffix == pgml.ARGILLA_SUFFIX
+    assert MLflowGenerator.name == 'mlflow'
+    assert MLflowGenerator.output_suffix == pgml.MLFLOW_SUFFIX
+    assert WandbGenerator.name == 'wandb'
+    assert WandbGenerator.output_suffix == pgml.WANDB_SUFFIX
 
     # Specs match the class attributes.
     assert base_spec.name == BaseModelGenerator.name
@@ -91,12 +99,16 @@ def test_class_attributes_match_specs() -> None:
     assert litserve_spec.name == LitServeGenerator.name
     assert pydantic_ai_spec.name == PydanticAIGenerator.name
     assert argilla_spec.name == ArgillaGenerator.name
+    assert mlflow_spec.name == MLflowGenerator.name
+    assert wandb_spec.name == WandbGenerator.name
     assert patch_spec.name == 'patch'
     assert lancedb_spec.enabled_by_default is False
     assert bentoml_spec.enabled_by_default is False
     assert litserve_spec.enabled_by_default is False
     assert pydantic_ai_spec.enabled_by_default is False
     assert argilla_spec.enabled_by_default is False
+    assert mlflow_spec.enabled_by_default is False
+    assert wandb_spec.enabled_by_default is False
 
 
 def test_build_active_default_runs_all_builtins() -> None:
@@ -118,6 +130,8 @@ def test_build_active_default_runs_all_builtins() -> None:
     assert 'LitServeGenerator' not in names
     assert 'PydanticAIGenerator' not in names
     assert 'ArgillaGenerator' not in names
+    assert 'MLflowGenerator' not in names
+    assert 'WandbGenerator' not in names
 
 
 def test_build_active_can_enable_lancedb() -> None:
@@ -148,6 +162,18 @@ def test_build_active_can_enable_argilla() -> None:
     registry = default_registry(include_entry_points=False)
     generators = registry.build_active(_FakePlugin(), enabled=['argilla'])
     assert [type(g).__name__ for g in generators] == ['ArgillaGenerator']
+
+
+def test_build_active_can_enable_mlflow() -> None:
+    registry = default_registry(include_entry_points=False)
+    generators = registry.build_active(_FakePlugin(), enabled=['mlflow'])
+    assert [type(g).__name__ for g in generators] == ['MLflowGenerator']
+
+
+def test_build_active_can_enable_wandb() -> None:
+    registry = default_registry(include_entry_points=False)
+    generators = registry.build_active(_FakePlugin(), enabled=['wandb'])
+    assert [type(g).__name__ for g in generators] == ['WandbGenerator']
 
 
 def test_build_active_filters_to_enabled_set() -> None:

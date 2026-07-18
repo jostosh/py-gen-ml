@@ -216,3 +216,27 @@ class ReviewExampleTestPatch(pgml.YamlBaseModel):
 
     quality: typing.Optional[str] = None
     """Annotator quality label for the generation."""
+
+
+class OptimizerConfigTestPatch(pgml.YamlBaseModel):
+    """Nested optimizer knobs for tracking flatten tests."""
+
+    learning_rate: typing.Optional[float] = None
+    weight_decay: typing.Optional[float] = None
+
+
+class RunConfigTestPatch(pgml.YamlBaseModel):
+    """RUN_CONFIG for MLflow / W&B param + tag helpers."""
+
+    run_name: typing.Optional[str] = None
+    """Human-readable run name (logged as a tag)."""
+
+    epochs: typing.Optional[int] = None
+    optimizer: typing.Optional[OptimizerConfigTestPatch] = None
+
+
+class MetricSetTestPatch(pgml.YamlBaseModel):
+    """METRIC_SET for MLflow / W&B metric helpers."""
+
+    accuracy: typing.Optional[float] = None
+    loss: typing.Optional[float] = None

@@ -26,6 +26,12 @@ argilla = [
     "argilla>=2.0",
     "datasets>=3.0",
 ]
+mlflow = [
+    "mlflow>=2.14",
+]
+wandb = [
+    "wandb>=0.17",
+]
 bridges = [
     "pydantic-ai>=0.1",
     "argilla>=2.0",
