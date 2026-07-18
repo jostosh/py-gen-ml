@@ -5,6 +5,10 @@ Opt a protobuf message into LanceDB codegen with `(pgml.lancedb).enable = true`.
 and every nested message type reachable from it, plus small helpers to create
 a table with the generated schema.
 
+Feature-row messages should also set `(pgml.kind) = FEATURE_ROW` so other
+generators can discover the same contract. See [Message kinds](message_kinds.md).
+Kind does **not** replace the LanceDB opt-in.
+
 ## Install the extra
 
 The generator itself ships with `py-gen-ml`. Generated modules import `lancedb`,
@@ -32,7 +36,8 @@ py-gen-ml path/to/schema.proto --generators=base,patch,sweep,cli_args,lancedb
 
 ### Message opt-in
 
-Annotate the **root** row type with `(pgml.lancedb)`:
+Annotate the **root** row type with `(pgml.lancedb)` (and preferably
+`(pgml.kind) = FEATURE_ROW`):
 
 | Option | Meaning |
 |--------|---------|

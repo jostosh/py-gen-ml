@@ -12,6 +12,7 @@ message SampleMeta {
 
 // Root table schema for a LanceDB dataset of embedding rows.
 message EmbeddingSample {
+    option (pgml.kind) = FEATURE_ROW;
     option (pgml.lancedb) = {
         enable: true;
         table_name: "embedding_samples";

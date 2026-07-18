@@ -103,6 +103,7 @@ nav:
   - Enums: guides/enums.md
   - Default values: guides/defaults.md
   - Unions: guides/oneofs.md
+  - Message kinds: guides/message_kinds.md
   - LanceDB schemas: guides/lancedb.md
 - Example projects:
   - CIFAR-10: example_projects/cifar10.md

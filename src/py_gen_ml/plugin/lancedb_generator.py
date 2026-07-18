@@ -1,21 +1,23 @@
 """Generator that emits ``lancedb.pydantic.LanceModel`` schemas from protobufs."""
 from __future__ import annotations
 
-from typing import ClassVar, Optional, Set
+from typing import ClassVar, Optional
 
-import networkx
 import protogen
 
 from py_gen_ml.extensions_pb2 import LanceDB, LanceDBField
 from py_gen_ml.logging.setup_logger import setup_logger
 from py_gen_ml.plugin.common import (
     generate_docstring,
-    get_element_subgraphs,
     get_extension_value,
     snake_case,
 )
 from py_gen_ml.plugin.constants import LANCEDB_SUFFIX
 from py_gen_ml.plugin.generator import Generator
+from py_gen_ml.plugin.message_kind import (
+    collect_message_closure,
+    ordered_messages,
+)
 from py_gen_ml.plugin.registry import GeneratorSpec
 from py_gen_ml.plugin.type_mapping import PythonTypeMapper, TypeMapper
 from py_gen_ml.typing.some import some
@@ -49,7 +51,7 @@ class LanceDBGenerator(Generator):
         if not roots:
             return
 
-        messages = self._collect_closure(roots, file)
+        messages = collect_message_closure(roots, file)
         if not messages:
             return
 
@@ -65,7 +67,7 @@ class LanceDBGenerator(Generator):
         g.P()
         g.P()
 
-        for message in self._ordered_messages(file, messages):
+        for message in ordered_messages(file, messages):
             self._generate_lance_model(g, message)
 
         for root in sorted(roots, key=lambda m: m.proto.name):
@@ -81,44 +83,6 @@ class LanceDBGenerator(Generator):
             if lancedb is not None and lancedb.enable:
                 roots.append(message)
         return roots
-
-    @staticmethod
-    def _collect_closure(
-        roots: list[protogen.Message],
-        file: protogen.File,
-    ) -> Set[protogen.Message]:
-        """Messages in ``file`` reachable from ``roots`` via nested fields."""
-        file_messages = set(file.messages)
-        to_generate: Set[protogen.Message] = set()
-        stack = list(roots)
-        while stack:
-            message = stack.pop()
-            if message not in file_messages or message in to_generate:
-                continue
-            to_generate.add(message)
-            for field in message.fields:
-                nested = field.message
-                if nested is not None and nested in file_messages:
-                    stack.append(nested)
-        return to_generate
-
-    @staticmethod
-    def _ordered_messages(
-        file: protogen.File,
-        messages: Set[protogen.Message],
-    ) -> list[protogen.Message]:
-        ordered: list[protogen.Message] = []
-        seen: Set[protogen.Message] = set()
-        subgraphs = get_element_subgraphs(file, include_elements={protogen.Kind.MESSAGE})
-        for subgraph in subgraphs:
-            for node in networkx.topological_sort(subgraph):
-                if isinstance(node, protogen.Message) and node in messages and node not in seen:
-                    ordered.append(node)
-                    seen.add(node)
-        for message in messages:
-            if message not in seen:
-                ordered.append(message)
-        return ordered
 
     def _generate_lance_model(
         self,

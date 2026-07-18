@@ -198,6 +198,7 @@ message LanceDBNestedMeta {
 }
 
 message LanceDBRecordTest {
+    option (pgml.kind) = FEATURE_ROW;
     option (pgml.lancedb) = {
         enable: true;
         table_name: "lance_records";

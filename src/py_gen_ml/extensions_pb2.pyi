@@ -1,10 +1,28 @@
 from google.protobuf import descriptor_pb2 as _descriptor_pb2
 from google.protobuf.internal import containers as _containers
+from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
+
+class MessageKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    MESSAGE_KIND_UNSPECIFIED: _ClassVar[MessageKind]
+    FEATURE_ROW: _ClassVar[MessageKind]
+    LABEL: _ClassVar[MessageKind]
+    PREDICTION: _ClassVar[MessageKind]
+    FEEDBACK: _ClassVar[MessageKind]
+    RUN_CONFIG: _ClassVar[MessageKind]
+    METRIC_SET: _ClassVar[MessageKind]
+MESSAGE_KIND_UNSPECIFIED: MessageKind
+FEATURE_ROW: MessageKind
+LABEL: MessageKind
+PREDICTION: MessageKind
+FEEDBACK: MessageKind
+RUN_CONFIG: MessageKind
+METRIC_SET: MessageKind
 ENABLE_FIELD_NUMBER: _ClassVar[int]
 enable: _descriptor.FieldDescriptor
 FACTORY_FIELD_NUMBER: _ClassVar[int]
@@ -13,6 +31,8 @@ CLI_FIELD_NUMBER: _ClassVar[int]
 cli: _descriptor.FieldDescriptor
 LANCEDB_FIELD_NUMBER: _ClassVar[int]
 lancedb: _descriptor.FieldDescriptor
+KIND_FIELD_NUMBER: _ClassVar[int]
+kind: _descriptor.FieldDescriptor
 DEFAULT_FIELD_NUMBER: _ClassVar[int]
 default: _descriptor.FieldDescriptor
 AS_VARARGS_FIELD_NUMBER: _ClassVar[int]
