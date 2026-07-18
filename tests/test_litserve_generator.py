@@ -29,12 +29,7 @@ def test_unit_proto_annotates_litserve_service() -> None:
 
 def test_docs_litserve_demo_fixture_exists() -> None:
     path = (
-        Path(__file__).resolve().parents[1]
-        / 'docs'
-        / 'snippets'
-        / 'src'
-        / 'pgml_out'
-        / 'litserve_demo_litserve.py'
+        Path(__file__).resolve().parents[1] / 'docs' / 'snippets' / 'src' / 'pgml_out' / 'litserve_demo_litserve.py'
     )
     assert path.is_file()
     source = path.read_text()

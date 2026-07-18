@@ -313,10 +313,7 @@ class LitServeGenerator(Generator):
         config_msg: Optional[protogen.Message],
     ) -> None:
         helper = snake_case(service.proto.name)
-        has_url = (
-            config_msg is not None
-            and any(f.py_name == 'url' for f in config_msg.fields)
-        )
+        has_url = (config_msg is not None and any(f.py_name == 'url' for f in config_msg.fields))
 
         for method in service.methods:
             api_path = self._method_api_path(method)
