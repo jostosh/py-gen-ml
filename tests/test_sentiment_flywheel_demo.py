@@ -53,15 +53,14 @@ def test_json_schema_descriptions_present(monkeypatch: pytest.MonkeyPatch) -> No
     props = SentimentExample.model_json_schema()['properties']
     assert 'IMDB' in props['text']['description'] or 'review' in props['text']['description'].lower()
     assert (
-        'positive' in props['sentiment']['description'].lower()
-        or 'negative' in props['sentiment']['description'].lower()
+        'positive' in props['sentiment']['description'].lower() or
+        'negative' in props['sentiment']['description'].lower()
     )
 
 
 @pytest.mark.skipif(
     not all(
-        __import__('os').environ.get(k)
-        for k in (
+        __import__('os').environ.get(k) for k in (
             'OPENAI_API_KEY',
             'OPENAI_ENDPOINT',
             'OPENAI_MODEL',

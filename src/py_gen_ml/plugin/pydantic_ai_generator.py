@@ -251,9 +251,13 @@ class PydanticAIGenerator(Generator):
         g.set_indent(4)
         g.P('if incomplete is not None:')
         g.set_indent(8)
-        g.P(f'return await _{helper}_complete(model=model, system_prompt=system_prompt, incomplete=incomplete, examples=examples)')
+        g.P(
+            f'return await _{helper}_complete(model=model, system_prompt=system_prompt, incomplete=incomplete, examples=examples)',
+        )
         g.set_indent(4)
-        g.P(f'return await _{helper}_generate(model=model, system_prompt=system_prompt, count=count, examples=examples, diversify_rounds=diversify_rounds)')
+        g.P(
+            f'return await _{helper}_generate(model=model, system_prompt=system_prompt, count=count, examples=examples, diversify_rounds=diversify_rounds)',
+        )
         g.set_indent(0)
         g.P()
         g.P()

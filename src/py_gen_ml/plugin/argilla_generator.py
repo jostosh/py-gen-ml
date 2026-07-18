@@ -224,7 +224,9 @@ class ArgillaGenerator(Generator):
                 g.set_indent(8)
                 g.P(f'suggestions.append(rg.Suggestion(question_name={name!r}, value=_qval))')
                 g.set_indent(4)
-            g.P('return rg.Record(fields=record_fields, metadata=record_metadata or None, suggestions=suggestions or None)')
+            g.P(
+                'return rg.Record(fields=record_fields, metadata=record_metadata or None, suggestions=suggestions or None)',
+            )
         else:
             g.P('return rg.Record(fields=record_fields, metadata=record_metadata or None)')
         g.set_indent(0)
@@ -270,7 +272,9 @@ class ArgillaGenerator(Generator):
             g.P()
             g.P(f'def {helper}_to_row_dict(row: {class_name}) -> typing.Dict[str, typing.Any]:')
             g.set_indent(4)
-            g.P(f'return {{{helper.upper()}_ALIASES[k]: v for k, v in row.model_dump().items() if k in {helper.upper()}_ALIASES}}')
+            g.P(
+                f'return {{{helper.upper()}_ALIASES[k]: v for k, v in row.model_dump().items() if k in {helper.upper()}_ALIASES}}',
+            )
             g.set_indent(0)
             g.P()
             g.P()

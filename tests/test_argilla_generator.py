@@ -24,13 +24,6 @@ def test_unit_proto_annotates_argilla_slots() -> None:
 
 
 def test_docs_flywheel_argilla_fixture_exists() -> None:
-    path = (
-        Path(__file__).resolve().parents[1]
-        / 'docs'
-        / 'snippets'
-        / 'src'
-        / 'pgml_out'
-        / 'flywheel_demo_argilla.py'
-    )
+    path = (Path(__file__).resolve().parents[1] / 'docs' / 'snippets' / 'src' / 'pgml_out' / 'flywheel_demo_argilla.py')
     assert path.is_file()
     assert 'def build_review_example_settings(' in path.read_text()

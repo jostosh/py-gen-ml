@@ -23,12 +23,7 @@ def test_unit_proto_annotates_pydantic_ai() -> None:
 
 def test_docs_flywheel_pydantic_ai_fixture_exists() -> None:
     path = (
-        Path(__file__).resolve().parents[1]
-        / 'docs'
-        / 'snippets'
-        / 'src'
-        / 'pgml_out'
-        / 'flywheel_demo_pydantic_ai.py'
+        Path(__file__).resolve().parents[1] / 'docs' / 'snippets' / 'src' / 'pgml_out' / 'flywheel_demo_pydantic_ai.py'
     )
     assert path.is_file()
     assert 'def synthesize_review_example(' in path.read_text()

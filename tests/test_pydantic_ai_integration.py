@@ -25,7 +25,8 @@ def test_field_descriptions_in_json_schema(synth_mod) -> None:
     props = schema['properties']
     assert 'instruction' in props
     assert 'description' in props['instruction']
-    assert 'prompt' in props['instruction']['description'].lower() or 'answer' in props['instruction']['description'].lower()
+    assert 'prompt' in props['instruction']['description'].lower(
+    ) or 'answer' in props['instruction']['description'].lower()
 
 
 def test_gap_model_only_missing_fields(synth_mod) -> None:
@@ -50,6 +51,7 @@ def test_synthesize_complete_path_merges(synth_mod) -> None:
     )
 
     class _Gap:
+
         def model_dump(self):
             return {'generation': 'Gravity pulls masses together.', 'quality': 'good'}
 
