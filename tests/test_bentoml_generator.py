@@ -12,7 +12,7 @@ def test_unit_bentoml_fixture_emits_models_factory_and_clients() -> None:
     assert 'kwargs["workers"] = config.workers' in source
     assert 'kwargs["traffic"] = {"timeout": config.timeout_s}' in source
     assert 'def create_classifier_test_service(' in source
-    assert "@bentoml.service(**service_kwargs)" in source
+    assert '@bentoml.service(**service_kwargs)' in source
     assert "route='/predict'" in source
     assert 'input_spec=PredictRequestTest' in source
     assert 'output_spec=PredictResponseTest' in source
@@ -33,14 +33,7 @@ def test_unit_proto_annotates_bentoml_service() -> None:
 
 
 def test_docs_bentoml_demo_fixture_exists() -> None:
-    path = (
-        Path(__file__).resolve().parents[1]
-        / 'docs'
-        / 'snippets'
-        / 'src'
-        / 'pgml_out'
-        / 'bentoml_demo_bentoml.py'
-    )
+    path = (Path(__file__).resolve().parents[1] / 'docs' / 'snippets' / 'src' / 'pgml_out' / 'bentoml_demo_bentoml.py')
     source = path.read_text()
     assert 'def create_classifier_service(' in source
     assert 'def call_classifier_predict_sync(' in source

@@ -15,7 +15,10 @@ from py_gen_ml.plugin.common import (
 )
 from py_gen_ml.plugin.constants import BASE_MODEL_ALIAS, BENTOML_SUFFIX
 from py_gen_ml.plugin.generator import Generator
-from py_gen_ml.plugin.message_kind import collect_message_closure, ordered_messages
+from py_gen_ml.plugin.message_kind import (
+    collect_message_closure,
+    ordered_messages,
+)
 from py_gen_ml.plugin.registry import GeneratorSpec
 from py_gen_ml.plugin.type_mapping import PythonTypeMapper, TypeMapper
 from py_gen_ml.typing.some import some
@@ -266,9 +269,7 @@ class BentoMLGenerator(Generator):
     ) -> None:
         helper = snake_case(service.proto.name)
         config_model = config_msg
-        has_url = (
-            config_model is not None and any(f.py_name == 'url' for f in config_model.fields)
-        )
+        has_url = (config_model is not None and any(f.py_name == 'url' for f in config_model.fields))
 
         for method in service.methods:
             opts = get_extension_value(method, 'bentoml_method', BentoMLMethod)
