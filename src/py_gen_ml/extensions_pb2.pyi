@@ -35,10 +35,16 @@ KIND_FIELD_NUMBER: _ClassVar[int]
 kind: _descriptor.FieldDescriptor
 BENTOML_CONFIG_FIELD_NUMBER: _ClassVar[int]
 bentoml_config: _descriptor.FieldDescriptor
+LITSERVE_CONFIG_FIELD_NUMBER: _ClassVar[int]
+litserve_config: _descriptor.FieldDescriptor
 BENTOML_FIELD_NUMBER: _ClassVar[int]
 bentoml: _descriptor.FieldDescriptor
+LITSERVE_FIELD_NUMBER: _ClassVar[int]
+litserve: _descriptor.FieldDescriptor
 BENTOML_METHOD_FIELD_NUMBER: _ClassVar[int]
 bentoml_method: _descriptor.FieldDescriptor
+LITSERVE_METHOD_FIELD_NUMBER: _ClassVar[int]
+litserve_method: _descriptor.FieldDescriptor
 DEFAULT_FIELD_NUMBER: _ClassVar[int]
 default: _descriptor.FieldDescriptor
 AS_VARARGS_FIELD_NUMBER: _ClassVar[int]
@@ -95,6 +101,28 @@ class BentoMLMethod(_message.Message):
     def __init__(self, route: _Optional[str] = ..., name: _Optional[str] = ..., batchable: bool = ...) -> None: ...
 
 class BentoMLConfig(_message.Message):
+    __slots__ = ("enable", "service")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    SERVICE_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    service: str
+    def __init__(self, enable: bool = ..., service: _Optional[str] = ...) -> None: ...
+
+class LitServe(_message.Message):
+    __slots__ = ("enable", "name")
+    ENABLE_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    enable: bool
+    name: str
+    def __init__(self, enable: bool = ..., name: _Optional[str] = ...) -> None: ...
+
+class LitServeMethod(_message.Message):
+    __slots__ = ("api_path",)
+    API_PATH_FIELD_NUMBER: _ClassVar[int]
+    api_path: str
+    def __init__(self, api_path: _Optional[str] = ...) -> None: ...
+
+class LitServeConfig(_message.Message):
     __slots__ = ("enable", "service")
     ENABLE_FIELD_NUMBER: _ClassVar[int]
     SERVICE_FIELD_NUMBER: _ClassVar[int]

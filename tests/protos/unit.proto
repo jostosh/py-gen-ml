@@ -225,18 +225,30 @@ message ClassifierServeConfigTest {
         enable: true;
         service: "ClassifierTest";
     };
+    option (pgml.litserve_config) = {
+        enable: true;
+        service: "ClassifierTest";
+    };
     string url = 1 [(pgml.default) = {string: "http://localhost:3000"}];
     int32 workers = 2 [(pgml.default) = {int32: 1}];
     float timeout_s = 3 [(pgml.default) = {float: 60}];
+    int32 workers_per_device = 4 [(pgml.default) = {int32: 1}];
+    string accelerator = 5 [(pgml.default) = {string: "auto"}];
 }
 
 service ClassifierTest {
     option (pgml.bentoml) = {
         enable: true;
     };
+    option (pgml.litserve) = {
+        enable: true;
+    };
     rpc Predict(PredictRequestTest) returns (PredictResponseTest) {
         option (pgml.bentoml_method) = {
             route: "/predict";
+        };
+        option (pgml.litserve_method) = {
+            api_path: "/predict";
         };
     }
 }

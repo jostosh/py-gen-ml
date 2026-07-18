@@ -113,9 +113,18 @@ def _load_builtin_specs() -> List[GeneratorSpec]:
     from py_gen_ml.plugin.bentoml_generator import bentoml_spec
     from py_gen_ml.plugin.cli_args_generator import cli_args_spec
     from py_gen_ml.plugin.lancedb_generator import lancedb_spec
+    from py_gen_ml.plugin.litserve_generator import litserve_spec
     from py_gen_ml.plugin.sweep_model_generator import sweep_spec
 
-    return [base_spec, patch_spec, sweep_spec, cli_args_spec, lancedb_spec, bentoml_spec]
+    return [
+        base_spec,
+        patch_spec,
+        sweep_spec,
+        cli_args_spec,
+        lancedb_spec,
+        bentoml_spec,
+        litserve_spec,
+    ]
 
 
 def _load_entry_point_specs() -> List[GeneratorSpec]:

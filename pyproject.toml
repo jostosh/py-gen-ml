@@ -63,6 +63,7 @@ sweep = "py_gen_ml.plugin.sweep_model_generator:sweep_spec"
 cli_args = "py_gen_ml.plugin.cli_args_generator:cli_args_spec"
 lancedb = "py_gen_ml.plugin.lancedb_generator:lancedb_spec"
 bentoml = "py_gen_ml.plugin.bentoml_generator:bentoml_spec"
+litserve = "py_gen_ml.plugin.litserve_generator:litserve_spec"
 
 [project.optional-dependencies]
 docs = [
@@ -79,6 +80,10 @@ lancedb = [
 ]
 bentoml = [
     "bentoml>=1.3",
+]
+litserve = [
+    "litserve>=0.2",
+    "httpx>=0.27",
 ]
 
 [build-system]
