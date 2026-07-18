@@ -8,7 +8,6 @@ import protogen
 from py_gen_ml.extensions_pb2 import BentoML, BentoMLConfig, BentoMLMethod
 from py_gen_ml.logging.setup_logger import setup_logger
 from py_gen_ml.plugin.common import (
-    generate_docstring,
     get_extension_value,
     py_import_for_source_file_derived_file,
     snake_case,
@@ -20,6 +19,14 @@ from py_gen_ml.plugin.message_kind import (
     ordered_messages,
 )
 from py_gen_ml.plugin.registry import GeneratorSpec
+from py_gen_ml.plugin.schema_emit import emit_pydantic_model
+from py_gen_ml.plugin.service_rpc import (
+    assert_unary_methods,
+    method_api_name,
+    method_http_route,
+    rpc_root_messages,
+    services_with_extension,
+)
 from py_gen_ml.plugin.type_mapping import PythonTypeMapper, TypeMapper
 from py_gen_ml.typing.some import some
 
@@ -48,19 +55,13 @@ class BentoMLGenerator(Generator):
         self._suffix = suffix or BENTOML_SUFFIX
 
     def _generate_code_for_file(self, file: protogen.File) -> None:
-        services = self._enabled_services(file)
+        services = services_with_extension(file, 'bentoml', BentoML)
         if not services:
             return
 
-        for service in services:
-            for method in service.methods:
-                if method.proto.client_streaming or method.proto.server_streaming:
-                    raise ValueError(
-                        f'BentoML generator supports unary RPCs only; '
-                        f'{method.full_name} is streaming',
-                    )
+        assert_unary_methods(services, generator_name='bentoml')
 
-        roots = self._rpc_root_messages(services)
+        roots = rpc_root_messages(services)
         messages = collect_message_closure(roots, file)
         configs = self._configs_by_service(file)
 
@@ -80,7 +81,13 @@ class BentoMLGenerator(Generator):
         g.P()
 
         for message in ordered_messages(file, messages):
-            self._generate_io_model(g, message)
+            emit_pydantic_model(
+                g,
+                message,
+                base_class='BaseModel',
+                field_annotation=self._field_annotation,
+                field_type=self._field_type,
+            )
 
         for service in sorted(services, key=lambda s: s.proto.name):
             config_msg = configs.get(service.proto.name)
@@ -91,27 +98,6 @@ class BentoMLGenerator(Generator):
         self._run_yapf(g)
 
     @staticmethod
-    def _enabled_services(file: protogen.File) -> list[protogen.Service]:
-        enabled: list[protogen.Service] = []
-        for service in file.services:
-            opts = get_extension_value(service, 'bentoml', BentoML)
-            if opts is not None and opts.enable:
-                enabled.append(service)
-        return enabled
-
-    @staticmethod
-    def _rpc_root_messages(services: list[protogen.Service]) -> list[protogen.Message]:
-        roots: list[protogen.Message] = []
-        seen: set[protogen.Message] = set()
-        for service in services:
-            for method in service.methods:
-                for message in (some(method.input), some(method.output)):
-                    if message not in seen:
-                        seen.add(message)
-                        roots.append(message)
-        return roots
-
-    @staticmethod
     def _configs_by_service(file: protogen.File) -> dict[str, protogen.Message]:
         mapping: dict[str, protogen.Message] = {}
         for message in file.messages:
@@ -120,38 +106,6 @@ class BentoMLGenerator(Generator):
                 continue
             mapping[opts.service] = message
         return mapping
-
-    def _generate_io_model(
-        self,
-        g: protogen.GeneratedFile,
-        message: protogen.Message,
-    ) -> None:
-        g.P(f'class {message.proto.name}(BaseModel):')
-        g.set_indent(4)
-        generate_docstring(g, message)
-
-        wrote_field = False
-        for field in message.fields:
-            if field.oneof and len(field.oneof.fields) > 1:
-                continue
-            g.P(f'{field.py_name}: {self._field_annotation(field)}')
-            generate_docstring(g, field)
-            wrote_field = True
-
-        for oneof in message.oneofs:
-            if len(oneof.fields) == 1:
-                continue
-            types = [self._field_type(field) for field in oneof.fields]
-            g.P(f'{oneof.proto.name}: typing.Union[{", ".join(types)}]')
-            generate_docstring(g, oneof)
-            wrote_field = True
-
-        if not wrote_field:
-            g.P('pass')
-
-        g.set_indent(0)
-        g.P()
-        g.P()
 
     def _generate_service_kwargs(
         self,
@@ -240,8 +194,8 @@ class BentoMLGenerator(Generator):
         method: protogen.Method,
     ) -> None:
         opts = get_extension_value(method, 'bentoml_method', BentoMLMethod)
-        api_name = (opts.name if opts and opts.name else None) or method.py_name
-        route = (opts.route if opts and opts.route else None) or f'/{method.py_name}'
+        api_name = method_api_name(method, opts.name if opts and opts.name else None)
+        route = method_http_route(method, opts.route if opts and opts.route else None)
         batchable = bool(opts.batchable) if opts is not None else False
         in_name = some(method.input).proto.name
         out_name = some(method.output).proto.name
@@ -273,7 +227,7 @@ class BentoMLGenerator(Generator):
 
         for method in service.methods:
             opts = get_extension_value(method, 'bentoml_method', BentoMLMethod)
-            api_name = (opts.name if opts and opts.name else None) or method.py_name
+            api_name = method_api_name(method, opts.name if opts and opts.name else None)
             in_name = some(method.input).proto.name
             out_name = some(method.output).proto.name
             sync_name = f'call_{helper}_{method.py_name}_sync'

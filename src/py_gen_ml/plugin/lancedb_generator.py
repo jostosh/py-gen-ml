@@ -7,11 +7,7 @@ import protogen
 
 from py_gen_ml.extensions_pb2 import LanceDB, LanceDBField
 from py_gen_ml.logging.setup_logger import setup_logger
-from py_gen_ml.plugin.common import (
-    generate_docstring,
-    get_extension_value,
-    snake_case,
-)
+from py_gen_ml.plugin.common import get_extension_value, snake_case
 from py_gen_ml.plugin.constants import LANCEDB_SUFFIX
 from py_gen_ml.plugin.generator import Generator
 from py_gen_ml.plugin.message_kind import (
@@ -19,6 +15,7 @@ from py_gen_ml.plugin.message_kind import (
     ordered_messages,
 )
 from py_gen_ml.plugin.registry import GeneratorSpec
+from py_gen_ml.plugin.schema_emit import emit_pydantic_model
 from py_gen_ml.plugin.type_mapping import PythonTypeMapper, TypeMapper
 from py_gen_ml.typing.some import some
 
@@ -68,7 +65,13 @@ class LanceDBGenerator(Generator):
         g.P()
 
         for message in ordered_messages(file, messages):
-            self._generate_lance_model(g, message)
+            emit_pydantic_model(
+                g,
+                message,
+                base_class='LanceModel',
+                field_annotation=self._field_annotation,
+                field_type=self._field_type,
+            )
 
         for root in sorted(roots, key=lambda m: m.proto.name):
             self._generate_root_helpers(g, root)
@@ -83,38 +86,6 @@ class LanceDBGenerator(Generator):
             if lancedb is not None and lancedb.enable:
                 roots.append(message)
         return roots
-
-    def _generate_lance_model(
-        self,
-        g: protogen.GeneratedFile,
-        message: protogen.Message,
-    ) -> None:
-        g.P(f'class {message.proto.name}(LanceModel):')
-        g.set_indent(4)
-        generate_docstring(g, message)
-
-        wrote_field = False
-        for field in message.fields:
-            if field.oneof and len(field.oneof.fields) > 1:
-                continue
-            g.P(f'{field.py_name}: {self._field_annotation(field)}')
-            generate_docstring(g, field)
-            wrote_field = True
-
-        for oneof in message.oneofs:
-            if len(oneof.fields) == 1:
-                continue
-            types = [self._field_type(field) for field in oneof.fields]
-            g.P(f'{oneof.proto.name}: typing.Union[{", ".join(types)}]')
-            generate_docstring(g, oneof)
-            wrote_field = True
-
-        if not wrote_field:
-            g.P('pass')
-
-        g.set_indent(0)
-        g.P()
-        g.P()
 
     def _generate_root_helpers(
         self,
