@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=schemas/sentiment_train_config.json
+run_name: sentiment
+synthesize_count: 4
+diversify_rounds: 1
+openai_model: gpt-4o
+test_size: 0.25
