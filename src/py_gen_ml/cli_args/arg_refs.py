@@ -25,7 +25,7 @@ def apply_args(model: TBaseModel, arg_ref_model: pydantic.BaseModel) -> TBaseMod
         TBaseModel: The model with the applied arguments.
     """
     out = model.model_copy()
-    for name, field_info in arg_ref_model.model_fields.items():
+    for name, field_info in type(arg_ref_model).model_fields.items():
         # Find shortcuts and replace the values in the given model
         if any(isinstance(arg_ref := m, ArgRef) for m in getattr(field_info, 'metadata', [])):
             current = out
@@ -36,7 +36,7 @@ def apply_args(model: TBaseModel, arg_ref_model: pydantic.BaseModel) -> TBaseMod
             if value is None:
                 continue
             setattr(current, field_in_container, value)
-        elif name in model.model_fields and (value := getattr(arg_ref_model, name)) is not None:
+        elif name in type(model).model_fields and (value := getattr(arg_ref_model, name)) is not None:
             setattr(out, name, value)
 
     return out
