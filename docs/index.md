@@ -6,57 +6,93 @@ hide:
 
 <div align="center">
   <img src="assets/images/logo.svg" alt="py-gen-ml logo" width="200" />
-  
+
   <h1>py-gen-ml</h1>
-  <p>Typed ML configuration tooling, generated from Protocol Buffer schemas.</p>
+  <p>Typed ML contracts from Protocol Buffers—across the whole lifecycle.</p>
 </div>
 
+## Project introduction
 
-## 🌟 Project Introduction
+`py-gen-ml` turns **your** protobuf schemas into typed adapters for the ML
+lifecycle: feature rows, labels, predictions, feedback, run configs, and metrics.
+A deterministic `protoc` plugin emits Pydantic models and optional tool adapters
+(LanceDB, Argilla, PydanticAI, LitServe, BentoML, MLflow, W&B, …). One schema is
+the source of truth; generators and small runtime [bridges](guides/bridges.md)
+hang off the same messages.
 
-`py-gen-ml` simplifies the configuration and management of machine learning projects. You define your config schema in [Protocol Buffers](https://protobuf.dev/) (protobufs). A deterministic `protoc` plugin then generates strongly typed Pydantic models, JSON Schemas, patch and sweep types, and optional Typer CLIs. The schema you write is the single source of truth from which the rest of the config tooling is derived.
+Experiment **configuration** (base / patch / sweep / CLI / YAML) is how you drive
+training runs from those schemas—load YAML, overlay patches, sample sweeps, and
+override fields from the command line.
 
-## 🧭 What this is (and isn't)
+## What this is (and isn't)
 
 **What this is:**
 
-- You author `.proto` files that describe your ML configuration.
-- You run `py-gen-ml`, which invokes the `protoc-gen-py-ml` plugin. That is ordinary schema-driven code generation.
-- From that schema you get base configs, patches, sweeps, JSON Schemas for YAML validation, CLI parsers, and optional factories.
+- You author `.proto` files that describe ML **contracts** (rows, predictions,
+  feedback, run configs, metrics—and training hyperparameters).
+- You mark roles with [`(pgml.kind)`](guides/message_kinds.md) and opt into tools
+  with `(pgml.<tool>).enable`.
+- You run `py-gen-ml` / `protoc-gen-py-ml` and get typed models plus adapters.
+- You keep training loops, servers, and HITL workflows in your code; generated
+  code owns schemas and glue.
 
 **What this isn't:**
 
-- Not an LLM. Nothing here invents schemas, protobufs, or training code from a prompt.
-- Not “AI generates your protobufs.” The direction is the opposite: **protobuf → ML config tooling**.
+- Not an LLM that invents schemas or training code from a prompt.
+- Not “AI generates your protobufs.” Direction is **protobuf → typed ML tooling**.
+- Not a replacement for Argilla, LitServe, MLflow, etc.—only the contract layer
+  and thin helpers around them.
 
-## 🔄 How it fits together
+## How it fits together
+
+```mermaid
+flowchart TB
+  proto["You write .proto + kinds"] --> plugin["py-gen-ml / protoc plugin"]
+  plugin --> base["Base / patch / sweep / CLI"]
+  plugin --> tools["Opt-in tool adapters"]
+  tools --> lance["LanceDB"]
+  tools --> arg["Argilla"]
+  tools --> pai["PydanticAI"]
+  tools --> serve["LitServe / BentoML"]
+  tools --> track["MLflow / W&B"]
+  base --> yourCode["Your training & serving code"]
+  tools --> yourCode
+  yourCode --> bridges["py_gen_ml.bridges"]
+```
+
+| Idea | Role |
+|------|------|
+| `(pgml.kind)` | Shared ML-contract role (`FEATURE_ROW`, `PREDICTION`, `FEEDBACK`, `RUN_CONFIG`, …) |
+| `(pgml.<tool>).enable` | Emit that tool’s adapter |
+| Base / patch / sweep / CLI | Experiment configs: YAML, patches, sweeps, and CLI overrides |
+| Bridges | Runtime helpers that compose **already generated** adapters |
+
+## Flagship path: sentiment flywheel
+
+The [Sentiment flywheel](example_projects/sentiment_flywheel.md) shows one proto
+driving **offline** synthesize → HITL → train → track and **online**
+serve → prediction → feedback → store:
 
 ```mermaid
 flowchart LR
-  proto["You write .proto"] --> cli["py-gen-ml / protoc plugin"]
-  cli --> base["Base Pydantic models"]
-  cli --> patch["Patch models"]
-  cli --> sweep["Sweep models"]
-  cli --> jsonSchema["JSON Schemas"]
-  cli --> typerCli["CLI args / entrypoint"]
-  base --> train["Your training code"]
-  patch --> train
-  sweep --> train
-  typerCli --> train
+  seed["IMDB seeds"] --> synth["PydanticAI"]
+  synth --> hitl["Argilla"]
+  hitl --> store["LanceDB"]
+  store --> train["Train + MLflow"]
+  train --> serve["LitServe"]
+  serve --> pred["PREDICTION"]
+  pred --> fb["FEEDBACK / re-label"]
+  fb --> store
 ```
 
-| Artifact | What it's for |
-|----------|----------------|
-| Base models | Load and validate full YAML configs |
-| Patch models | Overlay small experiment deltas on a base |
-| Sweep models | Define Optuna search spaces in YAML |
-| JSON Schemas | Validate YAML as you type in the IDE |
-| CLI / entrypoint | Override nested fields from the command line |
-| Factories | Optional `build()` helpers from `(pgml.factory)` |
+Start there if you want the full lifecycle picture. Use [CIFAR-10](example_projects/cifar10.md)
+when you care mainly about config → train → sweep.
 
-## ✨ Brief Overview
+## What codegen emits
 
-A real quick overview of what you can do with `py-gen-ml`:
+From one `.proto` you get experiment-config tooling **and** opt-in lifecycle
+adapters. Enable a generator with `(pgml.<tool>).enable` (and mark roles with
+[`(pgml.kind)`](guides/message_kinds.md)):
 
 <div class="grid cards" markdown>
 
@@ -65,10 +101,10 @@ A real quick overview of what you can do with `py-gen-ml`:
     ---
 
     ```proto
-    --8<-- "docs/snippets/proto/quickstart_b.proto:8:17"
+    --8<-- "docs/snippets/proto/sentiment_demo.proto:8:24"
     ```
 
--   :material-creation-outline:{ .lg .middle } __Generated Base Model__
+-   :material-creation-outline:{ .lg .middle } __Base / YAML model__
 
     ---
 
@@ -76,7 +112,7 @@ A real quick overview of what you can do with `py-gen-ml`:
     --8<-- "docs/snippets/src/pgml_out/quickstart_b_base.py:5:15"
     ```
 
--   :material-creation-outline:{ .lg .middle } __Generated Patch Config__
+-   :material-creation-outline:{ .lg .middle } __Patch__
 
     ---
 
@@ -84,9 +120,7 @@ A real quick overview of what you can do with `py-gen-ml`:
     --8<-- "docs/snippets/src/pgml_out/quickstart_b_patch.py:5:19"
     ```
 
-    ---
-
--   :material-creation-outline:{ .lg .middle } __Generated Sweep Config__
+-   :material-creation-outline:{ .lg .middle } __Sweep__
 
     ---
 
@@ -94,150 +128,120 @@ A real quick overview of what you can do with `py-gen-ml`:
     --8<-- "docs/snippets/src/pgml_out/quickstart_b_sweep.py:9:19"
     ```
 
-    ---
-
-
-
--   :material-creation-outline:{ .lg .middle } __Generated CLI Parser__
+-   :material-creation-outline:{ .lg .middle } __CLI parser__
 
     ---
 
     ```py
     --8<-- "docs/snippets/src/pgml_out/quickstart_b_cli_args.py:11:28"
-    # Remaining code...
+    # …
     ```
 
--   :material-creation-outline:{ .lg .middle } __Generated Entrypoint__
+-   :material-database-outline:{ .lg .middle } __LanceDB__
 
     ---
 
     ```py
-    --8<-- "docs/snippets/src/pgml_out/mlp_quickstart_entrypoint.py:22:35"
-        # Remaining code....
+    --8<-- "docs/snippets/src/pgml_out/sentiment_demo_lancedb.py:8:30"
     ```
 
--   :material-arm-flex-outline:{ .lg .middle } __Flexible YAML Config__
+-   :material-label-outline:{ .lg .middle } __Argilla__
 
     ---
 
-    ```yaml
-    # base.yaml
-    layers:
-    - num_units: 100
-      activation: "#/_defs/activation"
-    - num_units: 50
-      activation: "#/_defs/activation"
-    optimizer:
-      type: adamw
-      learning_rate: 1e-4
-      schedule: '!cosine_schedule.yaml'
-    _defs_:
-      activation: relu
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/sentiment_demo_argilla.py:53:71"
     ```
 
-    ```yaml
-    # cosine_schedule.yaml
-    min_lr: 1e-5
-    max_lr: 1e-3
-    ```
-
--   :material-arm-flex-outline:{ .lg .middle } __Flexible YAML sweeps__
+-   :material-robot-outline:{ .lg .middle } __PydanticAI__
 
     ---
 
-    ```yaml
-    layers:
-    - num_units:  # Sample from a list
-      - 100
-      - 50
-      activation: "#/_defs/activation"
-    - num_units:  # Sample from a range
-        low: 10
-        high: 100
-        step: 10
-      activation: "#/_defs/activation"
-    _defs_:
-      activation: relu
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/sentiment_demo_pydantic_ai.py:152:160"
     ```
 
+-   :material-api:{ .lg .middle } __LitServe__
 
--   :material-arm-flex-outline:{ .lg .middle } __Instant YAML validation w/ JSON schemas__
+    ---
+
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/sentiment_demo_litserve.py:101:119"
+    ```
+
+-   :material-chart-line:{ .lg .middle } __MLflow__
+
+    ---
+
+    ```py
+    --8<-- "docs/snippets/src/pgml_out/sentiment_demo_mlflow.py:125:137"
+    ```
+
+-   :material-file-check-outline:{ .lg .middle } __YAML + JSON Schema__
 
     ---
 
     ![type:video](assets/video/zoom-in-yaml-parsing.webm)
 
-
 </div>
 
+**Experiment config:** [YAML](guides/defining_yaml_files.md) ·
+[Patching](guides/patching.md) · [Sweeps](guides/sweep.md) ·
+[CLI](guides/cli_argument_parsing.md)
 
-## 🔑 Key Features
+**Lifecycle:** [LanceDB](guides/lancedb.md) · [Argilla](guides/argilla.md) ·
+[PydanticAI](guides/pydantic_ai.md) · [LitServe](guides/litserve.md) ·
+[BentoML](guides/bentoml.md) · [MLflow](guides/mlflow.md) · [W&B](guides/wandb.md) ·
+[bridges](guides/bridges.md)
 
-**📌 Single Source of Truth**:
-
-- The Protobuf schema provides a centralized definition for your configurations.
-
-**🔧 Flexible Configuration Management**:
-
-- **Minimal Change Amplification**: Automatically generated code reduces cascading manual changes when modifying configurations.
-- **Flexible Patching**: Easily modify base configurations with patches for quick experimentation.
-- **Flexible YAML**: Use human-readable YAML with support for advanced references within and across files.
-- **Hyperparameter Sweeps**: Effortlessly define and manage hyperparameter tuning.
-- **CLI Argument Parsing**: Automatically generate command-line interfaces from your configuration schemas.
-- **Factories**: Optionally generate `build()` helpers that instantiate Python classes from config fields.
-
-**✅ Validation and Type Safety**:
-
-- **JSON Schema Generation**: Easily validate your YAML content as you type.
-- **Strong Typing**: The generated code comes with strong typing that will help you, your IDE, the type checker and your team to better understand the codebase and to build more robust ML code.
-
-## 🚦 Getting Started
-
-To start using py-gen-ml, you can install it via pip:
+## Getting started
 
 ```console
 pip install py-gen-ml
 ```
 
-For a quick example of how to use py-gen-ml in your project, check out our [Quick Start Guide](quickstart.md).
+Optional extras match the tools you enable (`lancedb`, `argilla`, `pydantic-ai`,
+`litserve`, `bentoml`, `mlflow`, `wandb`, `bridges`, …).
 
-## 💡 Motivation
+- New to the library → [Quickstart](quickstart.md) (config loop in minutes)
+- Want the lifecycle story → [Sentiment flywheel](example_projects/sentiment_flywheel.md)
+- Schema roles → [Message kinds](guides/message_kinds.md)
 
-Machine learning projects often involve complex configurations with many interdependent parameters. Changing one config (e.g., the dataset) might require adjusting several other parameters for optimal performance. Traditional approaches to organizing configs can become unwieldy and tightly coupled with code, making changes difficult.
+## Motivation
 
-`py-gen-ml` addresses these challenges by:
+ML systems share the same pain in two places:
 
-1. 📊 Providing a single, strongly-typed schema definition for configurations. You write that schema in protobuf.
-2. 🔄 Generating deterministic code to manage configuration changes automatically (base, patch, sweep, CLI).
-3. 📝 Offering flexible YAML configurations with advanced referencing and variable support.
-4. 🛠️ Generating JSON schemas for real-time YAML validation.
-5. 🔌 Seamlessly integrating into your workflow with multiple experiment running options:
-   - Single experiments with specific config values
-   - Base config patching
-   - Parameter sweeps via JSON schema validated YAML files
-   - Quick value overrides via a generated CLI parser
-   - Arbitrary combinations of the above options
+1. **Contracts drift** across synthesis, labeling, storage, serving, and tracking
+   (parallel Pydantic models, ad-hoc JSON, copy-pasted schemas).
+2. **Configs amplify change** (one hyperparameter tweak forces edits in CLI,
+   sweep YAML, and validation).
 
-This approach results in more robust ML code, leveraging strong typing and IDE support while avoiding the burden of change amplification in complex configuration structures.
+`py-gen-ml` attacks both from protobuf: regenerate typed adapters when the
+schema changes, keep tool SDKs as the runtime, and keep experiment variation
+(YAML patch / sweep / CLI) generated instead of hand-maintained.
 
-## 🎯 When to use `py-gen-ml`
+## When to use it
 
-Consider using `py-gen-ml` when you need to:
+- You want one schema for **feature / prediction / feedback / run / metric**
+  messages across tools
+- You run HITL, synthesis, serving, or tracking and hate duplicating types
+- You also need robust **experiment config** (patch, sweep, CLI, JSON Schema)
 
-- 📈 Manage complex ML projects more efficiently
-- 🔬 Streamline experiment running and hyperparameter tuning
-- 🛡️ Reduce the impact of configuration changes on your workflow
-- 💻 Leverage type safety and IDE support in your ML workflows
+## Where to go from here
 
-## 📚 Where to go from here
+**Lifecycle**
 
-- [Quickstart](quickstart.md): Write a proto, generate models, load YAML, patch, sweep, and run a CLI.
-- [py-gen-ml command](py-gen-ml-command.md): Flags, outputs, and project layout.
-- [Protobuf crash course](guides/protobuf.md): How schemas map to generated tooling.
-- [YAML configuration](guides/defining_yaml_files.md): Human-readable configs with JSON Schema validation.
-- [Patching](guides/patching.md): Express experiments as deltas on a base config.
-- [Parameter Sweeps](guides/sweep.md): Optuna search spaces from generated sweep models.
-- [CLI argument parsing](guides/cli_argument_parsing.md): Override nested fields from the command line.
-- [Factories](guides/builders.md): Generate `build()` helpers from `(pgml.factory)`.
-- [CIFAR-10 example](example_projects/cifar10.md): An end-to-end training project using `py-gen-ml`.
-- [Sentiment flywheel](example_projects/sentiment_flywheel.md): Synthesize IMDB-style reviews, review in Argilla, train + track with MLflow.
+- [Message kinds](guides/message_kinds.md)
+- [Sentiment flywheel](example_projects/sentiment_flywheel.md)
+- [PydanticAI](guides/pydantic_ai.md) · [Argilla](guides/argilla.md) ·
+  [LanceDB](guides/lancedb.md) · [bridges](guides/bridges.md)
+- [LitServe](guides/litserve.md) · [BentoML](guides/bentoml.md)
+- [MLflow](guides/mlflow.md) · [W&B](guides/wandb.md)
+
+**Configuration**
+
+- [Quickstart](quickstart.md) · [py-gen-ml command](py-gen-ml-command.md)
+- [YAML](guides/defining_yaml_files.md) · [Patching](guides/patching.md) ·
+  [Sweeps](guides/sweep.md) · [CLI](guides/cli_argument_parsing.md) ·
+  [Factories](guides/builders.md)
+- [CIFAR-10](example_projects/cifar10.md)

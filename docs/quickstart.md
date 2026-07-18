@@ -1,8 +1,11 @@
-# 🚀 Quick Start Guide
+# Quick Start Guide
 
-## 🌟 Introduction
+## Introduction
 
-`py-gen-ml` turns **your** protobuf config schema into typed ML configuration tooling. You write the `.proto`. The `py-gen-ml` CLI runs a deterministic `protoc` plugin that emits Pydantic models, JSON Schemas, patches, sweeps, and optional CLIs. You can load YAML, overlay experiments, and sweep hyperparameters without hand-maintaining parallel config types.
+`py-gen-ml` turns **your** protobuf schemas into typed ML tooling. Start from
+[lifecycle contracts](index.md) (kinds, flywheel, tool adapters), or use this
+quickstart for **experiment configuration**: write a `.proto`, generate base /
+patch / sweep models, load YAML, and run a CLI.
 
 !!! note
     While `py-gen-ml` currently doesn't fully utilize the language-neutral or platform-neutral features of protobuf, these capabilities are available for future expansion. If you're new to protobufs, you can learn more about them [here](https://developers.google.com/protocol-buffers).

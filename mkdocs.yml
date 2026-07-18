@@ -1,7 +1,7 @@
 site_name: py-gen-ml
 site_url: https://jostosh.github.io/py-gen-ml/
 site_author: Jos van de Wolfshaar
-site_description: Typed ML configuration tooling generated from Protocol Buffer schemas
+site_description: Typed ML contracts from Protocol Buffer schemas across the lifecycle
 
 repo_name: jostosh/py-gen-ml
 repo_url: https://github.com/jostosh/py-gen-ml
@@ -94,7 +94,17 @@ nav:
   - Quick Start: quickstart.md
   - py-gen-ml script: py-gen-ml-command.md
   - Protobuf crash course: guides/protobuf.md
-- Guides:
+  - Message kinds: guides/message_kinds.md
+- Lifecycle:
+  - PydanticAI synthesis: guides/pydantic_ai.md
+  - Argilla datasets: guides/argilla.md
+  - LanceDB schemas: guides/lancedb.md
+  - Cross-tool bridges: guides/bridges.md
+  - LitServe services: guides/litserve.md
+  - BentoML services: guides/bentoml.md
+  - MLflow tracking: guides/mlflow.md
+  - Weights & Biases tracking: guides/wandb.md
+- Configuration:
   - YAML configuration: guides/defining_yaml_files.md
   - Patching: guides/patching.md
   - Sweeps: guides/sweep.md
@@ -103,18 +113,9 @@ nav:
   - Enums: guides/enums.md
   - Default values: guides/defaults.md
   - Unions: guides/oneofs.md
-  - Message kinds: guides/message_kinds.md
-  - LanceDB schemas: guides/lancedb.md
-  - BentoML services: guides/bentoml.md
-  - LitServe services: guides/litserve.md
-  - PydanticAI synthesis: guides/pydantic_ai.md
-  - Argilla datasets: guides/argilla.md
-  - Cross-tool bridges: guides/bridges.md
-  - MLflow tracking: guides/mlflow.md
-  - Weights & Biases tracking: guides/wandb.md
 - Example projects:
-  - CIFAR-10: example_projects/cifar10.md
   - Sentiment flywheel: example_projects/sentiment_flywheel.md
+  - CIFAR-10: example_projects/cifar10.md
 - Reference:
   - YamlBaseModel: reference/yaml.md
   - pgml_cmd: reference/command_from_func.md

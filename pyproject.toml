@@ -1,7 +1,7 @@
 [project]
 name = "py-gen-ml"
 dynamic = ["version"]
-description = "Typed ML configuration tooling generated from Protocol Buffer schemas."
+description = "Typed ML contracts from Protocol Buffer schemas across the lifecycle."
 license = {file = "LICENSE"}
 authors = [
     {name = "Jos van de Wolfshaar", email = "jos.vandewolfshaar@gmail.com"},

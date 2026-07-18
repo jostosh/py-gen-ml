@@ -1,8 +1,8 @@
 # `py-gen-ml`
 
-Generate typed ML configuration tooling from a protobuf definition.
+Generate typed ML contracts and configuration tooling from a protobuf definition.
 
-This command is the core of the `py-gen-ml` toolbox. You pass it one or more `.proto` files that **you** authored. Under the hood it runs `protoc` with the `protoc-gen-py-ml` plugin. That is ordinary, deterministic schema-driven code generation. It then writes Pydantic models and JSON Schemas for your project.
+This command is the core of the `py-gen-ml` toolbox. You pass it one or more `.proto` files that **you** authored. Under the hood it runs `protoc` with the `protoc-gen-py-ml` plugin. That is ordinary, deterministic schema-driven code generation. It writes Pydantic models and JSON Schemas, plus optional lifecycle adapters when you enable generators such as `lancedb`, `argilla`, `pydantic_ai`, `litserve`, `bentoml`, `mlflow`, or `wandb`.
 
 By default, generated Python lands in `src/pgml_out`. If your proto is called `example.proto`, you get:
 
