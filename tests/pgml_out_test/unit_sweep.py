@@ -554,3 +554,13 @@ MetricSetTestSweepField = typing.Union[
     MetricSetTestSweep,
     pgml.NestedChoice[MetricSetTestSweep, patch.MetricSetTestPatch],  # type: ignore
 ]
+
+
+class ModelRegistryTestSweep(pgml.Sweeper[patch.ModelRegistryTestPatch]):
+    """Model Registry contract (signature + register / resolve helpers)."""
+
+
+ModelRegistryTestSweepField = typing.Union[
+    ModelRegistryTestSweep,
+    pgml.NestedChoice[ModelRegistryTestSweep, patch.ModelRegistryTestPatch],  # type: ignore
+]

@@ -225,14 +225,20 @@ class TrackingField(_message.Message):
     def __init__(self, slot: _Optional[_Union[TrackingSlot, str]] = ..., name: _Optional[str] = ...) -> None: ...
 
 class MLflow(_message.Message):
-    __slots__ = ("enable", "experiment_name", "run_name_field")
+    __slots__ = ("enable", "experiment_name", "run_name_field", "registered_model_name", "signature_input", "signature_output")
     ENABLE_FIELD_NUMBER: _ClassVar[int]
     EXPERIMENT_NAME_FIELD_NUMBER: _ClassVar[int]
     RUN_NAME_FIELD_FIELD_NUMBER: _ClassVar[int]
+    REGISTERED_MODEL_NAME_FIELD_NUMBER: _ClassVar[int]
+    SIGNATURE_INPUT_FIELD_NUMBER: _ClassVar[int]
+    SIGNATURE_OUTPUT_FIELD_NUMBER: _ClassVar[int]
     enable: bool
     experiment_name: str
     run_name_field: str
-    def __init__(self, enable: bool = ..., experiment_name: _Optional[str] = ..., run_name_field: _Optional[str] = ...) -> None: ...
+    registered_model_name: str
+    signature_input: str
+    signature_output: str
+    def __init__(self, enable: bool = ..., experiment_name: _Optional[str] = ..., run_name_field: _Optional[str] = ..., registered_model_name: _Optional[str] = ..., signature_input: _Optional[str] = ..., signature_output: _Optional[str] = ...) -> None: ...
 
 class Wandb(_message.Message):
     __slots__ = ("enable", "project", "run_name_field")

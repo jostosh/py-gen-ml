@@ -240,3 +240,7 @@ class MetricSetTestPatch(pgml.YamlBaseModel):
 
     accuracy: typing.Optional[float] = None
     loss: typing.Optional[float] = None
+
+
+class ModelRegistryTestPatch(pgml.YamlBaseModel):
+    """Model Registry contract (signature + register / resolve helpers)."""

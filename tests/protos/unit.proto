@@ -330,3 +330,13 @@ message MetricSetTest {
     float accuracy = 1;
     float loss = 2;
 }
+
+// Model Registry contract (signature + register / resolve helpers).
+message ModelRegistryTest {
+    option (pgml.mlflow) = {
+        enable: true;
+        registered_model_name: "unit_classifier";
+        signature_input: "PredictRequestTest";
+        signature_output: "PredictResponseTest";
+    };
+}

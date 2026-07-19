@@ -245,3 +245,7 @@ class MetricSetTest(pgml.YamlBaseModel):
 
     accuracy: float
     loss: float
+
+
+class ModelRegistryTest(pgml.YamlBaseModel):
+    """Model Registry contract (signature + register / resolve helpers)."""

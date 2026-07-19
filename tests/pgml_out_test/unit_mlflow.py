@@ -44,6 +44,12 @@ class MetricSetTest(BaseModel):
     loss: float
 
 
+class ModelRegistryTest(BaseModel):
+    """Model Registry contract (signature + register / resolve helpers)."""
+
+    pass
+
+
 _metric_set_test_METRIC_PATHS: typing.List[typing.Tuple[str, str]] = [
     ('accuracy', 'accuracy'),
     ('loss', 'loss'),
@@ -63,6 +69,54 @@ def log_metric_set_test(
 ) -> None:
     """Log ``MetricSetTest`` metrics via ``mlflow.log_metrics``."""
     mlflow.log_metrics(metric_set_test_metrics(metrics), step=step)
+
+
+MODEL_REGISTRY_TEST_REGISTERED_NAME = 'unit_classifier'
+
+
+def model_registry_test_signature() -> typing.Any:
+    """Build an MLflow ``ModelSignature`` for ``ModelRegistryTest``."""
+    from mlflow.models.signature import ModelSignature
+    from mlflow.types.schema import Array, ColSpec, DataType, Schema
+
+    return ModelSignature(
+        inputs=Schema([ColSpec(Array(DataType.float), 'features')]),
+        outputs=Schema([ColSpec(DataType.integer, 'label'),
+                        ColSpec(DataType.float, 'score')],),
+    )
+
+
+def register_model_registry_test(
+    model_uri: str,
+    *,
+    name: typing.Optional[str] = None,
+    await_registration_for: int = 300,
+) -> typing.Any:
+    """Register ``model_uri`` as ``unit_classifier`` (or ``name``) in the MLflow Model Registry."""
+    model_name = name if name is not None else MODEL_REGISTRY_TEST_REGISTERED_NAME
+    return mlflow.register_model(
+        model_uri,
+        model_name,
+        await_registration_for=await_registration_for,
+    )
+
+
+def resolve_model_registry_test_uri(
+    *,
+    name: typing.Optional[str] = None,
+    stage: typing.Optional[str] = None,
+    version: typing.Optional[str] = None,
+    alias: typing.Optional[str] = None,
+) -> str:
+    """Build a ``models:/...`` URI for the ``unit_classifier`` registry entry."""
+    model_name = name if name is not None else MODEL_REGISTRY_TEST_REGISTERED_NAME
+    if alias is not None:
+        return f'models:/{model_name}@{alias}'
+    if version is not None:
+        return f'models:/{model_name}/{version}'
+    if stage is not None:
+        return f'models:/{model_name}/{stage}'
+    return f'models:/{model_name}/latest'
 
 
 _run_config_test_PARAM_PATHS: typing.List[typing.Tuple[str, str]] = [
