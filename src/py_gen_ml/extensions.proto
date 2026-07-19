@@ -165,13 +165,19 @@ message TrackingField {
 	string name = 2;
 }
 
-// Opt a message into MLflow run / param / metric helpers.
+// Opt a message into MLflow run / param / metric / model-registry helpers.
 message MLflow {
 	bool enable = 1;
 	// Optional default experiment name for start_*_run helpers.
 	string experiment_name = 2;
 	// Optional field name on a RUN_CONFIG used as the MLflow run name.
 	string run_name_field = 3;
+	// When set, emit Model Registry helpers (signature / register / resolve).
+	string registered_model_name = 4;
+	// Protobuf message name used as ModelSignature inputs (same .proto file).
+	string signature_input = 5;
+	// Protobuf message name used as ModelSignature outputs (same .proto file).
+	string signature_output = 6;
 }
 
 // Opt a message into Weights & Biases init / config / metric helpers.

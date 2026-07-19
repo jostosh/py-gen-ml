@@ -21,15 +21,23 @@ def lance_db_record_test_table_name() -> str:
     return 'lance_records'
 
 
+def lance_db_record_test_merge_on() -> typing.List[str]:
+    """Join columns for ``merge_insert`` / ``merge_rows`` (fields with ``(pgml.lancedb_field).merge_key``)."""
+    return []
+
+
 def create_lance_db_record_test_table(
     db: DBConnection,
     *,
     name: typing.Optional[str] = None,
+    exist_ok: bool = True,
     **kwargs: typing.Any,
 ) -> LanceTable:
     """Create a LanceDB table whose schema is :class:`LanceDBRecordTest`.
 
     ``db`` is a connection from ``lancedb.connect(...)``.
+    By default ``exist_ok=True`` opens the table if it already exists.
+    Pass ``mode="overwrite"`` (via kwargs) to replace an existing table.
     Load rows for training via Arrow (``table.to_arrow()``) or LanceDB's
     ``Permutation`` streaming API, then hand tensors to
     ``torch.utils.data.DataLoader`` as needed.
@@ -37,5 +45,6 @@ def create_lance_db_record_test_table(
     return db.create_table(
         name or lance_db_record_test_table_name(),
         schema=LanceDBRecordTest,
+        exist_ok=exist_ok,
         **kwargs,
     )

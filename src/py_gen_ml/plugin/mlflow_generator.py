@@ -30,13 +30,34 @@ from py_gen_ml.typing.some import some
 
 logger = setup_logger(__name__)
 
+# Maps protogen field kinds to ``mlflow.types.schema.DataType`` attribute names.
+_MLFLOW_DATA_TYPE: dict[protogen.Kind, str] = {
+    protogen.Kind.DOUBLE: 'double',
+    protogen.Kind.FLOAT: 'float',
+    protogen.Kind.INT64: 'long',
+    protogen.Kind.UINT64: 'long',
+    protogen.Kind.INT32: 'integer',
+    protogen.Kind.FIXED64: 'long',
+    protogen.Kind.FIXED32: 'integer',
+    protogen.Kind.BOOL: 'boolean',
+    protogen.Kind.STRING: 'string',
+    protogen.Kind.BYTES: 'binary',
+    protogen.Kind.UINT32: 'integer',
+    protogen.Kind.ENUM: 'string',
+    protogen.Kind.SFIXED32: 'integer',
+    protogen.Kind.SFIXED64: 'long',
+    protogen.Kind.SINT32: 'integer',
+    protogen.Kind.SINT64: 'long',
+}
+
 
 class MLflowGenerator(Generator):
     """Emit MLflow adapters for messages with ``(pgml.mlflow).enable``.
 
     ``RUN_CONFIG`` roots get ``start_*_run`` / ``log_*_params``; ``METRIC_SET``
-    roots get ``log_*_metrics``. Field slots come from ``(pgml.tracking_field)``
-    with kind-based defaults (PARAM / METRIC).
+    roots get ``log_*_metrics``. When ``registered_model_name`` is set, emit
+    Model Registry helpers (signature / register / resolve). Field slots come
+    from ``(pgml.tracking_field)`` with kind-based defaults (PARAM / METRIC).
     """
 
     name: ClassVar[str] = 'mlflow'
@@ -83,7 +104,7 @@ class MLflowGenerator(Generator):
             )
 
         for root in sorted(roots, key=lambda m: m.proto.name):
-            self._generate_root_helpers(g, root)
+            self._generate_root_helpers(g, root, file)
 
         self._run_yapf(g)
 
@@ -126,23 +147,168 @@ class MLflowGenerator(Generator):
         self,
         g: protogen.GeneratedFile,
         root: protogen.Message,
+        file: protogen.File,
     ) -> None:
         opts = some(get_extension_value(root, 'mlflow', MLflow))
         kind = get_message_kind(root)
         class_name = root.proto.name
         helper = snake_case(class_name)
 
+        if opts.registered_model_name:
+            self._emit_registry_helpers(g, root, opts, file, helper)
+
         if kind == RUN_CONFIG:
             self._emit_run_config_helpers(g, root, opts, class_name, helper)
         elif kind == METRIC_SET:
             self._emit_metric_set_helpers(g, root, class_name, helper)
-        else:
+        elif not opts.registered_model_name:
             logger.warning(
                 'Message %s has (pgml.mlflow).enable but kind is not RUN_CONFIG '
-                'or METRIC_SET; emitting flatten helpers only for PARAM/METRIC/TAG',
+                'or METRIC_SET and registered_model_name is unset; emitting '
+                'flatten helpers only for PARAM/METRIC/TAG',
                 class_name,
             )
             self._emit_generic_log_helpers(g, root, class_name, helper)
+
+    def _emit_registry_helpers(
+        self,
+        g: protogen.GeneratedFile,
+        root: protogen.Message,
+        opts: MLflow,
+        file: protogen.File,
+        helper: str,
+    ) -> None:
+        registered_name = opts.registered_model_name
+        const_name = f'{helper.upper()}_REGISTERED_NAME'
+        g.P(f'{const_name} = {registered_name!r}')
+        g.P()
+        g.P()
+
+        input_cols = self._col_specs_literal(file, opts.signature_input, root.proto.name, 'signature_input')
+        output_cols = self._col_specs_literal(file, opts.signature_output, root.proto.name, 'signature_output')
+
+        g.P(f'def {helper}_signature() -> typing.Any:')
+        g.set_indent(4)
+        g.P(f'"""Build an MLflow ``ModelSignature`` for ``{root.proto.name}``."""')
+        g.P('from mlflow.models.signature import ModelSignature')
+        g.P('from mlflow.types.schema import Array, ColSpec, DataType, Schema')
+        g.P()
+        g.P('return ModelSignature(')
+        g.set_indent(8)
+        g.P(f'inputs=Schema({input_cols}),')
+        g.P(f'outputs=Schema({output_cols}),')
+        g.set_indent(4)
+        g.P(')')
+        g.set_indent(0)
+        g.P()
+        g.P()
+
+        g.P(
+            f'def register_{helper}('
+            f'model_uri: str, *, '
+            f'name: typing.Optional[str] = None, '
+            f'await_registration_for: int = 300'
+            f') -> typing.Any:',
+        )
+        g.set_indent(4)
+        g.P(
+            f'"""Register ``model_uri`` as ``{registered_name}`` (or ``name``) '
+            f'in the MLflow Model Registry."""',
+        )
+        g.P(f'model_name = name if name is not None else {const_name}')
+        g.P(
+            'return mlflow.register_model('
+            'model_uri, model_name, await_registration_for=await_registration_for)',
+        )
+        g.set_indent(0)
+        g.P()
+        g.P()
+
+        g.P(
+            f'def resolve_{helper}_uri('
+            f'*, '
+            f'name: typing.Optional[str] = None, '
+            f'stage: typing.Optional[str] = None, '
+            f'version: typing.Optional[str] = None, '
+            f'alias: typing.Optional[str] = None'
+            f') -> str:',
+        )
+        g.set_indent(4)
+        g.P(
+            f'"""Build a ``models:/...`` URI for the ``{registered_name}`` registry entry."""',
+        )
+        g.P(f'model_name = name if name is not None else {const_name}')
+        g.P('if alias is not None:')
+        g.set_indent(8)
+        g.P('return f"models:/{model_name}@{alias}"')
+        g.set_indent(4)
+        g.P('if version is not None:')
+        g.set_indent(8)
+        g.P('return f"models:/{model_name}/{version}"')
+        g.set_indent(4)
+        g.P('if stage is not None:')
+        g.set_indent(8)
+        g.P('return f"models:/{model_name}/{stage}"')
+        g.set_indent(4)
+        g.P('return f"models:/{model_name}/latest"')
+        g.set_indent(0)
+        g.P()
+        g.P()
+
+    def _col_specs_literal(
+        self,
+        file: protogen.File,
+        message_name: str,
+        root_name: str,
+        option_name: str,
+    ) -> str:
+        if not message_name:
+            logger.warning(
+                'Message %s has registered_model_name but empty %s; '
+                'emitting an empty Schema',
+                root_name,
+                option_name,
+            )
+            return '[]'
+
+        message = self._find_message(file, message_name)
+        if message is None:
+            raise ValueError(
+                f'(pgml.mlflow).{option_name}={message_name!r} on {root_name} '
+                f'was not found in {file.proto.name}',
+            )
+
+        specs: list[str] = []
+        for field in message.fields:
+            if field.kind == protogen.Kind.MESSAGE:
+                logger.warning(
+                    'Skipping nested message field %s.%s in MLflow signature '
+                    '(scalars / repeated scalars only)',
+                    message_name,
+                    field.proto.name,
+                )
+                continue
+            type_attr = _MLFLOW_DATA_TYPE.get(field.kind)
+            if type_attr is None:
+                logger.warning(
+                    'Skipping unsupported field kind %s on %s.%s for MLflow signature',
+                    field.kind,
+                    message_name,
+                    field.proto.name,
+                )
+                continue
+            dtype = f'DataType.{type_attr}'
+            if field.is_list():
+                dtype = f'Array({dtype})'
+            specs.append(f'ColSpec({dtype}, {field.proto.name!r})')
+        return '[' + ', '.join(specs) + ']'
+
+    @staticmethod
+    def _find_message(file: protogen.File, name: str) -> Optional[protogen.Message]:
+        for message in file.messages:
+            if message.proto.name == name:
+                return message
+        return None
 
     def _emit_run_config_helpers(
         self,
@@ -298,5 +464,5 @@ mlflow_spec = GeneratorSpec(
     name='mlflow',
     factory=lambda plugin: MLflowGenerator(plugin),
     enabled_by_default=False,
-    description='MLflow run/param/metric helpers for (pgml.mlflow) messages.',
+    description='MLflow run/param/metric/registry helpers for (pgml.mlflow) messages.',
 )
