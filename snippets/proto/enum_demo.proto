@@ -1,0 +1,20 @@
+// enum_demo.proto
+syntax = "proto3";
+
+package enum_demo;
+
+// Activation function
+enum Activation {
+    // ReLU activation
+    RELU = 0;
+    // Gelu activation
+    GELU = 1;
+}
+
+// MLP configuration
+message MLP {
+    // Activation function
+    Activation activation = 1;
+    // Number of layers
+    uint32 num_layers = 2;
+}

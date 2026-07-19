@@ -1,0 +1,228 @@
+{
+  "$defs": {
+    "ConvBlockPatch": {
+      "description": "Conv block",
+      "properties": {
+        "out_channels": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Out Channels"
+        },
+        "kernel_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Kernel Size"
+        },
+        "activation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Activation"
+        }
+      },
+      "title": "ConvBlockPatch",
+      "type": "object"
+    },
+    "ConvNetPatch": {
+      "description": "Convolutional neural network configuration",
+      "properties": {
+        "layers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ConvBlockPatch"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Layers"
+        }
+      },
+      "title": "ConvNetPatch",
+      "type": "object"
+    },
+    "TransformerPatch": {
+      "description": "Transformer configuration",
+      "properties": {
+        "num_layers": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Layers"
+        },
+        "num_heads": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Heads"
+        },
+        "activation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Activation"
+        }
+      },
+      "title": "TransformerPatch",
+      "type": "object"
+    }
+  },
+  "description": "Model configuration",
+  "properties": {
+    "backbone": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TransformerPatch"
+        },
+        {
+          "$ref": "#/$defs/ConvNetPatch"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "title": "Backbone"
+    },
+    "_defs_": {}
+  },
+  "required": [
+    "backbone"
+  ],
+  "title": "ModelPatch",
+  "type": "object"
+}

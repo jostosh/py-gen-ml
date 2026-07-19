@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package demo;
+
+import "py_gen_ml/extensions.proto";
+
+// Labeled movie-review example for sentiment classification.
+// Field comments become JSON Schema descriptions for PydanticAI NativeOutput.
+message SentimentExample {
+    option (pgml.kind) = FEATURE_ROW;
+    option (pgml.pydantic_ai) = {
+        enable: true;
+    };
+    option (pgml.argilla) = {
+        enable: true;
+        dataset_name: "imdb_sentiment";
+    };
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "sentiment_examples";
+    };
+    option (pgml.mapper_config) = {
+        enable: true;
+    };
+
+    // Stable row id (Argilla metadata; not a primary UI field).
+    string id = 1 [
+        (pgml.argilla_field) = { slot: METADATA; },
+        (pgml.lancedb_field) = { merge_key: true }
+    ];
+
+    // Provenance of the row: "imdb" for seed reviews, "synthetic" for LLM-generated ones.
+    string source = 2 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+
+    // Full movie-review text in the style of IMDB user reviews (may include spoilers,
+    // informal tone, and mixed praise/criticism). Used as the classifier input.
+    string text = 3 [(pgml.argilla_field) = {
+        slot: FIELD;
+        field_type: "text";
+        required: true;
+    }];
+
+    // Binary sentiment of the review: "negative" or "positive".
+    string sentiment = 4 [(pgml.argilla_field) = {
+        slot: QUESTION;
+        question_type: "label";
+        labels: ["negative", "positive"];
+        required: true;
+    }];
+}
+
+// Hyperparameters for a sentiment flywheel training run.
+message SentimentTrainConfig {
+    option (pgml.kind) = RUN_CONFIG;
+    option (pgml.cli) = {
+        enable: true;
+    };
+    option (pgml.mlflow) = {
+        enable: true;
+        experiment_name: "imdb_sentiment";
+        run_name_field: "run_name";
+    };
+
+    // Human-readable run name (logged as a tracker tag).
+    string run_name = 1 [
+        (pgml.default).string = "sentiment",
+        (pgml.tracking_field) = { slot: TAG }
+    ];
+    // Number of synthetic examples requested per diversify round.
+    int32 synthesize_count = 2 [(pgml.default).int32 = 4];
+    // Extra synthesis rounds that feed prior outputs back as examples.
+    int32 diversify_rounds = 3 [(pgml.default).int32 = 1];
+    // OpenAI / Azure deployment name used for synthesis.
+    string openai_model = 4 [(pgml.default).string = "gpt-4o"];
+    // TF-IDF + logistic regression holdout fraction.
+    float test_size = 5 [(pgml.default).float = 0.25];
+}
+
+// Holdout metrics from the sentiment classifier.
+message SentimentMetrics {
+    option (pgml.kind) = METRIC_SET;
+    option (pgml.mlflow) = {
+        enable: true;
+    };
+
+    float accuracy = 1;
+    int32 n_train = 2;
+    int32 n_test = 3;
+    int32 n_labeled = 4;
+}
+
+// Inference request for the online sentiment classifier.
+message SentimentPredictRequest {
+    option (pgml.kind) = FEATURE_ROW;
+
+    // Stable sample id (links prediction and feedback rows).
+    string id = 1;
+    // Review text to classify.
+    string text = 2;
+}
+
+// Model output for one scored review (separate from the labeled training row).
+message SentimentPrediction {
+    option (pgml.kind) = PREDICTION;
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "sentiment_predictions";
+    };
+
+    // Sample id matching SentimentPredictRequest.id.
+    string sample_id = 1 [(pgml.lancedb_field) = { merge_key: true }];
+    // Review text that was scored.
+    string text = 2;
+    // Predicted sentiment: "negative" or "positive".
+    string sentiment = 3;
+    // Model confidence for the predicted class.
+    float score = 4;
+    // Deployed model / pipeline version tag.
+    string model_version = 5;
+}
+
+// Human correction / re-label for a scored review.
+message SentimentFeedback {
+    option (pgml.kind) = FEEDBACK;
+    option (pgml.argilla) = {
+        enable: true;
+        dataset_name: "imdb_sentiment_feedback";
+    };
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "sentiment_feedback";
+    };
+
+    // Sample id matching SentimentPrediction.sample_id.
+    string sample_id = 1 [
+        (pgml.argilla_field) = { slot: METADATA; },
+        (pgml.lancedb_field) = { merge_key: true }
+    ];
+
+    // Review text shown to the annotator.
+    string text = 2 [(pgml.argilla_field) = {
+        slot: FIELD;
+        field_type: "text";
+        required: true;
+    }];
+
+    // Model-predicted sentiment (for comparison; not the Argilla question).
+    string predicted_sentiment = 3 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+
+    // Corrected sentiment after review: "negative" or "positive".
+    // When logging a draft from a prediction, set this to the predicted label
+    // so Argilla records it as a Suggestion.
+    string sentiment = 4 [(pgml.argilla_field) = {
+        slot: QUESTION;
+        question_type: "label";
+        labels: ["negative", "positive"];
+        required: true;
+    }];
+
+    // Provenance: "model" for suggestion drafts, "human" after correction.
+    string source = 5 [(pgml.argilla_field) = {
+        slot: METADATA;
+    }];
+}
+
+// LitServe / client settings for SentimentClassifier.
+message SentimentServeConfig {
+    option (pgml.kind) = RUN_CONFIG;
+    option (pgml.litserve_config) = {
+        enable: true;
+        service: "SentimentClassifier";
+    };
+
+    string url = 1 [(pgml.default) = {string: "http://localhost:8000"}];
+    float timeout_s = 2 [(pgml.default) = {float: 30}];
+    int32 workers_per_device = 3 [(pgml.default) = {int32: 1}];
+    string accelerator = 4 [(pgml.default) = {string: "cpu"}];
+}
+
+// Online-loop metrics (predictions vs human feedback).
+message SentimentOnlineMetrics {
+    option (pgml.kind) = METRIC_SET;
+    option (pgml.mlflow) = {
+        enable: true;
+    };
+
+    int32 n_predictions = 1;
+    int32 n_feedback = 2;
+    float agreement_rate = 3;
+}
+
+// Unary sentiment inference service (LitServe).
+service SentimentClassifier {
+    option (pgml.litserve) = {
+        enable: true;
+    };
+    rpc Predict(SentimentPredictRequest) returns (SentimentPrediction) {
+        option (pgml.litserve_method) = {
+            api_path: "/predict";
+        };
+    }
+}

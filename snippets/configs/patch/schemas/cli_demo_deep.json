@@ -1,0 +1,249 @@
+{
+  "$defs": {
+    "DataPatch": {
+      "description": "Data config",
+      "properties": {
+        "train_dataset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatasetPatch"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null
+        },
+        "test_dataset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatasetPatch"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null
+        },
+        "num_workers": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Workers"
+        }
+      },
+      "title": "DataPatch",
+      "type": "object"
+    },
+    "DatasetPatch": {
+      "description": "Dataset configuration",
+      "properties": {
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        }
+      },
+      "title": "DatasetPatch",
+      "type": "object"
+    },
+    "ModelPatch": {
+      "description": "Model configuration",
+      "properties": {
+        "num_layers": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Layers"
+        }
+      },
+      "title": "ModelPatch",
+      "type": "object"
+    },
+    "TrainingPatch": {
+      "description": "Training configuration",
+      "properties": {
+        "num_epochs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Epochs"
+        }
+      },
+      "title": "TrainingPatch",
+      "type": "object"
+    }
+  },
+  "description": "Global configuration",
+  "properties": {
+    "data": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DataPatch"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null
+    },
+    "model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ModelPatch"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null
+    },
+    "training": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TrainingPatch"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null
+    },
+    "_defs_": {}
+  },
+  "title": "CliDemoDeepPatch",
+  "type": "object"
+}

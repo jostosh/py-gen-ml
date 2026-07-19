@@ -1,0 +1,554 @@
+{
+  "$defs": {
+    "Choice_int_": {
+      "properties": {
+        "options": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an external object",
+                "minLength": 2,
+                "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an internal object",
+                "minLength": 2,
+                "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+              }
+            ]
+          },
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "title": "Choice[int]",
+      "type": "object"
+    },
+    "Choice_str_": {
+      "properties": {
+        "options": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an external object",
+                "minLength": 2,
+                "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+              },
+              {
+                "type": "string",
+                "description": "An object path to an internal object",
+                "minLength": 2,
+                "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+              }
+            ]
+          },
+          "title": "Options",
+          "type": "array"
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "title": "Choice[str]",
+      "type": "object"
+    },
+    "DataSweep": {
+      "description": "Data config",
+      "properties": {
+        "train_dataset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatasetSweep"
+            },
+            {
+              "$ref": "#/$defs/NestedChoice_DatasetSweep_DatasetPatch_"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Train Dataset"
+        },
+        "test_dataset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DatasetSweep"
+            },
+            {
+              "$ref": "#/$defs/NestedChoice_DatasetSweep_DatasetPatch_"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Test Dataset"
+        },
+        "num_workers": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/Choice_int_"
+            },
+            {
+              "$ref": "#/$defs/IntUniform"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Workers"
+        }
+      },
+      "title": "DataSweep",
+      "type": "object"
+    },
+    "DatasetSweep": {
+      "description": "Dataset configuration",
+      "properties": {
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Choice_str_"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        }
+      },
+      "title": "DatasetSweep",
+      "type": "object"
+    },
+    "IntUniform": {
+      "description": "An int uniform.\n\nInt uniforms allow for sampling an int value within a range.",
+      "properties": {
+        "low": {
+          "anyOf": [
+            {
+              "title": "Low",
+              "type": "integer"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ]
+        },
+        "high": {
+          "anyOf": [
+            {
+              "title": "High",
+              "type": "integer"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ]
+        },
+        "step": {
+          "anyOf": [
+            {
+              "default": 1,
+              "title": "Step",
+              "type": "integer"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ]
+        }
+      },
+      "required": [
+        "low",
+        "high"
+      ],
+      "title": "IntUniform",
+      "type": "object"
+    },
+    "ModelSweep": {
+      "description": "Model configuration",
+      "properties": {
+        "num_layers": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/Choice_int_"
+            },
+            {
+              "$ref": "#/$defs/IntUniform"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Layers"
+        }
+      },
+      "title": "ModelSweep",
+      "type": "object"
+    },
+    "NestedChoice_DataSweep_DataPatch_": {
+      "properties": {
+        "nested_options": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/DataSweep"
+              },
+              "title": "Nested Options",
+              "type": "object"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nested_options"
+      ],
+      "title": "NestedChoice[DataSweep, DataPatch]",
+      "type": "object"
+    },
+    "NestedChoice_DatasetSweep_DatasetPatch_": {
+      "properties": {
+        "nested_options": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/DatasetSweep"
+              },
+              "title": "Nested Options",
+              "type": "object"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nested_options"
+      ],
+      "title": "NestedChoice[DatasetSweep, DatasetPatch]",
+      "type": "object"
+    },
+    "NestedChoice_ModelSweep_ModelPatch_": {
+      "properties": {
+        "nested_options": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ModelSweep"
+              },
+              "title": "Nested Options",
+              "type": "object"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nested_options"
+      ],
+      "title": "NestedChoice[ModelSweep, ModelPatch]",
+      "type": "object"
+    },
+    "NestedChoice_TrainingSweep_TrainingPatch_": {
+      "properties": {
+        "nested_options": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/TrainingSweep"
+              },
+              "title": "Nested Options",
+              "type": "object"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nested_options"
+      ],
+      "title": "NestedChoice[TrainingSweep, TrainingPatch]",
+      "type": "object"
+    },
+    "TrainingSweep": {
+      "description": "Training configuration",
+      "properties": {
+        "num_epochs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/Choice_int_"
+            },
+            {
+              "$ref": "#/$defs/IntUniform"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an external object",
+              "minLength": 2,
+              "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+            },
+            {
+              "type": "string",
+              "description": "An object path to an internal object",
+              "minLength": 2,
+              "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+            }
+          ],
+          "default": null,
+          "title": "Num Epochs"
+        }
+      },
+      "title": "TrainingSweep",
+      "type": "object"
+    }
+  },
+  "description": "Global configuration",
+  "properties": {
+    "data": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DataSweep"
+        },
+        {
+          "$ref": "#/$defs/NestedChoice_DataSweep_DataPatch_"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Data"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ModelSweep"
+        },
+        {
+          "$ref": "#/$defs/NestedChoice_ModelSweep_ModelPatch_"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Model"
+    },
+    "training": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TrainingSweep"
+        },
+        {
+          "$ref": "#/$defs/NestedChoice_TrainingSweep_TrainingPatch_"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ],
+      "default": null,
+      "title": "Training"
+    },
+    "_defs_": {}
+  },
+  "title": "CliExtensionDemoSweep",
+  "type": "object"
+}

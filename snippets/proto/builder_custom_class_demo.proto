@@ -1,0 +1,28 @@
+// builder_custom_class_demo.proto
+syntax = "proto3";
+
+package builder_custom_class_demo;
+
+import "py_gen_ml/extensions.proto";
+
+
+// Linear block configuration
+message LinearBlock {
+    option (pgml.factory) = "example_project.modules.LinearBlock";
+    // Number of input features
+    uint32 in_features = 1;
+    // Number of output features
+    uint32 out_features = 2;
+    // Bias
+    bool bias = 3;
+    // Dropout probability
+    float dropout = 4;
+    // Activation function
+    string activation = 5;
+}
+
+// MLP configuration
+message MLP {
+    // Linear blocks
+    repeated LinearBlock layers = 1;
+}

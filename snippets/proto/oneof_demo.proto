@@ -1,0 +1,38 @@
+// oneof_demo.proto
+syntax = "proto3";
+
+package oneof_demo;
+
+// Transformer configuration
+message Transformer {
+    // Number of layers
+    uint32 num_layers = 1;
+    // Number of heads
+    uint32 num_heads = 2;
+    // Activation function
+    string activation = 3;
+}
+
+// Conv block
+message ConvBlock {
+    // Number of output channels
+    uint32 out_channels = 1;
+    // Kernel size
+    uint32 kernel_size = 2;
+    // Activation function
+    string activation = 3;
+}
+
+// Convolutional neural network configuration
+message ConvNet {
+    // Conv layer configuration
+    repeated ConvBlock layers = 1;
+}
+
+// Model configuration
+message Model {
+    oneof backbone {
+        Transformer transformer = 1;
+        ConvNet conv_net = 2;
+    }
+}

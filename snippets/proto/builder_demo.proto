@@ -1,0 +1,25 @@
+// builder_demo.proto
+syntax = "proto3";
+
+package builder_demo;
+
+// Import the PGML extensions
+import "py_gen_ml/extensions.proto";
+
+
+// Linear layer configuration
+message Linear {
+    option (pgml.factory) = "torch.nn.Linear";
+    // Number of input features
+    uint32 in_features = 1;
+    // Number of output features
+    uint32 out_features = 2;
+    // Bias
+    bool bias = 3;
+}
+
+// MLP configuration
+message MLP {
+    // Linear layers
+    repeated Linear layers = 1;
+}

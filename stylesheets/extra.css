@@ -1,0 +1,32 @@
+.generated-code {
+    position: relative;
+    border-top: 1px solid rgba(100, 100, 100, 1.0);
+    border-bottom: 1px solid rgba(100, 100, 100, 1.0);
+    padding-top: 30px;
+    background: repeating-linear-gradient(
+        135deg,
+        rgba(200, 200, 200, 0.1),
+        rgba(200, 200, 200, 0.1) 40px,
+        rgba(200, 200, 200, 0.3) 40px,
+        rgba(200, 200, 200, 0.3) 80px
+    );
+}
+
+.generated-code::before {
+    content: "🤖 Generated Code";
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    font-size: 16px;
+    font-family: monospace;
+}
+
+.generated-code::after {
+    content: "🤖";
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    font-size: 16px;
+    font-family: monospace;
+}
+

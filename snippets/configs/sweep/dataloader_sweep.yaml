@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=schemas/data_loader_config.json
+batch_size:
+  options:
+  - 32
+  - 64

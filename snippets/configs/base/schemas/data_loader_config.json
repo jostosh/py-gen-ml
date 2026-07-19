@@ -1,0 +1,115 @@
+{
+  "description": "DataLoader configuration",
+  "properties": {
+    "batch_size": {
+      "anyOf": [
+        {
+          "title": "Batch Size",
+          "type": "integer"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ]
+    },
+    "num_workers": {
+      "anyOf": [
+        {
+          "title": "Num Workers",
+          "type": "integer"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ]
+    },
+    "pin_memory": {
+      "anyOf": [
+        {
+          "title": "Pin Memory",
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ]
+    },
+    "persistent_workers": {
+      "anyOf": [
+        {
+          "title": "Persistent Workers",
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ]
+    },
+    "prefetch_factor": {
+      "anyOf": [
+        {
+          "title": "Prefetch Factor",
+          "type": "integer"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an external object",
+          "minLength": 2,
+          "pattern": "^\\!(\\/?(?:[\\w\\.]+|\\.\\.)+(?:/(?:[\\w\\.]+|\\.\\.))*)(#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*)?$"
+        },
+        {
+          "type": "string",
+          "description": "An object path to an internal object",
+          "minLength": 2,
+          "pattern": "^#\\/?(?:[\\$a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.)(?:\\/([a-zA-Z0-9_]+(?:\\[\\d+\\])?|\\.\\.))*$"
+        }
+      ]
+    },
+    "_defs_": {}
+  },
+  "required": [
+    "batch_size",
+    "num_workers",
+    "pin_memory",
+    "persistent_workers",
+    "prefetch_factor"
+  ],
+  "title": "DataLoaderConfig",
+  "type": "object"
+}

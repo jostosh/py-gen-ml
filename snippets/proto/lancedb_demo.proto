@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package demo;
+
+import "py_gen_ml/extensions.proto";
+
+// Metadata nested under each training row.
+message SampleMeta {
+    string label = 1;
+    int32 split_id = 2;
+}
+
+// Root table schema for a LanceDB dataset of embedding rows.
+message EmbeddingSample {
+    option (pgml.kind) = FEATURE_ROW;
+    option (pgml.lancedb) = {
+        enable: true;
+        table_name: "embedding_samples";
+    };
+
+    string id = 1 [(pgml.lancedb_field) = { merge_key: true }];
+    // Fixed-size vector column for similarity search / training.
+    repeated float embedding = 2 [(pgml.lancedb_field).vector_dim = 8];
+    SampleMeta meta = 3;
+}

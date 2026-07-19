@@ -1,0 +1,14 @@
+// default.proto
+syntax = "proto3";
+
+package defaults;
+
+import "py_gen_ml/extensions.proto";
+
+// Optimizer configuration
+message Optimizer {
+    // Optimizer type
+    string type = 1 [(pgml.default).string = "sgd"];
+    // Learning rate
+    float learning_rate = 2 [(pgml.default).float = 0.01];
+}

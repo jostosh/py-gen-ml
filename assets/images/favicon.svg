@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 158.75 110.50932"
+   height="110.50932mm"
+   width="158.75mm"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="g818"
+     transform="translate(-62.593764,-60.494881)">
+    <g
+       id="g18"
+       transform="matrix(0.95012767,0,0,0.95012767,6.7973518,3.0170208)">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.04929"
+         id="rect17-3"
+         width="151.51189"
+         height="100.73914"
+         x="66.510635"
+         y="68.280281"
+         ry="10.393905" />
+      <!-- P letter with opening and rounded edges -->
+      <path
+         style="fill:#ffffff;stroke-width:1.31142"
+         d="M 100,85 Q 95,85 95,90 V 140 Q 95,145 100,145 H 110 Q 115,145 115,140 V 125 H 135 A 20,20 0 0 0 155,105 V 105 A 20,20 0 0 0 135,85 Z M 115,95 H 130 A 10,10 0 0 1 140,105 A 10,10 0 0 1 130,115 H 115 Z"
+         id="text-p" />
+      <!-- Enlarged Sparkle icon with sharper edges -->
+      <path
+         style="fill:#ffffff;stroke:none"
+         d="M 180,103 L 188,119 L 204,127 L 188,135 L 180,151 L 172,135 L 156,127 L 172,119 Z"
+         id="sparkle" />
+    </g>
+  </g>
+</svg>

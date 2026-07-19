@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package mlp;
+
+import "py_gen_ml/extensions.proto";
+
+// Activation is an enum of activation functions.
+enum Activation {
+    // ReLU is the Rectified Linear Unit activation function.
+    RELU = 0;
+    // TANH is the hyperbolic tangent activation function.
+    TANH = 1;
+    // SIGMOID is the sigmoid activation function.
+    SIGMOID = 2;
+}
+
+// MLP is a simple multi-layer perceptron.
+message MLPParsingDemo {
+    // Number of layers in the MLP.
+    uint32 num_layers = 1 [(pgml.default).uint32 = 2];
+    // Number of units in each layer.
+    uint32 num_units = 2;
+    // Activation function to use.
+    Activation activation = 3;
+}
+
+
