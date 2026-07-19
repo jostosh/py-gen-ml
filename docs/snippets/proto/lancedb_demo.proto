@@ -18,7 +18,7 @@ message EmbeddingSample {
         table_name: "embedding_samples";
     };
 
-    string id = 1;
+    string id = 1 [(pgml.lancedb_field) = { merge_key: true }];
     // Fixed-size vector column for similarity search / training.
     repeated float embedding = 2 [(pgml.lancedb_field).vector_dim = 8];
     SampleMeta meta = 3;

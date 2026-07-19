@@ -36,6 +36,7 @@ from pgml_out.sentiment_demo_argilla import (
 from pgml_out.sentiment_demo_lancedb import (
     SentimentExample as LanceSentimentExample,
     create_sentiment_example_table,
+    sentiment_example_merge_on,
     sentiment_example_table_name,
 )
 from pgml_out.sentiment_demo_pydantic_ai import (
@@ -47,7 +48,7 @@ from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.azure import AzureProvider
 
 import py_gen_ml as pgml
-from py_gen_ml.bridges.lancedb_rows import append_feature_rows
+from py_gen_ml.bridges.lancedb_rows import merge_rows
 from py_gen_ml.bridges.synthesis_argilla import synthetic_rows_to_argilla_records
 
 # .../docs/snippets/src/snippets/this_file.py → parents[2] == docs/snippets
@@ -160,15 +161,10 @@ def persist_to_lancedb(rows: Sequence[SentimentExample], db_uri: str) -> str:
     import lancedb
 
     db = lancedb.connect(db_uri)
-    table_name = sentiment_example_table_name()
     lance_rows = [LanceSentimentExample.model_validate(r.model_dump()) for r in rows]
-    try:
-        db.drop_table(table_name)
-    except Exception:
-        pass
-    table = create_sentiment_example_table(db)
-    append_feature_rows(table, lance_rows)
-    return table_name
+    table = create_sentiment_example_table(db, mode='overwrite', exist_ok=False)
+    merge_rows(table, lance_rows, on=sentiment_example_merge_on())
+    return sentiment_example_table_name()
 
 
 def log_training_to_mlflow(*, train_config: base.SentimentTrainConfig, metrics) -> None:

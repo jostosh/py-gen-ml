@@ -27,19 +27,30 @@ def embedding_sample_table_name() -> str:
     return 'embedding_samples'
 
 
+def embedding_sample_merge_on() -> typing.List[str]:
+    """Join columns for ``merge_insert`` / ``merge_rows`` (fields with ``(pgml.lancedb_field).merge_key``)."""
+    return ['id']
+
+
 def create_embedding_sample_table(
     db: DBConnection,
     *,
     name: typing.Optional[str] = None,
+    exist_ok: bool = True,
     **kwargs: typing.Any
 ) -> LanceTable:
     """Create a LanceDB table whose schema is :class:`EmbeddingSample`.
 
     ``db`` is a connection from ``lancedb.connect(...)``.
+    By default ``exist_ok=True`` opens the table if it already exists.
+    Pass ``mode="overwrite"`` (via kwargs) to replace an existing table.
     Load rows for training via Arrow (``table.to_arrow()``) or LanceDB's
     ``Permutation`` streaming API, then hand tensors to
     ``torch.utils.data.DataLoader`` as needed.
     """
     return db.create_table(
-        name or embedding_sample_table_name(), schema=EmbeddingSample, **kwargs
+        name or embedding_sample_table_name(),
+        schema=EmbeddingSample,
+        exist_ok=exist_ok,
+        **kwargs
     )

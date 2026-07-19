@@ -305,7 +305,7 @@ Annotators confirm or correct `sentiment` in the Argilla UI. Labels are logged a
 
 `run_flywheel(train_config, use_lancedb=True)` writes labeled rows to a temp LanceDB using the
 generated `SentimentExample` LanceModel and
-`py_gen_ml.bridges.append_feature_rows`.
+`py_gen_ml.bridges.merge_rows`.
 
 In production, keep a durable URI and append only after HITL acceptance.
 
@@ -357,7 +357,7 @@ Flow:
 
 1. Fit TF–IDF + LogReg on IMDB seeds (same helper as the offline demo).
 2. Score each seed as `SentimentPredictRequest` → `SentimentPrediction`.
-3. Persist predictions with `append_rows` to the `sentiment_predictions` table.
+3. Persist predictions with `merge_rows` to the `sentiment_predictions` table.
 4. Merge request + prediction into a `SentimentFeedback` draft (`source=model`);
    Argilla gets the predicted label as a **Suggestion** on the QUESTION field.
 5. Simulate (or apply) human corrections → `source=human` feedback rows in

@@ -1,8 +1,10 @@
 """Tests for py_gen_ml.bridges helpers."""
 from __future__ import annotations
 
+import pytest
+
 from py_gen_ml.bridges.flywheel import seeds_to_dicts
-from py_gen_ml.bridges.lancedb_rows import append_rows
+from py_gen_ml.bridges.lancedb_rows import append_rows, merge_rows
 from py_gen_ml.bridges.serving_argilla import log_prediction_for_review
 from py_gen_ml.bridges.synthesis_argilla import (
     synthetic_rows_to_argilla_records,
@@ -18,13 +20,33 @@ class _Row:
         return {'x': self.x}
 
 
+class _FakeMergeBuilder:
+
+    def __init__(self, table: '_FakeTable', on: list[str]) -> None:
+        self._table = table
+        self._on = on
+
+    def when_matched_update_all(self) -> '_FakeMergeBuilder':
+        return self
+
+    def when_not_matched_insert_all(self) -> '_FakeMergeBuilder':
+        return self
+
+    def execute(self, rows: list[dict]) -> None:
+        self._table.executed.append((self._on, rows))
+
+
 class _FakeTable:
 
     def __init__(self) -> None:
-        self.rows: list[dict] = []
+        self.executed: list[tuple[list[str], list[dict]]] = []
+        self.added: list[dict] = []
+
+    def merge_insert(self, on: list[str]) -> _FakeMergeBuilder:
+        return _FakeMergeBuilder(self, on)
 
     def add(self, rows: list[dict]) -> None:
-        self.rows.extend(rows)
+        self.added.extend(rows)
 
 
 def test_seeds_to_dicts() -> None:
@@ -53,7 +75,18 @@ def test_log_prediction_for_review() -> None:
     assert logged == [record]
 
 
-def test_append_rows_alias() -> None:
+def test_append_rows() -> None:
     table = _FakeTable()
-    append_rows(table, [_Row(1), _Row(2)])
-    assert table.rows == [{'x': 1}, {'x': 2}]
+    append_rows(table, [_Row(1), _Row(2)])  # type: ignore[arg-type]
+    assert table.added == [{'x': 1}, {'x': 2}]
+
+
+def test_merge_rows() -> None:
+    table = _FakeTable()
+    merge_rows(table, [_Row(1), _Row(2)], on=['x'])  # type: ignore[arg-type]
+    assert table.executed == [(['x'], [{'x': 1}, {'x': 2}])]
+
+
+def test_merge_rows_requires_on() -> None:
+    with pytest.raises(ValueError, match='at least one join column'):
+        merge_rows(_FakeTable(), [_Row(1)], on=[])  # type: ignore[arg-type]

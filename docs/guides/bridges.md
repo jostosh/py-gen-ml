@@ -39,7 +39,7 @@ flowchart LR
 | Module | Responsibility |
 |--------|----------------|
 | `bridges.synthesis_argilla` | Map synthesized rows → Argilla records via `to_record` |
-| `bridges.lancedb_rows` | `append_rows` / `append_feature_rows`, `load_seeds_from_table` |
+| `bridges.lancedb_rows` | `append_rows`, `merge_rows`, `load_seeds_from_table` |
 | `bridges.serving_argilla` | Serving request/response → review record |
 | `bridges.flywheel` | Thin `seeds_to_dicts` / `annotated_rows_to_dicts` helpers |
 
@@ -76,27 +76,36 @@ log_records(dataset, records)
 
 ```python
 import lancedb
-from py_gen_ml.bridges import append_rows, load_seeds_from_table
+from py_gen_ml.bridges import append_rows, merge_rows, load_seeds_from_table
 from pgml_out.sentiment_demo_lancedb import (
     SentimentExample,
     create_sentiment_example_table,
+    sentiment_example_merge_on,
 )
 
 db = lancedb.connect("./sentiment.lancedb")
 table = create_sentiment_example_table(db)
-append_rows(
+
+# Upsert when you have merge keys:
+merge_rows(
     table,
     [SentimentExample.model_validate(r.model_dump()) for r in rows],
+    on=sentiment_example_merge_on(),
 )
+
+# Or append when there is no join key:
+# append_rows(table, rows)
 
 # Later: reload for training or few-shot seeds
 seeds = load_seeds_from_table(table, model_cls=SentimentExample, limit=100)
 ```
 
-`append_rows` (alias of `append_feature_rows`) calls `table.add(...)` with
-`model_dump()`. It is row-agnostic: use it for `FEATURE_ROW`, `PREDICTION`, and
-`FEEDBACK` LanceModels. `load_seeds_from_table` uses `table.to_pandas()` then
-`model_cls.model_validate`.
+`merge_rows` calls ``table.merge_insert(on=...).when_matched_update_all()
+.when_not_matched_insert_all()`` with ``model_dump()``. Join columns come from
+fields marked ``(pgml.lancedb_field).merge_key`` (see generated ``*_merge_on()``).
+Use `append_rows` (``table.add``) when there is no merge key. Both helpers are
+row-agnostic (`FEATURE_ROW`, `PREDICTION`, `FEEDBACK`). `load_seeds_from_table`
+uses `table.to_pandas()` then `model_cls.model_validate`.
 
 ## Serving → HITL
 
@@ -129,7 +138,7 @@ record = log_prediction_for_review(
 ```
 
 `merge` is application-specific. Persist the immutable `SentimentPrediction` to
-LanceDB separately with `append_rows`.
+LanceDB separately with `merge_rows`.
 
 ## Flywheel dict helpers
 

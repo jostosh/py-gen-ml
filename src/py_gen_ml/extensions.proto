@@ -42,6 +42,8 @@ message LanceDBField {
 	// When set to a positive value, the field is emitted as ``Vector(dim)``
 	// instead of a scalar or list type. Typically applied to ``repeated float``.
 	uint32 vector_dim = 1;
+	// When true, this field is part of the join key for ``table.merge_insert(on=...)``.
+	bool merge_key = 2;
 }
 
 // Canonical role of a message in the ML lifecycle. Tool-specific options
