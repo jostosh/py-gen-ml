@@ -58,6 +58,19 @@ repeated float embedding = 2 [(pgml.lancedb_field).vector_dim = 8];
 
 That field is generated as `embedding: Vector(8)` instead of `List[float]`.
 
+### Merge keys
+
+Mark join columns for LanceDB ``merge_insert`` with
+``(pgml.lancedb_field).merge_key = true``:
+
+```protobuf
+string id = 1 [(pgml.lancedb_field) = { merge_key: true }];
+```
+
+Codegen emits ``*_merge_on() -> list[str]`` listing those fields. Pass that to
+``py_gen_ml.bridges.merge_rows(table, rows, on=...)`` for upserts. When no field
+is marked, use ``py_gen_ml.bridges.append_rows(table, rows)`` instead.
+
 ### What gets generated
 
 For a proto `lancedb_demo.proto`, enabling the generator writes
@@ -65,7 +78,8 @@ For a proto `lancedb_demo.proto`, enabling the generator writes
 
 - One `LanceModel` subclass per message in the nested closure
 - `*_table_name()` returning the configured (or default) table name
-- `create_*_table(db, ...)` calling `db.create_table(..., schema=<RootModel>)`
+- `*_merge_on()` returning fields marked ``merge_key``
+- `create_*_table(db, ...)` calling `db.create_table(..., schema=<RootModel>, exist_ok=True)`
 
 Enums are stored as `str`. Scalar / list / nested-message fields follow the usual
 Python mapping that LanceDB converts to Arrow types.

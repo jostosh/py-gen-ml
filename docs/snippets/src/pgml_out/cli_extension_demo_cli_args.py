@@ -35,6 +35,14 @@ class CliExtensionDemoArgs(pgml.YamlBaseModel):
     ]
     """Number of epochs"""
 
+    num_layers: typing.Annotated[
+        typing.Optional[int],
+        typer.Option(help="Number of layers. Maps to 'model.num_layers'"),
+        pydantic.Field(None),
+        pgml.ArgRef("model.num_layers"),
+    ]
+    """Number of layers"""
+
     num_workers: typing.Annotated[
         typing.Optional[int],
         typer.Option(
@@ -44,11 +52,3 @@ class CliExtensionDemoArgs(pgml.YamlBaseModel):
         pgml.ArgRef("data.num_workers"),
     ]
     """Number of workers for loading the dataset"""
-
-    num_layers: typing.Annotated[
-        typing.Optional[int],
-        typer.Option(help="Number of layers. Maps to 'model.num_layers'"),
-        pydantic.Field(None),
-        pgml.ArgRef("model.num_layers"),
-    ]
-    """Number of layers"""

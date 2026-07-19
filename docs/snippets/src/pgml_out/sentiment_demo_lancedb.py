@@ -79,21 +79,32 @@ def sentiment_example_table_name() -> str:
     return 'sentiment_examples'
 
 
+def sentiment_example_merge_on() -> typing.List[str]:
+    """Join columns for ``merge_insert`` / ``merge_rows`` (fields with ``(pgml.lancedb_field).merge_key``)."""
+    return ['id']
+
+
 def create_sentiment_example_table(
     db: DBConnection,
     *,
     name: typing.Optional[str] = None,
+    exist_ok: bool = True,
     **kwargs: typing.Any
 ) -> LanceTable:
     """Create a LanceDB table whose schema is :class:`SentimentExample`.
 
     ``db`` is a connection from ``lancedb.connect(...)``.
+    By default ``exist_ok=True`` opens the table if it already exists.
+    Pass ``mode="overwrite"`` (via kwargs) to replace an existing table.
     Load rows for training via Arrow (``table.to_arrow()``) or LanceDB's
     ``Permutation`` streaming API, then hand tensors to
     ``torch.utils.data.DataLoader`` as needed.
     """
     return db.create_table(
-        name or sentiment_example_table_name(), schema=SentimentExample, **kwargs
+        name or sentiment_example_table_name(),
+        schema=SentimentExample,
+        exist_ok=exist_ok,
+        **kwargs
     )
 
 
@@ -102,21 +113,32 @@ def sentiment_feedback_table_name() -> str:
     return 'sentiment_feedback'
 
 
+def sentiment_feedback_merge_on() -> typing.List[str]:
+    """Join columns for ``merge_insert`` / ``merge_rows`` (fields with ``(pgml.lancedb_field).merge_key``)."""
+    return ['sample_id']
+
+
 def create_sentiment_feedback_table(
     db: DBConnection,
     *,
     name: typing.Optional[str] = None,
+    exist_ok: bool = True,
     **kwargs: typing.Any
 ) -> LanceTable:
     """Create a LanceDB table whose schema is :class:`SentimentFeedback`.
 
     ``db`` is a connection from ``lancedb.connect(...)``.
+    By default ``exist_ok=True`` opens the table if it already exists.
+    Pass ``mode="overwrite"`` (via kwargs) to replace an existing table.
     Load rows for training via Arrow (``table.to_arrow()``) or LanceDB's
     ``Permutation`` streaming API, then hand tensors to
     ``torch.utils.data.DataLoader`` as needed.
     """
     return db.create_table(
-        name or sentiment_feedback_table_name(), schema=SentimentFeedback, **kwargs
+        name or sentiment_feedback_table_name(),
+        schema=SentimentFeedback,
+        exist_ok=exist_ok,
+        **kwargs
     )
 
 
@@ -125,19 +147,30 @@ def sentiment_prediction_table_name() -> str:
     return 'sentiment_predictions'
 
 
+def sentiment_prediction_merge_on() -> typing.List[str]:
+    """Join columns for ``merge_insert`` / ``merge_rows`` (fields with ``(pgml.lancedb_field).merge_key``)."""
+    return ['sample_id']
+
+
 def create_sentiment_prediction_table(
     db: DBConnection,
     *,
     name: typing.Optional[str] = None,
+    exist_ok: bool = True,
     **kwargs: typing.Any
 ) -> LanceTable:
     """Create a LanceDB table whose schema is :class:`SentimentPrediction`.
 
     ``db`` is a connection from ``lancedb.connect(...)``.
+    By default ``exist_ok=True`` opens the table if it already exists.
+    Pass ``mode="overwrite"`` (via kwargs) to replace an existing table.
     Load rows for training via Arrow (``table.to_arrow()``) or LanceDB's
     ``Permutation`` streaming API, then hand tensors to
     ``torch.utils.data.DataLoader`` as needed.
     """
     return db.create_table(
-        name or sentiment_prediction_table_name(), schema=SentimentPrediction, **kwargs
+        name or sentiment_prediction_table_name(),
+        schema=SentimentPrediction,
+        exist_ok=exist_ok,
+        **kwargs
     )

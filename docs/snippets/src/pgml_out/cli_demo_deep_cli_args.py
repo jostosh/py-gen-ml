@@ -11,14 +11,6 @@ from . import cli_demo_deep_base as base
 class CliDemoDeepArgs(pgml.YamlBaseModel):
     """Global configuration"""
 
-    num_epochs: typing.Annotated[
-        typing.Optional[int],
-        typer.Option(help="Number of epochs. Maps to 'training.num_epochs'"),
-        pydantic.Field(None),
-        pgml.ArgRef("training.num_epochs"),
-    ]
-    """Number of epochs"""
-
     train_dataset_path: typing.Annotated[
         typing.Optional[str],
         typer.Option(help="Path to the dataset. Maps to 'data.train_dataset.path'"),
@@ -35,6 +27,22 @@ class CliDemoDeepArgs(pgml.YamlBaseModel):
     ]
     """Path to the dataset"""
 
+    num_epochs: typing.Annotated[
+        typing.Optional[int],
+        typer.Option(help="Number of epochs. Maps to 'training.num_epochs'"),
+        pydantic.Field(None),
+        pgml.ArgRef("training.num_epochs"),
+    ]
+    """Number of epochs"""
+
+    num_layers: typing.Annotated[
+        typing.Optional[int],
+        typer.Option(help="Number of layers. Maps to 'model.num_layers'"),
+        pydantic.Field(None),
+        pgml.ArgRef("model.num_layers"),
+    ]
+    """Number of layers"""
+
     num_workers: typing.Annotated[
         typing.Optional[int],
         typer.Option(
@@ -44,11 +52,3 @@ class CliDemoDeepArgs(pgml.YamlBaseModel):
         pgml.ArgRef("data.num_workers"),
     ]
     """Number of workers for loading the dataset"""
-
-    num_layers: typing.Annotated[
-        typing.Optional[int],
-        typer.Option(help="Number of layers. Maps to 'model.num_layers'"),
-        pydantic.Field(None),
-        pgml.ArgRef("model.num_layers"),
-    ]
-    """Number of layers"""

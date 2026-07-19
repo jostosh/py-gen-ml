@@ -115,10 +115,12 @@ class LanceDB(_message.Message):
     def __init__(self, enable: bool = ..., table_name: _Optional[str] = ...) -> None: ...
 
 class LanceDBField(_message.Message):
-    __slots__ = ("vector_dim",)
+    __slots__ = ("vector_dim", "merge_key")
     VECTOR_DIM_FIELD_NUMBER: _ClassVar[int]
+    MERGE_KEY_FIELD_NUMBER: _ClassVar[int]
     vector_dim: int
-    def __init__(self, vector_dim: _Optional[int] = ...) -> None: ...
+    merge_key: bool
+    def __init__(self, vector_dim: _Optional[int] = ..., merge_key: bool = ...) -> None: ...
 
 class BentoML(_message.Message):
     __slots__ = ("enable", "name")

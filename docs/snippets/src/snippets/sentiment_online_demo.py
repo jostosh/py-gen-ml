@@ -114,16 +114,12 @@ def ensure_tables(db: Any) -> Tuple[Any, Any]:
     from pgml_out.sentiment_demo_lancedb import (
         create_sentiment_feedback_table,
         create_sentiment_prediction_table,
-        sentiment_feedback_table_name,
-        sentiment_prediction_table_name,
     )
 
-    for name in (sentiment_prediction_table_name(), sentiment_feedback_table_name()):
-        try:
-            db.drop_table(name)
-        except Exception:
-            pass
-    return create_sentiment_prediction_table(db), create_sentiment_feedback_table(db)
+    return (
+        create_sentiment_prediction_table(db, mode='overwrite', exist_ok=False),
+        create_sentiment_feedback_table(db, mode='overwrite', exist_ok=False),
+    )
 
 
 def build_feedback_records(
@@ -203,10 +199,12 @@ def score_batch(
     from pgml_out.sentiment_demo_lancedb import (
         SentimentFeedback as LanceFeedback,
         SentimentPrediction as LancePrediction,
+        sentiment_feedback_merge_on,
+        sentiment_prediction_merge_on,
     )
     from pgml_out.sentiment_demo_litserve import SentimentPredictRequest
     from pgml_out.sentiment_demo_argilla import sentiment_feedback_dataset_name
-    from py_gen_ml.bridges import append_rows
+    from py_gen_ml.bridges import merge_rows
 
     seeds = load_imdb_seeds()
     pipeline = fit_pipeline_from_seeds()
@@ -231,13 +229,15 @@ def score_batch(
         uri = db_uri if db_uri is not None else tmp_ctx.name  # type: ignore[union-attr]
         db = lancedb.connect(uri)
         pred_table, fb_table = ensure_tables(db)
-        append_rows(
+        merge_rows(
             pred_table,
             [LancePrediction.model_validate(p.model_dump()) for p in predictions],
+            on=sentiment_prediction_merge_on(),
         )
-        append_rows(
+        merge_rows(
             fb_table,
             [LanceFeedback.model_validate(f.model_dump()) for f in feedbacks],
+            on=sentiment_feedback_merge_on(),
         )
         pred_by_id = {p.sample_id: p.sentiment for p in predictions}
         matched = sum(1 for f in feedbacks if pred_by_id.get(f.sample_id) == f.sentiment)
@@ -282,12 +282,15 @@ def serve_cmd(
     """Fit on seeds and serve ``SentimentClassifier`` via LitServe."""
     import lancedb
     from pgml_out.sentiment_demo_base import SentimentServeConfig
-    from pgml_out.sentiment_demo_lancedb import SentimentPrediction as LancePrediction
+    from pgml_out.sentiment_demo_lancedb import (
+        SentimentPrediction as LancePrediction,
+        sentiment_prediction_merge_on,
+    )
     from pgml_out.sentiment_demo_litserve import (
         SentimentPredictRequest,
         create_sentiment_classifier_server,
     )
-    from py_gen_ml.bridges import append_rows
+    from py_gen_ml.bridges import merge_rows
 
     pipeline = fit_pipeline_from_seeds()
     db = lancedb.connect(db_uri)
@@ -299,9 +302,10 @@ def serve_cmd(
             sample_id=request.id,
             text=request.text,
         )
-        append_rows(
+        merge_rows(
             pred_table,
             [LancePrediction.model_validate(prediction.model_dump())],
+            on=sentiment_prediction_merge_on(),
         )
         return prediction
 

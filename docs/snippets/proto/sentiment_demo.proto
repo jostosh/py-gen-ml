@@ -24,9 +24,10 @@ message SentimentExample {
     };
 
     // Stable row id (Argilla metadata; not a primary UI field).
-    string id = 1 [(pgml.argilla_field) = {
-        slot: METADATA;
-    }];
+    string id = 1 [
+        (pgml.argilla_field) = { slot: METADATA; },
+        (pgml.lancedb_field) = { merge_key: true }
+    ];
 
     // Provenance of the row: "imdb" for seed reviews, "synthetic" for LLM-generated ones.
     string source = 2 [(pgml.argilla_field) = {
@@ -109,7 +110,7 @@ message SentimentPrediction {
     };
 
     // Sample id matching SentimentPredictRequest.id.
-    string sample_id = 1;
+    string sample_id = 1 [(pgml.lancedb_field) = { merge_key: true }];
     // Review text that was scored.
     string text = 2;
     // Predicted sentiment: "negative" or "positive".
@@ -133,9 +134,10 @@ message SentimentFeedback {
     };
 
     // Sample id matching SentimentPrediction.sample_id.
-    string sample_id = 1 [(pgml.argilla_field) = {
-        slot: METADATA;
-    }];
+    string sample_id = 1 [
+        (pgml.argilla_field) = { slot: METADATA; },
+        (pgml.lancedb_field) = { merge_key: true }
+    ];
 
     // Review text shown to the annotator.
     string text = 2 [(pgml.argilla_field) = {

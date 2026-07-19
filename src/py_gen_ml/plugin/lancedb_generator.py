@@ -96,6 +96,7 @@ class LanceDBGenerator(Generator):
         table_name = lancedb.table_name or snake_case(root.proto.name)
         class_name = root.proto.name
         helper = snake_case(root.proto.name)
+        merge_on = self._merge_on_fields(root)
 
         g.P(f'def {helper}_table_name() -> str:')
         g.set_indent(4)
@@ -105,20 +106,38 @@ class LanceDBGenerator(Generator):
         g.P()
         g.P()
 
+        g.P(f'def {helper}_merge_on() -> typing.List[str]:')
+        g.set_indent(4)
+        g.P(
+            f'"""Join columns for ``merge_insert`` / ``merge_rows`` '
+            f'(fields with ``(pgml.lancedb_field).merge_key``)."""',
+        )
+        g.P(f'return {merge_on!r}')
+        g.set_indent(0)
+        g.P()
+        g.P()
+
         g.P(
             f'def create_{helper}_table('
-            f'db: DBConnection, *, name: typing.Optional[str] = None, **kwargs: typing.Any'
+            f'db: DBConnection, *, name: typing.Optional[str] = None, '
+            f'exist_ok: bool = True, **kwargs: typing.Any'
             f') -> LanceTable:',
         )
         g.set_indent(4)
         g.P(f'"""Create a LanceDB table whose schema is :class:`{class_name}`.')
         g.P()
         g.P('``db`` is a connection from ``lancedb.connect(...)``.')
+        g.P('By default ``exist_ok=True`` opens the table if it already exists.')
+        g.P('Pass ``mode=\"overwrite\"`` (via kwargs) to replace an existing table.')
         g.P('Load rows for training via Arrow (``table.to_arrow()``) or LanceDB\'s')
         g.P('``Permutation`` streaming API, then hand tensors to')
         g.P('``torch.utils.data.DataLoader`` as needed.')
         g.P('"""')
-        g.P(f'return db.create_table(name or {helper}_table_name(), schema={class_name}, **kwargs)')
+        g.P(
+            f'return db.create_table('
+            f'name or {helper}_table_name(), schema={class_name}, '
+            f'exist_ok=exist_ok, **kwargs)',
+        )
         g.set_indent(0)
         g.P()
         g.P()
@@ -149,6 +168,17 @@ class LanceDBGenerator(Generator):
         if opts is None or opts.vector_dim == 0:
             return None
         return int(opts.vector_dim)
+
+    @staticmethod
+    def _merge_on_fields(message: protogen.Message) -> list[str]:
+        keys: list[str] = []
+        for field in message.fields:
+            if field.oneof and len(field.oneof.fields) > 1:
+                continue
+            opts = get_extension_value(field, 'lancedb_field', LanceDBField)
+            if opts is not None and opts.merge_key:
+                keys.append(field.py_name)
+        return keys
 
 
 lancedb_spec = GeneratorSpec(

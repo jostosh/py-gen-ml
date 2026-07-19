@@ -11,6 +11,14 @@ from . import cli_demo_base as base
 class CLIDemoArgs(pgml.YamlBaseModel):
     """Global configuration"""
 
+    num_epochs: typing.Annotated[
+        typing.Optional[int],
+        typer.Option(help="Number of epochs. Maps to 'training.num_epochs'"),
+        pydantic.Field(None),
+        pgml.ArgRef("training.num_epochs"),
+    ]
+    """Number of epochs"""
+
     num_workers: typing.Annotated[
         typing.Optional[int],
         typer.Option(
@@ -20,14 +28,6 @@ class CLIDemoArgs(pgml.YamlBaseModel):
         pgml.ArgRef("data.num_workers"),
     ]
     """Number of workers for loading the dataset"""
-
-    num_epochs: typing.Annotated[
-        typing.Optional[int],
-        typer.Option(help="Number of epochs. Maps to 'training.num_epochs'"),
-        pydantic.Field(None),
-        pgml.ArgRef("training.num_epochs"),
-    ]
-    """Number of epochs"""
 
     path: typing.Annotated[
         typing.Optional[str],
